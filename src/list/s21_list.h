@@ -19,18 +19,17 @@ class list {
   using size_type = std::size_t;
 
   /*** List functions ***/
-  list() : head_(new node<value_type>), tail_(head_) { push_back(0); };
+  list() : head_(new node) {};
 
-  explicit list(size_type n) : head_(new node<T>), tail_(head_) {
+  explicit list(size_type n) : list() {
     while (--n > 0U) {
       push_back(0);
     }
   };
 
   explicit list(std::initializer_list<value_type> const &items)
-      : head_(new node<value_type>), tail_(head_) {
+      : list() {
     for (auto &item : items) push_back(item);
-    pop_front();
   };
 
   list(const list &l);
@@ -38,10 +37,11 @@ class list {
   list(list &&l);
 
   ~list() {
-    while (head_ != tail_) {
+    while (head_->data_) {
       pop_back();
     }
     delete head_;
+    head_ = nullptr;
   };
 
   list<value_type> operator=(const list<T> &l);
@@ -49,9 +49,9 @@ class list {
   list<value_type> operator=(list &&l);
 
   /*** List element access ***/
-  const_reference front() { return head_->value_; };
+  const_reference front() { return head_->next_->value_; };
 
-  const_reference back() { return tail_->value_; };
+  const_reference back() { return head_->prev_->value_; };
 
   /*** List iterators ***/
   iterator begin();
@@ -67,26 +67,29 @@ class list {
   iterator insert(iterator pos, const_reference value);
   void erase(iterator pos);
   void push_back(const_reference value) {
-    node<value_type> *temp = new node<value_type>;
-    temp->prev_ = tail_;
-    tail_->next_ = temp;
+    node *temp = new node;
+    temp->prev_ = head_->prev_;
+    temp->next_ = head_;
     temp->value_ = value;
-    tail_ = temp;
+    head_->prev_ = temp;
+    ++head_->data_;
   };
   void pop_back() {
-    node<value_type> *temp = tail_->prev_;
-    delete tail_;
-    tail_ = temp;
+    node *temp = head_->prev_;
+    temp->prev_->next_ = head_;
+    head_->prev_ = temp->prev_;
+    delete temp;
   }
   void push_front(const_reference value) {
-    node<value_type> *temp = new node<value_type>;
-    temp->next_ = head_;
-    head_->prev_ = temp;
+    node *temp = new node;
+    temp->next_ = head_->next_;
+    temp->prev_ = head_;
     temp->value_ = value;
-    head_ = temp;
+    head_->next_ = temp;
+    ++head_->data_;
   };
   void pop_front() {
-    node<value_type> *temp = head_->next_;
+    node *temp = head_->next_;
     delete head_;
     head_ = temp;
   };
@@ -98,15 +101,14 @@ class list {
   void sort();
 
  private:
-  template <typename>
   struct node {
-    node<value_type> *next_ = nullptr;
-    node<value_type> *prev_ = nullptr;
+    node *next_ = nullptr;
+    node *prev_ = nullptr;
     T data_ = 0;
     value_type value_;
+    node() : next_(this), prev_(this) {};
   };
-  node<value_type> *head_;
-  node<value_type> *tail_;
+  node *head_;
 };
 }  // namespace s21
 
