@@ -3,7 +3,6 @@
 
 #include <initializer_list>
 #include <limits>
-#include "s21_listiterator.h"
 
 namespace s21 {
 template <typename T>
@@ -51,48 +50,55 @@ class list {
   list<value_type> operator=(list &&l);
 
   /*** List element access ***/
-  const_reference front() { return head_->next_->value_; };
+  const_reference front() { return head_->next_->data_; };
 
-  const_reference back() { return head_->prev_->value_; };
+  const_reference back() { return head_->prev_->data_; };
 
   /*** List iterators ***/
-  iterator begin();
-  iterator end();
+  iterator begin() { return iterator(head_->next_); };
+
+  iterator end() { return iterator(head_); };
 
   /*** List capacity ***/
-  bool empty();
-  size_type size();
+  bool empty() { return head_->next_ == head_->back_; };
+
+  size_type size() { return m_size_; };
+
   size_type max_size();
 
   /*** List modifiers ***/
   void clear();
   iterator insert(iterator pos, const_reference value);
   void erase(iterator pos);
+
   void push_back(const_reference value) {
     Node *temp = new Node;
-    temp->value_ = value;
+    temp->data_ = value;
     temp->prev_ = head_->prev_;
     temp->next_ = temp->prev_->next_;
     temp->next_->prev_ = temp;
     temp->prev_->next_ = temp;
     ++m_size_;
   };
+
   void pop_back() {
     Node *temp = head_->prev_;
     temp->prev_->next_ = head_;
     head_->prev_ = temp->prev_;
     --m_size_;
     delete temp;
-  }
+  };
+
   void push_front(const_reference value) {
     Node *temp = new Node;
-    temp->value_ = value;
+    temp->data_ = value;
     temp->next_ = head_->next_;
     temp->prev_ = temp->next_->prev_;
     temp->next_->prev_ = temp;
     temp->prev_->next_ = temp;
     ++m_size_;
   };
+
   void pop_front() {
     Node *temp = head_->next_;
     temp->next_->prev_ = head_;
@@ -100,6 +106,7 @@ class list {
     --m_size_;
     delete temp;
   };
+
   void swap(list &other);
   void merge(list &other);
   void splice(const_iterator pos, list &other);
@@ -109,21 +116,20 @@ class list {
 
  private:
   struct Node {
-    Node *next_ = nullptr;
-    Node *prev_ = nullptr;
-    T data_ = 0;
-    value_type value_;
-    Node() : next_(this), prev_(this) {};
+    Node *next_;
+    Node *prev_;
+    value_type data_;
+    Node() : next_(this), prev_(this), data_(0) {};
   };
   class ListIterator {
     public:
-      ListIterator() = delete;
-      explicit ListIterator(Node *list_node) : iter(list_node) {};
-      ListIterator(const ListIterator& other) : iter(other.iter) {};
+      ListIterator() : iter_(0) {};
+      explicit ListIterator(Node *list_node) : iter_(list_node) {};
+      ListIterator(const ListIterator& other) : iter_(other.iter_) {};
       ListIterator(ListIterator&& other) { *this = std::move(other); };
       ListIterator operator=(const ListIterator& other) {
         if (*this != other)
-          iter = other.iter;
+          iter_ = other.iter_;
         return *this; 
       };
       ListIterator operator=(ListIterator&& other) {
@@ -131,9 +137,38 @@ class list {
           *this = std::move(other);
         return *this; 
       };
-      ~ListIterator() = delete;
+      ~ListIterator();
+
+      value_type operator*() { return iter_->data_; }
+
+      iterator &operator++() { 
+        iter_ = iter_->next_;
+        return *this;
+      };
+
+      iterator operator++(int) { 
+        iterator post_increment = *this;
+        ++(*this);
+        return post_increment;
+      };
+
+      iterator &operator--() {
+        iter_ = iter_->prev_;
+        return *this; 
+      };
+
+      iterator operator--(int) {
+        iterator post_decrement = *this;
+        --(*this);
+        return *this;
+      };
+
+      bool operator==(const iterator& other) { return iter_ == other.iter_; }
+
+      bool operator!=(const iterator& other) { return iter_ != other.iter_; }
+
     private:
-      Node *iter;
+      Node *iter_;
   };
   class ConstListIterator {
   };
