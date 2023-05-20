@@ -19,7 +19,7 @@ class list {
   using size_type = std::size_t;
 
   /*** List functions ***/
-  list() : head_(new node) {};
+  list() : head_(new node), m_size_(0) {};
 
   explicit list(size_type n) : list() {
     while (--n > 0U) {
@@ -37,7 +37,7 @@ class list {
   list(list &&l);
 
   ~list() {
-    while (head_->data_) {
+    while (m_size_) {
       pop_back();
     }
     delete head_;
@@ -68,30 +68,35 @@ class list {
   void erase(iterator pos);
   void push_back(const_reference value) {
     node *temp = new node;
-    temp->prev_ = head_->prev_;
-    temp->next_ = head_;
     temp->value_ = value;
-    head_->prev_ = temp;
-    ++head_->data_;
+    temp->prev_ = head_->prev_;
+    temp->next_ = temp->prev_->next_;
+    temp->next_->prev_ = temp;
+    temp->prev_->next_ = temp;
+    ++m_size_;
   };
   void pop_back() {
     node *temp = head_->prev_;
     temp->prev_->next_ = head_;
     head_->prev_ = temp->prev_;
+    --m_size_;
     delete temp;
   }
   void push_front(const_reference value) {
     node *temp = new node;
-    temp->next_ = head_->next_;
-    temp->prev_ = head_;
     temp->value_ = value;
-    head_->next_ = temp;
-    ++head_->data_;
+    temp->next_ = head_->next_;
+    temp->prev_ = temp->next_->prev_;
+    temp->next_->prev_ = temp;
+    temp->prev_->next_ = temp;
+    ++m_size_;
   };
   void pop_front() {
     node *temp = head_->next_;
-    delete head_;
-    head_ = temp;
+    temp->next_->prev_ = head_;
+    head_->next_ = temp->next_;
+    --m_size_;
+    delete temp;
   };
   void swap(list &other);
   void merge(list &other);
@@ -109,6 +114,7 @@ class list {
     node() : next_(this), prev_(this) {};
   };
   node *head_;
+  size_type m_size_;
 };
 }  // namespace s21
 
