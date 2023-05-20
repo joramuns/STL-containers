@@ -9,13 +9,16 @@
 namespace s21 {
 template <typename T>
 class list {
+  /*** Forward declaration of nested classes ***/
+  class ListIterator;
+  class ConstListIterator;
  public:
   /*** List member types ***/
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
-  using iterator = ListIterator<T>;
-  using const_iterator = ConstListIterator<T>;
+  using iterator = ListIterator;
+  using const_iterator = ConstListIterator;
   using size_type = std::size_t;
 
   /*** List functions ***/
@@ -112,8 +115,27 @@ class list {
     T data_ = 0;
     value_type value_;
     node() : next_(this), prev_(this) {};
+  class ListIterator {
+    public:
+      ListIterator() = delete;
+      explicit ListIterator(Node *list_node) : iter(list_node) {};
+      ListIterator(const ListIterator& other) : iter(other.iter) {};
+      ListIterator(ListIterator&& other) { *this = std::move(other); };
+      ListIterator operator=(const ListIterator& other) {
+        if (*this != other)
+          iter = other.iter;
+        return *this; 
+      };
+      ListIterator operator=(ListIterator&& other) {
+        if (*this != other)
+          *this = std::move(other);
+        return *this; 
+      };
+      ~ListIterator() = delete;
+    private:
+      Node *iter;
   };
-  node *head_;
+  class ConstListIterator {
   size_type m_size_;
 };
 }  // namespace s21
