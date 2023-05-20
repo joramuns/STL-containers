@@ -3,7 +3,6 @@
 
 #include <initializer_list>
 #include <limits>
-
 #include "s21_listiterator.h"
 
 namespace s21 {
@@ -22,7 +21,7 @@ class list {
   using size_type = std::size_t;
 
   /*** List functions ***/
-  list() : head_(new node), m_size_(0) {};
+  list() : head_(new Node), m_size_(0) {};
 
   explicit list(size_type n) : list() {
     while (--n > 0U) {
@@ -70,7 +69,7 @@ class list {
   iterator insert(iterator pos, const_reference value);
   void erase(iterator pos);
   void push_back(const_reference value) {
-    node *temp = new node;
+    Node *temp = new Node;
     temp->value_ = value;
     temp->prev_ = head_->prev_;
     temp->next_ = temp->prev_->next_;
@@ -79,14 +78,14 @@ class list {
     ++m_size_;
   };
   void pop_back() {
-    node *temp = head_->prev_;
+    Node *temp = head_->prev_;
     temp->prev_->next_ = head_;
     head_->prev_ = temp->prev_;
     --m_size_;
     delete temp;
   }
   void push_front(const_reference value) {
-    node *temp = new node;
+    Node *temp = new Node;
     temp->value_ = value;
     temp->next_ = head_->next_;
     temp->prev_ = temp->next_->prev_;
@@ -95,7 +94,7 @@ class list {
     ++m_size_;
   };
   void pop_front() {
-    node *temp = head_->next_;
+    Node *temp = head_->next_;
     temp->next_->prev_ = head_;
     head_->next_ = temp->next_;
     --m_size_;
@@ -109,12 +108,13 @@ class list {
   void sort();
 
  private:
-  struct node {
-    node *next_ = nullptr;
-    node *prev_ = nullptr;
+  struct Node {
+    Node *next_ = nullptr;
+    Node *prev_ = nullptr;
     T data_ = 0;
     value_type value_;
-    node() : next_(this), prev_(this) {};
+    Node() : next_(this), prev_(this) {};
+  };
   class ListIterator {
     public:
       ListIterator() = delete;
@@ -136,6 +136,8 @@ class list {
       Node *iter;
   };
   class ConstListIterator {
+  };
+  Node *head_;
   size_type m_size_;
 };
 }  // namespace s21
