@@ -2,6 +2,7 @@
 #define CPP2_S21_CONTAINERS_0_LIST_S21_LIST_H_
 
 #include <initializer_list>
+#include <iterator>
 #include <limits>
 
 namespace s21 {
@@ -123,6 +124,11 @@ class list {
   };
   class ListIterator {
     public:
+      /* using iterator_category = std::bidirectional_iterator_tag; */
+      /* using difference_type = std::ptrdiff_t; */
+      /* using value_type = list::value_type; */
+      /* using pointer = value_type *; */
+      /* using reference = value_type &; */
       ListIterator() : iter_(0) {};
       explicit ListIterator(Node *list_node) : iter_(list_node) {};
       ListIterator(const ListIterator& other) : iter_(other.iter_) {};
@@ -137,7 +143,7 @@ class list {
           *this = std::move(other);
         return *this; 
       };
-      ~ListIterator();
+      ~ListIterator() {};
 
       value_type operator*() { return iter_->data_; }
 
