@@ -24,7 +24,7 @@ class list {
   list() : head_(new Node), m_size_(0) {};
 
   explicit list(size_type n) : list() {
-    while (--n > 0U) {
+    while (n--) {
       push_back(0);
     }
   };
@@ -39,9 +39,7 @@ class list {
   list(list &&l);
 
   ~list() {
-    while (m_size_) {
-      pop_back();
-    }
+    clear();
     delete head_;
     head_ = nullptr;
   };
