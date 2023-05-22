@@ -38,7 +38,7 @@ class list {
 
   list(list &&l);
 
-  ~list() {
+  ~list() noexcept {
     clear();
     delete head_;
     head_ = nullptr;
@@ -49,24 +49,24 @@ class list {
   list<value_type> operator=(list &&l);
 
   /*** List element access ***/
-  const_reference front() { return head_->next_->data_; };
+  const_reference front() const noexcept { return head_->next_->data_; };
 
-  const_reference back() { return head_->prev_->data_; };
+  const_reference back() const noexcept { return head_->prev_->data_; };
 
   /*** List iterators ***/
-  iterator begin() { return iterator(head_->next_); };
+  iterator begin() const noexcept { return iterator(head_->next_); };
 
-  iterator end() { return iterator(head_); };
+  iterator end() const noexcept { return iterator(head_); };
 
   /*** List capacity ***/
-  bool empty() { return m_size_ == 0; };
+  bool empty() const noexcept { return m_size_ == 0; };
 
-  size_type size() { return m_size_; };
+  size_type size() const noexcept { return m_size_; };
 
   size_type max_size();
 
   /*** List modifiers ***/
-  void clear() {
+  void clear() noexcept {
     while (m_size_)
       erase(begin());
   };
@@ -83,7 +83,7 @@ class list {
     return iterator(temp);
   };
 
-  void erase(iterator pos) {
+  void erase(iterator pos) noexcept {
     if (pos != end()) {
       Node *temp = pos.iter_;
       temp->prev_->next_ = temp->next_;
@@ -97,7 +97,7 @@ class list {
     insert(end(), value);
   };
 
-  void pop_back() {
+  void pop_back() noexcept {
     erase(--end());
   };
 
@@ -105,7 +105,7 @@ class list {
     insert(begin(), value);
   };
 
-  void pop_front() {
+  void pop_front() noexcept {
     erase(begin());
   };
 
@@ -130,49 +130,49 @@ class list {
       /* using value_type = list::value_type; */
       /* using pointer = value_type *; */
       /* using reference = value_type &; */
-      ListIterator() : iter_(0) {};
-      explicit ListIterator(Node *list_node) : iter_(list_node) {};
-      ListIterator(const ListIterator& other) : iter_(other.iter_) {};
-      ListIterator(ListIterator&& other) { *this = std::move(other); };
-      ListIterator operator=(const ListIterator& other) {
+      ListIterator() = delete;
+      explicit ListIterator(Node *list_node) noexcept : iter_(list_node) {};
+      ListIterator(const ListIterator& other) noexcept : iter_(other.iter_) {};
+      ListIterator(ListIterator&& other) noexcept { *this = std::move(other); };
+      ListIterator operator=(const ListIterator& other) noexcept {
         if (*this != other)
           iter_ = other.iter_;
         return *this; 
       };
-      ListIterator operator=(ListIterator&& other) {
+      ListIterator operator=(ListIterator&& other) noexcept {
         if (*this != other)
           *this = std::move(other);
         return *this; 
       };
-      ~ListIterator() {};
+      ~ListIterator() noexcept {};
 
-      value_type operator*() { return iter_->data_; }
+      value_type operator*() const noexcept { return iter_->data_; }
 
-      iterator &operator++() { 
+      iterator &operator++() noexcept { 
         iter_ = iter_->next_;
         return *this;
       };
 
-      iterator operator++(int) { 
+      iterator operator++(int) noexcept { 
         iterator post_increment = *this;
         ++(*this);
         return post_increment;
       };
 
-      iterator &operator--() {
+      iterator &operator--() noexcept {
         iter_ = iter_->prev_;
         return *this; 
       };
 
-      iterator operator--(int) {
+      iterator operator--(int) noexcept {
         iterator post_decrement = *this;
         --(*this);
         return *this;
       };
 
-      bool operator==(const iterator& other) { return iter_ == other.iter_; }
+      bool operator==(const iterator& other) const noexcept { return iter_ == other.iter_; }
 
-      bool operator!=(const iterator& other) { return iter_ != other.iter_; }
+      bool operator!=(const iterator& other) const noexcept { return iter_ != other.iter_; }
 
       Node *iter_;
   };
