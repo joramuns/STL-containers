@@ -68,44 +68,47 @@ class list {
   size_type max_size();
 
   /*** List modifiers ***/
-  void clear();
-  iterator insert(iterator pos, const_reference value);
-  void erase(iterator pos);
+  void clear() {
+    while (m_size_)
+      erase(begin());
+  };
 
-  void push_back(const_reference value) {
+  iterator insert(iterator pos, const_reference value) {
     Node *temp = new Node;
     temp->data_ = value;
-    temp->prev_ = head_->prev_;
+    temp->prev_ = pos.iter_->prev_;
     temp->next_ = temp->prev_->next_;
     temp->next_->prev_ = temp;
     temp->prev_->next_ = temp;
     ++m_size_;
+
+    return iterator(temp);
+  };
+
+  void erase(iterator pos) {
+    if (pos != end()) {
+      Node *temp = pos.iter_;
+      temp->prev_->next_ = temp->next_;
+      temp->next_->prev_ = temp->prev_;
+      --m_size_;
+      delete temp;
+    }
+  };
+
+  void push_back(const_reference value) {
+    insert(end(), value);
   };
 
   void pop_back() {
-    Node *temp = head_->prev_;
-    temp->prev_->next_ = head_;
-    head_->prev_ = temp->prev_;
-    --m_size_;
-    delete temp;
+    erase(--end());
   };
 
   void push_front(const_reference value) {
-    Node *temp = new Node;
-    temp->data_ = value;
-    temp->next_ = head_->next_;
-    temp->prev_ = temp->next_->prev_;
-    temp->next_->prev_ = temp;
-    temp->prev_->next_ = temp;
-    ++m_size_;
+    insert(begin(), value);
   };
 
   void pop_front() {
-    Node *temp = head_->next_;
-    temp->next_->prev_ = head_;
-    head_->next_ = temp->next_;
-    --m_size_;
-    delete temp;
+    erase(begin());
   };
 
   void swap(list &other);
@@ -173,7 +176,6 @@ class list {
 
       bool operator!=(const iterator& other) { return iter_ != other.iter_; }
 
-    private:
       Node *iter_;
   };
   class ConstListIterator {
