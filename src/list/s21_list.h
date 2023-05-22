@@ -61,7 +61,7 @@ class list {
   iterator end() { return iterator(head_); };
 
   /*** List capacity ***/
-  bool empty() { return head_->next_ == head_->back_; };
+  bool empty() { return m_size_ == 0; };
 
   size_type size() { return m_size_; };
 
