@@ -49,12 +49,17 @@ TEST(List, Size_2) {
 
 TEST(List, Size_3) {
   s21::list<int> aboba;
+  aboba.push_back(0);
   aboba.pop_back();
   aboba.push_back(1);
   aboba.pop_front();
+  aboba.push_back(2);
   aboba.pop_back();
+  aboba.push_back(3);
   aboba.pop_front();
+  aboba.push_back(4);
   aboba.pop_front();
+  aboba.push_front(5);
   aboba.pop_front();
   aboba.push_front(99);
   ASSERT_EQ(aboba.size(), 1);
@@ -81,7 +86,7 @@ TEST(List, Empty_2) {
 }
 
 TEST(List, Empty_3) {
-  s21::list<int> aboba;
+  s21::list<int> aboba(2);
   aboba.pop_back();
   aboba.pop_front();
   ASSERT_EQ(aboba.empty(), true);
@@ -89,10 +94,20 @@ TEST(List, Empty_3) {
 
 TEST(List, Empty_4) {
   s21::list<int> aboba;
+  aboba.push_back(0);
   aboba.pop_back();
   aboba.push_back(1);
   aboba.pop_front();
+  aboba.push_front(2);
   aboba.pop_back();
+  aboba.push_front(3);
   aboba.pop_front();
   ASSERT_EQ(aboba.empty(), true);
 }
+
+/* TEST(List, Exception_1) { */
+/*   s21::list<int> aboba; */
+/*   EXPECT_THROW(aboba.pop_back(), std::invalid_argument); */
+/*   EXPECT_THROW(aboba.pop_front(), std::invalid_argument); */
+/*   EXPECT_THROW(aboba.erase(aboba.begin()), std::invalid_argument); */
+/* } */
