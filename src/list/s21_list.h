@@ -77,6 +77,10 @@ class list {
 
   const_reference back() const noexcept { return head_->prev_->data_; };
 
+  reference &front() noexcept { return head_->next_->data_; }
+
+  reference &back() noexcept { return head_->prev_->data_; }
+
   /*** List iterators ***/
   iterator begin() const noexcept { return iterator(head_->next_); };
 
@@ -136,7 +140,18 @@ class list {
   void swap(list &other);
   void merge(list &other);
   void splice(const_iterator pos, list &other);
-  void reverse();
+  void reverse() {
+    iterator iter_front = begin();
+    iterator iter_back = --end();
+    value_type temp;
+    for (size_type i = 0; i != m_size_ / 2; ++i) {
+      temp = *iter_front;
+      *iter_front = *iter_back;
+      *iter_back = temp;
+      ++iter_front;
+      --iter_back;
+    }
+  };
   void unique();
   void sort();
 
@@ -170,7 +185,7 @@ class list {
       };
       ~ListIterator() noexcept {};
 
-      value_type operator*() const noexcept { return iter_->data_; }
+      value_type &operator*() noexcept { return iter_->data_; }
 
       iterator &operator++() noexcept { 
         iter_ = iter_->next_;
