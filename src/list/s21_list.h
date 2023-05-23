@@ -2,6 +2,8 @@
 #define CPP2_S21_CONTAINERS_0_LIST_S21_LIST_H_
 
 #include <initializer_list>
+#include <exception>
+#include <iostream>
 #include <iterator>
 #include <limits>
 
@@ -34,19 +36,41 @@ class list {
     for (auto &item : items) push_back(item);
   };
 
-  list(const list &l);
+  list(const list &l) : list() {
+    for (const auto& item : l)
+      push_back(item);
+  };
 
-  list(list &&l);
+  list(list &&l) : list() {
+    std::swap(head_, l.head_);
+    std::swap(m_size_, l.m_size_);
+  };
 
-  ~list() noexcept {
+  ~list() {
     clear();
     delete head_;
     head_ = nullptr;
   };
 
-  list<value_type> operator=(const list<T> &l);
+  list &operator=(const list &l) {
+    if (this != &l) {
+      clear();
+      m_size_ = 0;
+      for (const auto& item : l)
+        push_back(item);
+    }
 
-  list<value_type> operator=(list &&l);
+    return *this;
+  };
+
+  list &operator=(list &&l) {
+    if (this != &l) {
+      std::swap(head_, l.head_);
+      std::swap(m_size_, l.m_size_);
+    }
+
+    return *this;
+  };
 
   /*** List element access ***/
   const_reference front() const noexcept { return head_->next_->data_; };
@@ -66,7 +90,7 @@ class list {
   size_type max_size();
 
   /*** List modifiers ***/
-  void clear() noexcept {
+  void clear() {
     while (m_size_)
       erase(begin());
   };
@@ -83,21 +107,21 @@ class list {
     return iterator(temp);
   };
 
-  void erase(iterator pos) noexcept {
-    if (pos != end()) {
-      Node *temp = pos.iter_;
-      temp->prev_->next_ = temp->next_;
-      temp->next_->prev_ = temp->prev_;
-      --m_size_;
-      delete temp;
-    }
+  void erase(iterator pos) {
+    if (pos == end())
+      throw std::invalid_argument("Container is empty or trying to erase end iterator");
+    Node *temp = pos.iter_;
+    temp->prev_->next_ = temp->next_;
+    temp->next_->prev_ = temp->prev_;
+    --m_size_;
+    delete temp;
   };
 
   void push_back(const_reference value) {
     insert(end(), value);
   };
 
-  void pop_back() noexcept {
+  void pop_back() {
     erase(--end());
   };
 
@@ -105,7 +129,7 @@ class list {
     insert(begin(), value);
   };
 
-  void pop_front() noexcept {
+  void pop_front() {
     erase(begin());
   };
 
