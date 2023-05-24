@@ -102,10 +102,7 @@ class list {
   iterator insert(iterator pos, const_reference value) {
     Node *temp = new Node;
     temp->data_ = value;
-    temp->prev_ = pos.iter_->prev_;
-    temp->next_ = temp->prev_->next_;
-    temp->next_->prev_ = temp;
-    temp->prev_->next_ = temp;
+    temp->LinkNodes(pos.iter_);
     ++m_size_;
 
     return iterator(temp);
@@ -167,6 +164,13 @@ class list {
     Node *prev_;
     value_type data_;
     Node() : next_(this), prev_(this), data_(0) {};
+
+    void LinkNodes(Node *pos) {
+      prev_ = pos->prev_;
+      next_ = prev_->next_;
+      next_->prev_ = this;
+      prev_->next_ = this;
+    };
   };
   class ListIterator {
     public:
