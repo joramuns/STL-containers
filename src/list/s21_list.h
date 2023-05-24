@@ -82,10 +82,13 @@ class list {
   reference &back() noexcept { return head_->prev_->data_; }
 
   /*** List iterators ***/
-  iterator begin() const noexcept { return iterator(head_->next_); };
+  iterator begin() noexcept { return iterator(head_->next_); };
 
-  iterator end() const noexcept { return iterator(head_); };
+  iterator end() noexcept { return iterator(head_); };
+  
+  const_iterator begin() const noexcept { return const_iterator(head_->next_); };
 
+  const_iterator end() const noexcept { return const_iterator(head_); };
   /*** List capacity ***/
   bool empty() const noexcept { return m_size_ == 0; };
 
@@ -147,14 +150,15 @@ class list {
   void merge(list &other);
 
   /* void splice(const_iterator pos, list &other) { */
-  void splice(iterator pos, list &other) {
+  void splice(const_iterator pos, list &other) {
     if (this != &other) {
-      Node *lnode = pos.iter_->prev_;
+      iterator non_const_pos{const_cast<Node *>(pos.iter_)};
+      Node *lnode = non_const_pos.iter_->prev_;
       Node *rnode = other.begin().iter_;
       lnode->LinkOneSide(rnode);
 
       lnode = other.end().iter_->prev_;
-      rnode = pos.iter_;
+      rnode = non_const_pos.iter_;
       lnode->LinkOneSide(rnode);
 
       m_size_ += other.size();
@@ -217,7 +221,7 @@ class list {
       };
       ~ListIterator() noexcept {};
 
-      value_type &operator*() noexcept { return iter_->data_; }
+      reference operator*() noexcept { return iter_->data_; }
 
       iterator &operator++() noexcept { 
         iter_ = iter_->next_;
@@ -248,6 +252,50 @@ class list {
       Node *iter_;
   };
   class ConstListIterator {
+    public:
+      /* using iterator_category = std::bidirectional_iterator_tag; */
+      /* using difference_type = std::ptrdiff_t; */
+      /* using value_type = list::value_type; */
+      /* using pointer = value_type *; */
+      /* using reference = value_type &; */
+      ConstListIterator() = delete;
+      /* explicit ConstListIterator(const Node *list_node) noexcept : iter_(list_node) {}; */
+      ConstListIterator(const iterator &other) noexcept : iter_(other.iter_) {};
+      /* ConstListIterator(std::initializer_list<iterator> &other) noexcept : iter_(other.iter_) {}; */
+      /* explicit ConstListIterator(typename list<T>::ListIterator other) noexcept : iter_(other.iter_) {}; */
+      ~ConstListIterator() noexcept {};
+
+      value_type operator*() const noexcept { return iter_->data_; }
+
+      const_iterator &operator++() noexcept { 
+        iter_ = iter_->next_;
+        return *this;
+      };
+
+      const_iterator operator++(int) noexcept { 
+        const_iterator post_increment = *this;
+        ++(*this);
+        return post_increment;
+      };
+
+      const_iterator &operator--() noexcept {
+        iter_ = iter_->prev_;
+        return *this; 
+      };
+
+      const_iterator operator--(int) noexcept {
+        const_iterator post_decrement = *this;
+        --(*this);
+        return *this;
+      };
+
+      /* friend bool operator==(const const_iterator &one, const const_iterator& other)  noexcept { return one.iter_ == other.iter_; } */
+      bool operator==(const const_iterator& other)  noexcept { return iter_ == other.iter_; }
+
+      /* friend bool operator!=(const const_iterator &one, const const_iterator& other)  noexcept { return one.iter_ != other.iter_; } */
+      bool operator!=(const const_iterator& other)  noexcept { return iter_ != other.iter_; }
+
+      const Node *iter_;
   };
 
   void SwapPrevNode (iterator &pos) {
