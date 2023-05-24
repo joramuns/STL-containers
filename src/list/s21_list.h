@@ -140,18 +140,15 @@ class list {
   void swap(list &other);
   void merge(list &other);
   void splice(const_iterator pos, list &other);
+
   void reverse() {
-    iterator iter_front = begin();
-    iterator iter_back = --end();
-    value_type temp;
-    for (size_type i = 0; i != m_size_ / 2; ++i) {
-      temp = *iter_front;
-      *iter_front = *iter_back;
-      *iter_back = temp;
-      ++iter_front;
-      --iter_back;
+    iterator iter_prev = end();
+    for (int i = 0; i <= m_size_; ++i) {
+      SwapPrevNode(iter_prev);
+      ++iter_prev;
     }
   };
+
   void unique();
   void sort();
 
@@ -217,6 +214,14 @@ class list {
   };
   class ConstListIterator {
   };
+
+  void SwapPrevNode (iterator &pos) {
+    Node *target = pos.iter_;
+    Node *temp = target->prev_;
+    target->prev_ = target->next_;
+    target->next_ = temp;
+  };
+
   Node *head_;
   size_type m_size_;
 };
