@@ -137,7 +137,16 @@ class list {
     erase(begin());
   };
 
-  void swap(list &other);
+  void swap(list &other) {
+    if (this != &other) {
+      Node *temp = head_;
+      head_ = other.head_;
+      other.head_ = temp;
+      size_type temp_size = m_size_;
+      m_size_ = other.m_size_;
+      other.m_size_ = temp_size;
+    }
+  };
   void merge(list &other);
   void splice(const_iterator pos, list &other);
 
