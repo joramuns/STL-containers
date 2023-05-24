@@ -209,7 +209,7 @@ class list {
       explicit ListIterator(Node *list_node) noexcept : iter_(list_node) {};
       ListIterator(const ListIterator& other) noexcept : iter_(other.iter_) {};
       ListIterator(ListIterator&& other) noexcept { *this = std::move(other); };
-      ListIterator operator=(const ListIterator& other) noexcept {
+      ListIterator &operator=(const ListIterator& other) noexcept {
         if (*this != other)
           iter_ = other.iter_;
         return *this; 
@@ -242,7 +242,7 @@ class list {
       iterator operator--(int) noexcept {
         iterator post_decrement = *this;
         --(*this);
-        return *this;
+        return post_decrement;
       };
 
       bool operator==(const iterator& other) const noexcept { return iter_ == other.iter_; }
@@ -286,7 +286,7 @@ class list {
       const_iterator operator--(int) noexcept {
         const_iterator post_decrement = *this;
         --(*this);
-        return *this;
+        return post_decrement;
       };
 
       /* friend bool operator==(const const_iterator &one, const const_iterator& other)  noexcept { return one.iter_ == other.iter_; } */
@@ -298,7 +298,7 @@ class list {
       const Node *iter_;
   };
 
-  void SwapPrevNode (iterator &pos) {
+  void SwapPrevNode (const iterator &pos) {
     Node *target = pos.iter_;
     Node *temp = target->prev_;
     target->prev_ = target->next_;
