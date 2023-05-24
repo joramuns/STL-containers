@@ -145,7 +145,24 @@ class list {
     }
   };
   void merge(list &other);
-  void splice(const_iterator pos, list &other);
+
+  /* void splice(const_iterator pos, list &other) { */
+  void splice(iterator pos, list &other) {
+    if (this != &other) {
+      Node *lnode = pos.iter_->prev_;
+      Node *rnode = other.begin().iter_;
+      lnode->LinkOneSide(rnode);
+
+      lnode = other.end().iter_->prev_;
+      rnode = pos.iter_;
+      lnode->LinkOneSide(rnode);
+
+      m_size_ += other.size();
+      other.head_->next_ = other.head_;
+      other.head_->prev_ = other.head_;
+      other.m_size_ = 0;
+    }
+  };
 
   void reverse() {
     iterator iter_prev = end();
@@ -171,6 +188,11 @@ class list {
       next_->prev_ = this;
       prev_->next_ = this;
     };
+
+    void LinkOneSide(Node *other) {
+      next_ = other;
+      other->prev_ = this;
+    }
   };
   class ListIterator {
     public:
