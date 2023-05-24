@@ -205,7 +205,7 @@ class list {
       /* using value_type = list::value_type; */
       /* using pointer = value_type *; */
       /* using reference = value_type &; */
-      ListIterator() = delete;
+      ListIterator() {};
       explicit ListIterator(Node *list_node) noexcept : iter_(list_node) {};
       ListIterator(const ListIterator& other) noexcept : iter_(other.iter_) {};
       ListIterator(ListIterator&& other) noexcept { *this = std::move(other); };
@@ -220,6 +220,8 @@ class list {
         return *this; 
       };
       ~ListIterator() noexcept {};
+
+      operator ConstListIterator() const { return ConstListIterator(*this); };
 
       reference operator*() noexcept { return iter_->data_; }
 
@@ -260,7 +262,9 @@ class list {
       /* using reference = value_type &; */
       ConstListIterator() = delete;
       /* explicit ConstListIterator(const Node *list_node) noexcept : iter_(list_node) {}; */
-      ConstListIterator(const iterator &other) noexcept : iter_(other.iter_) {};
+      explicit ConstListIterator(const iterator &other) noexcept : iter_(other.iter_) {};
+      /* operator ListIterator() const { return ListIterator(); }; */
+      /* explicit ConstListIterator(const iterator&) {}; */
       /* ConstListIterator(std::initializer_list<iterator> &other) noexcept : iter_(other.iter_) {}; */
       /* explicit ConstListIterator(typename list<T>::ListIterator other) noexcept : iter_(other.iter_) {}; */
       ~ConstListIterator() noexcept {};
