@@ -22,9 +22,9 @@ class stack {
 
   stack(const stack &s) : data_(s.data_){};
 
-  stack(stack &&s) { std::swap(data_, s.data_); };
+  stack(stack &&s) noexcept { std::swap(data_, s.data_); };
 
-  ~stack(){};
+  ~stack(){} noexcept;
 
   stack &operator=(const stack &s) {
     data_ = s.data_;
@@ -32,7 +32,7 @@ class stack {
     return *this;
   };
 
-  stack &operator=(stack &&s) {
+  stack &operator=(stack &&s) noexcept {
     std::swap(data_, s.data_);
 
     return *this;
