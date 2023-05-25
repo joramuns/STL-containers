@@ -40,16 +40,20 @@ class stack {
 
   /*** Stack element access ***/
   const_reference top() const noexcept { return data_.back(); };
+
   reference top() noexcept { return data_.back(); };
 
   /*** Stack capacity ***/
-  bool empty() { return data_.empty(); };
-  size_type size() { return data_.size(); };
+  bool empty() const noexcept { return data_.empty(); };
+
+  size_type size() const noexcept { return data_.size(); };
 
   /*** Stack modifiers ***/
   void push(const_reference value) { data_.push_back(value); };
+
   void pop() { data_.pop_back(); };
-  void swap(stack &other) { std::swap(data_, other.data_); };
+
+  void swap(stack &other) noexcept { std::swap(data_, other.data_); };
 
  private:
   Container data_;
