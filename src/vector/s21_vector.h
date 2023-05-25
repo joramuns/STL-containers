@@ -1,6 +1,7 @@
 #ifndef CPP2_S21_CONTAINERS_0_VECTOR_S21_VECTOR_H_
 #define CPP2_S21_CONTAINERS_0_VECTOR_S21_VECTOR_H_
 
+#include <initializer_list>
 #include <iostream>
 
 namespace s21 {
@@ -15,31 +16,43 @@ public:
 
   // vector member function
 
-  vector(){
+  vector() : sz_(1), cpct_(1) { InitVector(); };
 
+  explicit vector(size_type n) : sz_(n), cpct_(n) {
+    InitVector();
+    while (n--) {
+      push_back(0);
+    }
   };
 
-  vector(size_type n){
-
+  explicit vector(std::initializer_list<value_type> const &items) {
+    for (const auto &item : items) {
+      push_back(item);
+    }
   };
 
-  vector(std::initializer_list<value_type> const &items){
-
+  vector(const vector &v){
+		sz_ = v.sz_;
+		cpct_ = v.cpct_;
+		InitVector();
+		CopyArr(v);
   };
 
-  vector(const &v){
-
+  vector(vector &&v) : vector() {
+		std::swap(sz_, v.sz_);
+		std::swap(cpct_, v.cpct_);
+		InitVector();
+		std::swap(arr_, v.arr_);
   };
 
-  vector(vector &&v){
-
+  ~vector() {
+    delete[] arr_;
+    sz_ = 0;
+    cpct_ = 0;
+		arr_ = nullptr;
   };
 
-  ~vector(){
-
-  };
-
-  operator=(vector &&v){
+  operator=(vector &&v) noexcept {
 
   };
 
@@ -52,48 +65,48 @@ public:
 
   };
 
-  const_reference front(){
+  const_reference front() const {
 
   };
 
-  const_reference back(){
+  const_reference back() const {
 
   };
 
-  T *data(){
+  T *data() noexcept {
 
   };
 
   // vector iterators
-  iterator begin(){
+  iterator begin() noexcept {
 
   };
 
-  iterator end(){
+  iterator end() noexcept {
 
   };
 
   // vector capacity
 
-  bool empty(){
+  bool empty() const noexcept {
 
   };
 
-  size_type size(){
+  size_type size() const noexcept {
 
   };
 
-  size_type max_size(){
+  size_type max_size() const noexcept {
 
   };
 
   void reserve(size_type size){
 
-  } :
+  };
 
-      size_type capacity(){
+  size_type capacity() const noexcept {
 
-      };
+  };
 
   void shrink_to_fit(){
 
@@ -101,7 +114,7 @@ public:
 
   // vector modifiers
 
-  void clear(){
+  void clear() noexcept {
 
   };
 
@@ -113,21 +126,39 @@ public:
 
   };
 
-  void push_back(const_reference value){
-
+  void push_back(const_reference value) {
+    ++sz_;
+    if (sz_ == cpct_) {
+      vector tmp = this;
+      this->~vector();
+      sz_ = tmp.sz_;
+      cpct_ = 2 * sz_;
+      InitVector();
+      CopyArr(tmp);
+    }
+    arr_[sz_ - 1] = value;
   };
 
   void pop_back(){
 
   };
 
-  void swap(vector &other){
+  void swap(vector &other) noexcept {
 
   };
 
 private:
-  T *arr : size_type sz;
-  size_type cpct;
+  T *arr_;
+  size_type sz_;
+  size_type cpct_;
+
+  void InitVector() { arr = new T[cpct_](); };
+
+  void CopyArr(const vector &other) noexcept {
+    for (size_type i = 0; i < other.sz_; ++i) {
+      arr_[i] = other.arr_[i];
+    }
+  };
 };
 } // namespace s21
 
