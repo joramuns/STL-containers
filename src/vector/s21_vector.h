@@ -66,11 +66,11 @@ public:
   };
 
   const_reference front() const {
-
+		return arr_[0];
   };
 
   const_reference back() const {
-
+		return arr_[sz_ - 1];
   };
 
   T *data() noexcept {
@@ -79,21 +79,22 @@ public:
 
   // vector iterators
   iterator begin() noexcept {
-
+		return arr_;
   };
 
   iterator end() noexcept {
-
+		iterator tmp = arr_;
+		return (tmp + sz_);
   };
 
   // vector capacity
 
   bool empty() const noexcept {
-
+		return sz_ == 0 ? 1 : 0;
   };
 
   size_type size() const noexcept {
-
+		return sz_;
   };
 
   size_type max_size() const noexcept {
@@ -105,7 +106,7 @@ public:
   };
 
   size_type capacity() const noexcept {
-
+		return cpct_;
   };
 
   void shrink_to_fit(){
@@ -119,7 +120,8 @@ public:
   };
 
   iterator insert(iterator pos, const_reference value){
-
+		*(++pos) = value;
+		return pos;
   };
 
   void erase(iterator pos){
@@ -140,7 +142,7 @@ public:
   };
 
   void pop_back(){
-
+		erase(end());
   };
 
   void swap(vector &other) noexcept {
