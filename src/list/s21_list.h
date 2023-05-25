@@ -33,7 +33,7 @@ class list {
   };
 
   explicit list(std::initializer_list<value_type> const &items) : list() {
-    for (auto &item : items) push_back(item);
+    for (const auto &item : items) push_back(item);
   };
 
   list(const list &l) : list() {
@@ -75,9 +75,9 @@ class list {
 
   const_reference back() const noexcept { return head_->prev_->data_; };
 
-  reference &front() noexcept { return head_->next_->data_; }
+  reference front() noexcept { return head_->next_->data_; }
 
-  reference &back() noexcept { return head_->prev_->data_; }
+  reference back() noexcept { return head_->prev_->data_; }
 
   /*** List iterators ***/
   iterator begin() noexcept { return iterator(head_->next_); };
