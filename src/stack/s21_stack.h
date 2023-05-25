@@ -1,6 +1,7 @@
 #ifndef CPP2_S21_CONTAINERS_0_STACK_S21_STACK_H_
 #define CPP2_S21_CONTAINERS_0_STACK_S21_STACK_H_
 
+#include <initializer_list>
 #include "../list/s21_list.h"
 
 namespace s21 {
@@ -13,26 +14,45 @@ class stack {
    using size_type = std::size_t;
 
    /*** Stack member functions ***/
-   stack();
-   explicit stack(std::initializer_list<value_type> const &items);
-   stack(const stack &s);
-   stack(stack &&s);
-   ~stack();
-   stack &operator=(const stack &s);
-   stack &operator=(stack &&s);
+   stack(){};
+
+   explicit stack(std::initializer_list<value_type> const &items) : data_(items) {};
+
+   stack(const stack &s) : data_(s.data_){};
+
+   stack(stack &&s) {
+     std::swap(data_, s.data_);
+   };
+
+   ~stack(){};
+
+   stack &operator=(const stack &s) {
+     data_ = s.data_;
+
+     return *this;
+   };
+
+   stack &operator=(stack &&s) {
+     std::swap(data_, s.data_);
+
+     return *this;
+   };
 
    /*** Stack element access ***/
-   const_reference top() const noexcept;
-   reference top() noexcept;
+   const_reference top() const noexcept { return data_.back(); };
+   reference top() noexcept { return data_.back(); };
 
    /*** Stack capacity ***/
-   bool empty();
-   size_type size();
+   bool empty() { return data_.empty(); };
+   size_type size() { return data_.size(); };
 
    /*** Stack modifiers ***/
-   void push(const_reference value);
-   void pop();
-   void swap(stack &other);
+   void push(const_reference value) { data_.push_back(value); };
+   void pop() { data_.pop_back(); };
+   void swap(stack &other) { std::swap(data_, other.data_); };
+
+ private:
+   Container data_;
 };
 }  // namespace s21
 
