@@ -22,9 +22,9 @@ class queue {
 
   queue(const queue &q) : data_(q.data_){};
 
-  queue(queue &&q) { std::swap(data_, q.data_); };
+  queue(queue &&q) noexcept { std::swap(data_, q.data_); };
 
-  ~queue();
+  ~queue() noexcept;
 
   queue &operator=(const queue &q) {
     data_ = q.data_;
@@ -32,7 +32,7 @@ class queue {
     return *this;
   };
 
-  queue &operator=(queue &&q) {
+  queue &operator=(queue &&q) noexcept {
     std::swap(data_, q.data_);
 
     return *this;
