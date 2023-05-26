@@ -7,5 +7,6 @@
 #include "set/s21_set.h"
 #include "stack/s21_stack.h"
 #include "vector/s21_vector.h"
+#include "s21_containersplus.h"
 
 #endif  // CPP2_S21_CONTAINERS_0_S21_CONTAINERS_H_
