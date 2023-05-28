@@ -71,7 +71,10 @@ public:
 
   // vector Elements access
   reference at(size_type pos){
-
+    if (sz_ > pos) {
+      throw std::invalid_argument("\nWrong vector position\n");
+    }
+    return arr_[pos];
   };
 
   reference operator[](size_type pos) { return arr_[pos]; };
