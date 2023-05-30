@@ -6,10 +6,10 @@
 
 // Temp for print
 #include <cmath>
+#include <deque>
 #include <iomanip>
 #include <ios>
 #include <string>
-#include <deque>
 #include <vector>
 
 namespace s21 {
@@ -56,7 +56,8 @@ class Tree {
         search->right_ = new TNode(search, value);
         result.first = iterator(search->right_);
         result.second = true;
-        std::cout << "inside: " << result.second << " what: " << *result.first << std::endl;
+        std::cout << "inside: " << result.second << " what: " << *result.first
+                  << std::endl;
       } else if (value < search->data_) {
         search->left_ = new TNode(search, value);
         result.first = iterator(search->left_);
@@ -151,7 +152,9 @@ class Tree {
     TreeIterator(){};
     explicit TreeIterator(TNode *tree_node) noexcept : iter_(tree_node){};
     TreeIterator(const TreeIterator &other) noexcept : iter_(other.iter_){};
-    TreeIterator(TreeIterator &&other) noexcept { std::swap(iter_, other.iter_); }
+    TreeIterator(TreeIterator &&other) noexcept {
+      std::swap(iter_, other.iter_);
+    }
 
     TreeIterator &operator=(const TreeIterator &other) noexcept {
       if (this != &other) iter_ = other.iter_;
@@ -194,6 +197,33 @@ class Tree {
     explicit TNode(const_reference value) : data_(value){};
     TNode(TNode *parent, const_reference value)
         : parent_(parent), data_(value){};
+
+    bool IsFatherLeft() {
+      if (parent_ && parent_->parent_ && parent_->parent_->left_ == parent_) {
+        return true;
+      }
+      return false;
+    }
+    bool IsParentRed() {
+      if (parent_ && parent_->color_ == kRed) {
+        return true;
+      }
+      return false;
+    }
+
+    bool IsLeftSon() {
+      if (parent_ && parent_->left_ == *this) {
+        return true;
+      }
+      return false;
+    }
+
+    bool IsUncleRed() {
+      if (parent_ && parent_->right_ && parent_->right_->color_ == kRed) {
+        return true;
+      }
+      return false;
+    }
 
     size_type PrintTree(TNode *pivot, size_type h,
                         std::deque<std::deque<std::string>> &output) {
