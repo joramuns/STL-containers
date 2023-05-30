@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <ios>
 #include <string>
+#include <deque>
 #include <vector>
 
 namespace s21 {
@@ -91,17 +92,53 @@ class Tree {
     return iterator(parent);
   }
 
+  void RotateLeft(iterator upper_it, iterator lower_it) {
+    TNode *upper_node = upper_it.iter_;
+    TNode *lower_node = lower_it.iter_;
+    if (upper_node->right_ == lower_node) {
+      lower_node->parent_ = upper_node->parent_;
+      if (upper_node->parent_ == nullptr) {
+        head_ = lower_node;
+        lower_node->color_ = kBlack;
+      } else {
+        if (lower_node->parent_->right_ == upper_node) {
+          lower_node->parent_->right_ = lower_node;
+        } else {
+          lower_node->parent_->left_ = lower_node;
+        }
+      }
+      upper_node->right_ = lower_node->left_;
+      lower_node->left_ = upper_node;
+      upper_node->parent_ = lower_node;
+    }
+  }
+
+  void RotateRight(iterator upper_it, iterator lower_it) {
+    TNode *upper_node = upper_it.iter_;
+    TNode *lower_node = lower_it.iter_;
+    if (upper_node->left_ == lower_node) {
+      lower_node->parent_ = upper_node->parent_;
+      if (upper_node->parent_ == nullptr) {
+        head_ = lower_node;
+        lower_node->color_ = kBlack;
+      } else {
+        if (lower_node->parent_->right_ == upper_node) {
+          lower_node->parent_->right_ = lower_node;
+        } else {
+          lower_node->parent_->left_ = lower_node;
+        }
+      }
+      upper_node->left_ = lower_node->right_;
+      lower_node->right_ = upper_node;
+      upper_node->parent_ = lower_node;
+    }
+  }
+
   void PrintTree() {
-    std::vector<std::vector<std::string>> printout;
+    std::deque<std::deque<std::string>> printout;
     head_->PrintTree(head_, 1, printout);
-    size_type height = printout.size();
-    size_type n_height = height - 1;
     for (const auto &item : printout) {
-      size_type width = std::pow(2, height) / (2 * item.size());
-      width *= 3;
-      width -= std::pow(3, --n_height);
       for (const auto &str_item : item) {
-        std::cout.width(width);
         std::cout << str_item;
       }
       std::cout << std::endl;
@@ -159,8 +196,11 @@ class Tree {
         : parent_(parent), data_(value){};
 
     size_type PrintTree(TNode *pivot, size_type h,
-                        std::vector<std::vector<std::string>> &output) {
-      if (output.size() < h) output.push_back({});
+                        std::deque<std::deque<std::string>> &output) {
+      if (output.size() <= h) {
+        output.push_back({});
+        output.push_back({});
+      }
       if (pivot) {
         output[h - 1].push_back(std::to_string(pivot->data_));
         if (pivot->color_ == kBlack) {
@@ -172,6 +212,8 @@ class Tree {
         PrintTree(pivot->right_, h + 1, output);
       } else {
         output[h - 1].push_back("x");
+        output[h].push_back("y");
+        output[h].push_back("y");
       }
 
       return h;
