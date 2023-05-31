@@ -144,8 +144,8 @@ class Tree {
       while (target_node->IsParentRed()) { 
         /* :1-3: First 3 cases, father is left child of grandfother */
         if (target_node->IsLeftFather()) {
-          /* :1: Uncle is red, no matter whether son is left or right child */
-          if (target_node->IsUncleRed()) {
+          /* :1: Uncle (right) is red, no matter whether son is left or right child */
+          if (target_node->IsRightUncleRed()) {
             target_node->parent_->color_ = kBlack;
             target_node->parent_->parent_->right_->color_ = kBlack;
             target_node->parent_->parent_->color_ = kRed;
@@ -164,6 +164,24 @@ class Tree {
           }
         /* :4-6: Second 3 cases, father is right child of grandfother */
         } else {
+          /* :4: Uncle (left) is red, no matter whether son is left or right child */
+          if (target_node->IsLeftUncleRed()) {
+            target_node->parent_->color_ = kBlack;
+            target_node->parent_->parent_->left_->color_ = kBlack;
+            target_node->parent_->parent_->color_ = kRed;
+            target_node = target_node->parent_->parent_;
+          /* :5-6: No uncle or uncle black, check if son is right or left son */
+          } else {
+            /* :6: Son is right */
+            if (target_node->IsRightSon()) {
+              target_node->parent_->color_ = kBlack;
+              target_node->parent_->parent_->color_ = kRed;
+              RotateLeft(iterator(target_node->parent_->parent_), iterator(target_node->parent_));
+            /* :5: Son is left, need to convert to 6 case */
+            } else {
+              RotateRight(iterator(target_node->parent_), iterator(target_node));
+            }
+          }
         }
       }
       if (head_->color_ == kRed)
@@ -253,8 +271,15 @@ class Tree {
       return false;
     }
 
-    bool IsUncleRed() {
-      if (parent_ && parent_->parent_ && parent_->parent_->right_ && parent_->parent_->right_->color_ == kRed) {
+    bool IsRightUncleRed() {
+      if (parent_->parent_ && parent_->parent_->right_ && parent_->parent_->right_->color_ == kRed) {
+        return true;
+      }
+      return false;
+    }
+
+    bool IsLeftUncleRed() {
+      if (parent_->parent_ && parent_->parent_->left_ && parent_->parent_->left_->color_ == kRed) {
         return true;
       }
       return false;
