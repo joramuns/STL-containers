@@ -56,13 +56,12 @@ class Tree {
         search->right_ = new TNode(search, value);
         result.first = iterator(search->right_);
         result.second = true;
-        std::cout << "inside: " << result.second << " what: " << *result.first
-                  << std::endl;
       } else if (value < search->data_) {
         search->left_ = new TNode(search, value);
         result.first = iterator(search->left_);
         result.second = true;
       }
+      BalanceTree(iterator(result.first));
     } else {
       head_ = new TNode(value);
       head_->color_ = kBlack;
@@ -135,6 +134,38 @@ class Tree {
     }
   }
 
+  void BalanceTree(iterator target_iter) {
+      TNode *target_node = target_iter.iter_; 
+      /* Father and son are red, need to balance */
+      while (target_node->IsParentRed()) {
+        /* :1-3: First 3 cases, father is left child of grandfother */
+        if (target_node->IsLeftFather()) {
+          /* :1: Uncle is red, no matter whether son is left or right child */
+          if (target_node->IsUncleRed()) {
+            target_node->parent_->color_ = kBlack;
+            target_node->parent_->parent_->right_->color_ = kBlack;
+            target_node->parent_->parent_->color_ = kRed;
+            target_node = target_node->parent_->parent_;
+          /* :2-3: No uncle or uncle black, check if son is left or right son */
+          } else {
+            /* :2: Son is right, need to convert to 3 case */
+            if (target_node->IsRightSon()) {
+              RotateLeft(iterator(target_node->parent_), iterator(target_node));
+            /* :3: Son is left */
+            } else {
+              target_node->parent_->color_ = kBlack;
+              target_node->parent_->parent_->color_ = kRed;
+              RotateRight(iterator(target_node->parent_->parent_), iterator(target_node->parent_));
+            }
+          }
+        /* :4-6: Second 3 cases, father is right child of grandfother */
+        } else {
+        }
+      }
+      if (head_->color_ == kRed)
+        head_->color_ = kBlack;
+  }
+
   void PrintTree() {
     std::deque<std::deque<std::string>> printout;
     head_->PrintTree(head_, 1, printout);
@@ -198,7 +229,7 @@ class Tree {
     TNode(TNode *parent, const_reference value)
         : parent_(parent), data_(value){};
 
-    bool IsFatherLeft() {
+    bool IsLeftFather() {
       if (parent_ && parent_->parent_ && parent_->parent_->left_ == parent_) {
         return true;
       }
@@ -211,15 +242,15 @@ class Tree {
       return false;
     }
 
-    bool IsLeftSon() {
-      if (parent_ && parent_->left_ == *this) {
+    bool IsRightSon() {
+      if (parent_ && parent_->right_ == this) {
         return true;
       }
       return false;
     }
 
     bool IsUncleRed() {
-      if (parent_ && parent_->right_ && parent_->right_->color_ == kRed) {
+      if (parent_ && parent_->parent_ && parent_->parent_->right_ && parent_->parent_->right_->color_ == kRed) {
         return true;
       }
       return false;
