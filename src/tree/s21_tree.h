@@ -101,13 +101,15 @@ class Tree {
         head_ = lower_node;
         lower_node->color_ = kBlack;
       } else {
-        if (lower_node->parent_->right_ == upper_node) {
-          lower_node->parent_->right_ = lower_node;
+        if (upper_node->parent_->right_ == upper_node) {
+          upper_node->parent_->right_ = lower_node;
         } else {
-          lower_node->parent_->left_ = lower_node;
+          upper_node->parent_->left_ = lower_node;
         }
       }
       upper_node->right_ = lower_node->left_;
+      if (upper_node->right_)
+        upper_node->right_->parent_ = upper_node;
       lower_node->left_ = upper_node;
       upper_node->parent_ = lower_node;
     }
@@ -122,13 +124,15 @@ class Tree {
         head_ = lower_node;
         lower_node->color_ = kBlack;
       } else {
-        if (lower_node->parent_->right_ == upper_node) {
-          lower_node->parent_->right_ = lower_node;
+        if (upper_node->parent_->right_ == upper_node) {
+          upper_node->parent_->right_ = lower_node;
         } else {
-          lower_node->parent_->left_ = lower_node;
+          upper_node->parent_->left_ = lower_node;
         }
       }
       upper_node->left_ = lower_node->right_;
+      if (upper_node->left_)
+        upper_node->left_->parent_ = upper_node;
       lower_node->right_ = upper_node;
       upper_node->parent_ = lower_node;
     }
@@ -137,7 +141,7 @@ class Tree {
   void BalanceTree(iterator target_iter) {
       TNode *target_node = target_iter.iter_; 
       /* Father and son are red, need to balance */
-      while (target_node->IsParentRed()) {
+      while (target_node->IsParentRed()) { 
         /* :1-3: First 3 cases, father is left child of grandfother */
         if (target_node->IsLeftFather()) {
           /* :1: Uncle is red, no matter whether son is left or right child */
