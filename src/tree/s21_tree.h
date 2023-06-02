@@ -52,16 +52,17 @@ class Tree {
     std::pair<iterator, bool> result;
     if (head_) {
       TNode *search = FindNode(value).iter_;
-      if (value > search->data_) {
-        search->right_ = new TNode(search, value);
-        result.first = iterator(search->right_);
-        result.second = true;
-      } else if (value < search->data_) {
-        search->left_ = new TNode(search, value);
-        result.first = iterator(search->left_);
-        result.second = true;
-      }
-      BalanceTree(iterator(result.first));
+        if (value > search->data_) {
+          search->right_ = new TNode(search, value);
+          result.first = iterator(search->right_);
+          result.second = true;
+        } else if (value < search->data_) {
+          search->left_ = new TNode(search, value);
+          result.first = iterator(search->left_);
+          result.second = true;
+        }
+        if (result.second) 
+          BalanceTree(iterator(result.first));
     } else {
       head_ = new TNode(value);
       head_->color_ = kBlack;
@@ -155,6 +156,7 @@ class Tree {
             /* :2: Son is right, need to convert to 3 case */
             if (target_node->IsRightSon()) {
               RotateLeft(iterator(target_node->parent_), iterator(target_node));
+              target_node = target_node->left_;
             /* :3: Son is left */
             } else {
               target_node->parent_->color_ = kBlack;
@@ -180,6 +182,7 @@ class Tree {
             /* :5: Son is left, need to convert to 6 case */
             } else {
               RotateRight(iterator(target_node->parent_), iterator(target_node));
+              target_node = target_node->right_;
             }
           }
         }
