@@ -46,7 +46,7 @@ class Tree {
 
   Tree &operator=(Tree &&other) { return *this; };
 
-  ~Tree() { head_->DeleteNode(head_); };
+  ~Tree() { head_->DeleteTree(head_); };
 
   std::pair<iterator, bool> InsertNode(value_type value) {
     std::pair<iterator, bool> result;
@@ -240,6 +240,22 @@ class Tree {
     }
     if (head_->color_ == kRed) head_->color_ = kBlack;
   }
+  
+  void DeleteNode(iterator target) {
+    TNode *remove_node = target.iter_;
+    size_type children_num = remove_node->CountChildren();
+    if (remove_node->color_ == kRed) {
+      if (children_num == 2) {
+      } else {
+        remove_node->EraseNode();
+      }
+    } else {
+      if (children_num == 2) {
+      } else if (children_num == 1) {
+      } else {
+      }
+    }
+  }
 
   void PrintTree() {
     std::deque<std::deque<std::string>> printout;
@@ -340,6 +356,25 @@ class Tree {
       return false;
     }
 
+    size_type CountChildren() {
+      size_type count = 0;
+      if (left_)
+        ++count;
+      if (right_)
+        ++count;
+
+      return count;
+    }
+
+    void EraseNode() {
+      if (IsRightSon()) {
+        parent_->right_ = nullptr;
+      } else if (parent_) {
+        parent_->left_ = nullptr;
+      }
+      delete this;
+    }
+
     size_type PrintTree(TNode *pivot, size_type h,
                         std::deque<std::deque<std::string>> &output) {
       if (output.size() <= h) {
@@ -364,10 +399,10 @@ class Tree {
       return h;
     };
 
-    void DeleteNode(TNode *pivot) {
+    void DeleteTree(TNode *pivot) {
       if (pivot) {
-        DeleteNode(pivot->left_);
-        DeleteNode(pivot->right_);
+        DeleteTree(pivot->left_);
+        DeleteTree(pivot->right_);
         delete pivot;
       }
     }
