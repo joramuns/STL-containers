@@ -120,12 +120,26 @@ class Tree {
       while (next_node->parent_ && next_node == next_node->parent_->right_) {
         next_node = next_node->parent_;
       }
-      /* if (next_node->parent_) { */
-        next_node = next_node->parent_;
-      /* } */
+      next_node = next_node->parent_;
     }
 
     return iterator(next_node);
+  }
+
+  iterator PrevNode(iterator target) {
+    TNode *prev_node = target.iter_;
+    if (prev_node->left_) {
+      prev_node = MaxNode(iterator(prev_node->left_)).iter_;
+    } else if (prev_node->parent_ && prev_node == prev_node->parent_->right_) {
+      prev_node = prev_node->parent_;
+    } else {
+      while (prev_node->parent_ && prev_node == prev_node->parent_->left_) {
+        prev_node = prev_node->parent_;
+      }
+      prev_node = prev_node->parent_;
+    }
+
+    return iterator(prev_node);
   }
 
   void RotateLeft(iterator upper_it, iterator lower_it) {
