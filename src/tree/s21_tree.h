@@ -276,6 +276,31 @@ class Tree {
         }
       /* :5: B0, black node without children */
       } else {
+        /* This node is right */
+        if (remove_node->IsRightSon()) {
+        /* This node is left */
+        } else {
+          TNode *brother = remove_node->parent_->right_;
+          /* :B0.1: Brother is black */
+          if (brother->color_ == kBlack) {
+          std::cout << "kek" << std::endl;
+            /* Right nephew is red, left nephew's color doesn't matter */
+            if (brother->right_ && brother->right_->color_ == kRed) {
+              brother->color_ = brother->parent_->color_;
+              brother->parent_->color_ = kBlack;
+              brother->right_->color_ = kBlack;
+              RotateLeft(iterator(brother->parent_), iterator(brother));
+              remove_node->EraseNode();
+            /* Right newphew is black, left nephew is red */
+            } else if (brother->left_ && brother->left_->color_ == kRed) {
+            /* Both nephews are black */
+            } else {
+            } 
+          /* :B0.2: Brother is red */
+          } else {
+
+          }
+        }
       }
     }
   }
@@ -388,7 +413,6 @@ class Tree {
     }
 
     void EraseNode() {
-      std::cout << "here" << std::endl;
       if (IsRightSon()) {
         parent_->right_ = nullptr;
       } else if (parent_) {
