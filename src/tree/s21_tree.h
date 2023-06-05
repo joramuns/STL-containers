@@ -274,34 +274,108 @@ class Tree {
           remove_node->data_ = remove_node->left_->data_;
           DeleteNode(iterator(remove_node->left_));
         }
-      /* :5: B0, black node without children */
+        /* :5: B0, black node without children */
       } else {
         /* This node is right */
         if (remove_node->IsRightSon()) {
-        /* This node is left */
+          TNode *brother = remove_node->parent_->left_;
+          remove_node->EraseNode();
+          RebalanceLeftBrother(iterator(brother));
+
+          /* This node is left */
         } else {
           TNode *brother = remove_node->parent_->right_;
-          /* :B0.1: Brother is black */
-          if (brother->color_ == kBlack) {
-          std::cout << "kek" << std::endl;
-            /* Right nephew is red, left nephew's color doesn't matter */
-            if (brother->right_ && brother->right_->color_ == kRed) {
-              brother->color_ = brother->parent_->color_;
-              brother->parent_->color_ = kBlack;
-              brother->right_->color_ = kBlack;
-              RotateLeft(iterator(brother->parent_), iterator(brother));
-              remove_node->EraseNode();
-            /* Right newphew is black, left nephew is red */
-            } else if (brother->left_ && brother->left_->color_ == kRed) {
-            /* Both nephews are black */
-            } else {
-            } 
-          /* :B0.2: Brother is red */
-          } else {
+          remove_node->EraseNode();
+          RebalanceRightBrother(iterator(brother));
+        }
+      }
+    }
+  }
 
+  void RebalanceLeftBrother(iterator target) { /* :B0.1: Brother is black */
+    TNode *brother = target.iter_;
+    if (brother->color_ == kBlack) {
+      /* Left nephew is red, right nephew's color doesn't matter */
+      if (brother->left_ && brother->left_->color_ == kRed) {
+        brother->color_ = brother->parent_->color_;
+        brother->parent_->color_ = kBlack;
+        brother->left_->color_ = kBlack;
+        RotateRight(iterator(brother->parent_), iterator(brother));
+        /* Left newphew is black, right nephew is red */
+      } else if (brother->right_ && brother->right_->color_ == kRed) {
+        TNode *nephew = brother->right_;
+        brother->color_ = kRed;
+        nephew->color_ = kBlack;
+        RotateLeft(iterator(brother), iterator(nephew));
+        RebalanceLeftBrother(iterator(nephew));
+        /* Both nephews are black */
+      } else {
+        brother->color_ = kRed;
+        if (brother->parent_->color_ == kRed) {
+          brother->parent_->color_ = kBlack;
+        } else {
+          TNode *fake_remove_node = brother->parent_;
+          if (fake_remove_node->IsRightSon()) {
+            brother = fake_remove_node->parent_->left_;
+            RebalanceLeftBrother(iterator(brother));
+          } else {
+            brother = fake_remove_node->parent_->right_;
+            RebalanceRightBrother(iterator(brother));
           }
         }
       }
+      /* :B0.2: Brother is red */
+    } else {
+      brother->color_ = kBlack;
+      brother->parent_->color_ = kRed;
+      /* Right nephew becomes new brother, then goes new rebalancing */
+      TNode *new_brother = brother->right_;
+      RotateRight(iterator(brother->parent_), iterator(brother));
+      RebalanceLeftBrother(iterator(new_brother));
+    }
+  }
+
+  void RebalanceRightBrother(iterator target) {
+    TNode *brother = target.iter_;
+    /* :B0.1: Brother is black */
+    if (brother->color_ == kBlack) {
+      /* Right nephew is red, left nephew's color doesn't matter */
+      if (brother->right_ && brother->right_->color_ == kRed) {
+        brother->color_ = brother->parent_->color_;
+        brother->parent_->color_ = kBlack;
+        brother->right_->color_ = kBlack;
+        RotateLeft(iterator(brother->parent_), iterator(brother));
+        /* Right newphew is black, left nephew is red */
+      } else if (brother->left_ && brother->left_->color_ == kRed) {
+        TNode *nephew = brother->left_;
+        brother->color_ = kRed;
+        nephew->color_ = kBlack;
+        RotateRight(iterator(brother), iterator(nephew));
+        RebalanceRightBrother(iterator(nephew));
+        /* Both nephews are black */
+      } else {
+        brother->color_ = kRed;
+        if (brother->parent_->color_ == kRed) {
+          brother->parent_->color_ = kBlack;
+        } else {
+          TNode *fake_remove_node = brother->parent_;
+          if (fake_remove_node->IsRightSon()) {
+            brother = fake_remove_node->parent_->left_;
+            RebalanceLeftBrother(iterator(brother));
+          } else {
+            brother = fake_remove_node->parent_->right_;
+            RebalanceRightBrother(iterator(brother));
+          }
+        }
+      }
+      /* :B0.2: Brother is red */
+    } else {
+      brother->color_ = kBlack;
+      brother->parent_->color_ = kRed;
+      /* Left nephew becomes new brother, then goes new rebalancing */
+      TNode *new_brother = brother->left_;
+      RotateLeft(iterator(brother->parent_), iterator(brother));
+      RebalanceRightBrother(iterator(new_brother));
     }
   }
 
