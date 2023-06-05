@@ -240,15 +240,32 @@ class Tree {
     }
     if (head_->color_ == kRed) head_->color_ = kBlack;
   }
-  
+
   void DeleteNode(iterator target) {
     TNode *remove_node = target.iter_;
     size_type children_num = remove_node->CountChildren();
+    /* :1-2: Delete red node */
     if (remove_node->color_ == kRed) {
+      /* :2: R2, red node with 2 children:
+       * Check if maximum value of left tree is red and delete it
+       * Otherwise, go to minumum value of right tree, call this function
+       * and repeat the whole algorithm */
       if (children_num == 2) {
+        iterator swap_node = MaxNode(iterator(remove_node->left_));
+        if (swap_node.iter_->color_ == kRed) {
+          remove_node->data_ = swap_node.iter_->data_;
+          DeleteNode(swap_node);
+        } else {
+          swap_node = MinNode(iterator(remove_node->right_));
+          remove_node->data_ = swap_node.iter_->data_;
+          DeleteNode(swap_node);
+        }
+        /* :1: R0, red node without children
+         * Simply erase this node            */
       } else {
         remove_node->EraseNode();
       }
+    /* :3-5: Delete black node */
     } else {
       if (children_num == 2) {
       } else if (children_num == 1) {
@@ -358,10 +375,8 @@ class Tree {
 
     size_type CountChildren() {
       size_type count = 0;
-      if (left_)
-        ++count;
-      if (right_)
-        ++count;
+      if (left_) ++count;
+      if (right_) ++count;
 
       return count;
     }
