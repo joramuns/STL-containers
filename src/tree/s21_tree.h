@@ -244,31 +244,37 @@ class Tree {
   void DeleteNode(iterator target) {
     TNode *remove_node = target.iter_;
     size_type children_num = remove_node->CountChildren();
-    /* :1-2: Delete red node */
-    if (remove_node->color_ == kRed) {
-      /* :2: R2, red node with 2 children:
-       * Check if maximum value of left tree is red and delete it
-       * Otherwise, go to minumum value of right tree, call this function
-       * and repeat the whole algorithm */
-      if (children_num == 2) {
-        iterator swap_node = MaxNode(iterator(remove_node->left_));
-        if (swap_node.iter_->color_ == kRed) {
-          remove_node->data_ = swap_node.iter_->data_;
-          DeleteNode(swap_node);
-        } else {
-          swap_node = MinNode(iterator(remove_node->right_));
-          remove_node->data_ = swap_node.iter_->data_;
-          DeleteNode(swap_node);
-        }
-        /* :1: R0, red node without children
-         * Simply erase this node            */
+
+    /* :3: RB2, red or black node with 2 children:
+     * Check if maximum value of left tree is red and delete it
+     * Otherwise, go to minumum value of right tree, call this function
+     * and repeat the whole algorithm */
+    if (children_num == 2) {
+      iterator swap_node = MaxNode(iterator(remove_node->left_));
+      if (swap_node.iter_->color_ == kRed) {
+        remove_node->data_ = swap_node.iter_->data_;
+        DeleteNode(swap_node);
       } else {
-        remove_node->EraseNode();
+        swap_node = MinNode(iterator(remove_node->right_));
+        remove_node->data_ = swap_node.iter_->data_;
+        DeleteNode(swap_node);
       }
-    /* :3-5: Delete black node */
-    } else {
-      if (children_num == 2) {
-      } else if (children_num == 1) {
+      /* :1: R0, red node without children
+       * Simply erase this node            */
+    } else if (remove_node->color_ == kRed) {
+      remove_node->EraseNode();
+      /* :4-5: Delete black node */
+    } else if (remove_node->color_ == kBlack) {
+      /* :4: B1, black node with one child */
+      if (children_num == 1) {
+        if (remove_node->right_) {
+          remove_node->data_ = remove_node->right_->data_;
+          DeleteNode(iterator(remove_node->right_));
+        } else {
+          remove_node->data_ = remove_node->left_->data_;
+          DeleteNode(iterator(remove_node->left_));
+        }
+      /* :5: B0, black node without children */
       } else {
       }
     }
@@ -382,6 +388,7 @@ class Tree {
     }
 
     void EraseNode() {
+      std::cout << "here" << std::endl;
       if (IsRightSon()) {
         parent_->right_ = nullptr;
       } else if (parent_) {
