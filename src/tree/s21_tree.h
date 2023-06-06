@@ -142,6 +142,16 @@ class Tree {
     return iterator(prev_node);
   }
 
+  void RotateNodes(iterator upper_it, iterator lower_it) {
+    TNode *upper_node = upper_it.iter_;
+    TNode *lower_node = lower_it.iter_;
+    if (upper_node->right_ == lower_node) {
+      RotateLeft(upper_it, lower_it);
+    } else if (upper_node->left_ == lower_node) {
+      RotateRight(upper_it, lower_it);
+    }
+  }
+
   void RotateLeft(iterator upper_it, iterator lower_it) {
     TNode *upper_node = upper_it.iter_;
     TNode *lower_node = lower_it.iter_;
@@ -276,18 +286,9 @@ class Tree {
         }
         /* :5: B0, black node without children */
       } else {
-        /* This node is right */
-        if (remove_node->IsRightSon()) {
-          TNode *brother = remove_node->parent_->left_;
-          remove_node->EraseNode();
-          RebalanceBrother(iterator(brother));
-
-          /* This node is left */
-        } else {
-          TNode *brother = remove_node->parent_->right_;
-          remove_node->EraseNode();
-          RebalanceBrother(iterator(brother));
-        }
+        TNode *brother = remove_node->GetBrother();
+        remove_node->EraseNode();
+        RebalanceBrother(iterator(brother));
       }
     }
   }
@@ -297,25 +298,17 @@ class Tree {
     if (brother->color_ == kBlack) {
       TNode *far_nephew = brother->GetFarNephew();
       TNode *near_nephew = brother->GetNearNephew();
-      /* Left nephew is red, right nephew's color doesn't matter */
+      /* Far nephew is red, near nephew's color doesn't matter */
       if (far_nephew && far_nephew->color_ == kRed) {
         brother->color_ = brother->parent_->color_;
         brother->parent_->color_ = kBlack;
         far_nephew->color_ = kBlack;
-        if (brother->IsRightSon()) {
-          RotateLeft(iterator(brother->parent_), iterator(brother));
-        } else {
-          RotateRight(iterator(brother->parent_), iterator(brother));
-        }
-        /* Left newphew is black, right nephew is red */
+        RotateNodes(iterator(brother->parent_), iterator(brother));
+        /* Far newphew is black, near nephew is red */
       } else if (near_nephew && near_nephew->color_ == kRed) {
         brother->color_ = kRed;
         near_nephew->color_ = kBlack;
-        if (brother->IsRightSon()) {
-          RotateRight(iterator(brother), iterator(near_nephew));
-        } else {
-          RotateLeft(iterator(brother), iterator(near_nephew));
-        }
+        RotateNodes(iterator(brother), iterator(near_nephew));
         RebalanceBrother(iterator(near_nephew));
         /* Both nephews are black */
       } else {
@@ -333,11 +326,7 @@ class Tree {
       brother->parent_->color_ = kRed;
       /* Near nephew becomes new brother, then goes new rebalancing */
       TNode *new_brother = brother->GetNearNephew();
-      if (brother->IsRightSon()) {
-        RotateLeft(iterator(brother->parent_), iterator(brother));
-      } else {
-        RotateRight(iterator(brother->parent_), iterator(brother));
-      }
+      RotateNodes(iterator(brother->parent_), iterator(brother));
       RebalanceBrother(iterator(new_brother));
     }
   }
