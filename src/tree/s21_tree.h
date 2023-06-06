@@ -5,27 +5,21 @@
 #include <iostream>
 
 // Temp for print
-#include <cmath>
 #include <deque>
-#include <iomanip>
-#include <ios>
 #include <string>
-#include <vector>
 
 namespace s21 {
 template <typename T>
 class Tree {
   struct TNode;
-  class TreeIterator;
-  class ConstTreeIterator;
 
  public:
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
   using size_type = std::size_t;
-  using iterator = TreeIterator;
-  using const_iterator = ConstTreeIterator;
+  using iterator = TNode *;
+  using const_iterator = const TNode *;
 
   Tree(){};
 
@@ -46,33 +40,33 @@ class Tree {
 
   Tree &operator=(Tree &&other) { return *this; };
 
-  ~Tree() { head_->DeleteTree(head_); };
+  virtual ~Tree() { head_->DeleteTree(head_); };
 
   std::pair<iterator, bool> InsertNode(value_type value) {
     std::pair<iterator, bool> result;
     if (head_) {
-      TNode *search = FindNode(value).iter_;
+      TNode *search = FindNode(value);
       if (value > search->data_) {
         search->right_ = new TNode(search, value);
-        result.first = iterator(search->right_);
+        result.first = search->right_;
         result.second = true;
       } else if (value < search->data_) {
         search->left_ = new TNode(search, value);
-        result.first = iterator(search->left_);
+        result.first = search->left_;
         result.second = true;
       }
-      if (result.second) BalanceTree(iterator(result.first));
+      if (result.second) BalanceTree(result.first);
     } else {
       head_ = new TNode(value);
       head_->color_ = kBlack;
-      result.first = iterator(head_);
+      result.first = head_;
       result.second = false;
     }
 
     return result;
   }
 
-  iterator FindNode(value_type value) {
+  iterator FindNode(value_type value) const noexcept {
     TNode *parent = head_;
     TNode *child = parent;
     bool not_found = true;
@@ -86,92 +80,79 @@ class Tree {
         not_found = false;
       }
     }
-    if (not_found) {
-    }
 
-    return iterator(parent);
+    return parent;
   }
 
-  iterator MinNode(iterator root) {
-    TNode *root_node = root.iter_;
+  iterator MinNode(iterator root_node) const noexcept {
     while (root_node->left_) {
       root_node = root_node->left_;
     }
 
-    return iterator(root_node);
+    return root_node;
   }
 
-  iterator MaxNode(iterator root) {
-    TNode *root_node = root.iter_;
+  iterator MaxNode(iterator root_node) const noexcept {
     while (root_node->right_) {
       root_node = root_node->right_;
     }
 
-    return iterator(root_node);
+    return root_node;
   }
 
-  iterator NextNode(iterator target) {
-    TNode *next_node = target.iter_;
+  iterator NextNode(iterator next_node) {
     if (next_node->right_) {
-      next_node = MinNode(iterator(next_node->right_)).iter_;
-    } else if (next_node->parent_ && next_node == next_node->parent_->left_) {
+      next_node = MinNode(next_node->right_);
+    } else if (next_node->parent_ && !next_node->IsRightSon()) {
       next_node = next_node->parent_;
     } else {
-      while (next_node->parent_ && next_node == next_node->parent_->right_) {
+      while (next_node->parent_ && next_node->IsRightSon()) {
         next_node = next_node->parent_;
       }
       next_node = next_node->parent_;
     }
 
-    return iterator(next_node);
+    return next_node;
   }
 
-  iterator PrevNode(iterator target) {
-    TNode *prev_node = target.iter_;
+  iterator PrevNode(iterator prev_node) {
     if (prev_node->left_) {
-      prev_node = MaxNode(iterator(prev_node->left_)).iter_;
-    } else if (prev_node->parent_ && prev_node == prev_node->parent_->right_) {
+      prev_node = MaxNode(prev_node->left_);
+    } else if (prev_node->parent_ && prev_node->IsRightSon()) {
       prev_node = prev_node->parent_;
     } else {
-      while (prev_node->parent_ && prev_node == prev_node->parent_->left_) {
+      while (prev_node->parent_ && !prev_node->IsRightSon()) {
         prev_node = prev_node->parent_;
       }
       prev_node = prev_node->parent_;
     }
 
-    return iterator(prev_node);
+    return prev_node;
   }
 
-  void RotateNodes(iterator upper_it, iterator lower_it) {
-    TNode *lower_node = lower_it.iter_;
+  void RotateNodes(iterator upper_node, iterator lower_node) {
     if (lower_node->IsRightSon()) {
-      RotateLeft(upper_it, lower_it);
+      RotateLeft(upper_node, lower_node);
     } else {
-      RotateRight(upper_it, lower_it);
+      RotateRight(upper_node, lower_node);
     }
   }
 
-  void RotateLeft(iterator upper_it, iterator lower_it) {
-    TNode *upper_node = upper_it.iter_;
-    TNode *lower_node = lower_it.iter_;
-    SwapParents(upper_it, lower_it);
+  void RotateLeft(iterator upper_node, iterator lower_node) {
+    SwapParents(upper_node, lower_node);
     upper_node->right_ = lower_node->left_;
     if (upper_node->right_) upper_node->right_->parent_ = upper_node;
     lower_node->left_ = upper_node;
   }
 
-  void RotateRight(iterator upper_it, iterator lower_it) {
-    TNode *upper_node = upper_it.iter_;
-    TNode *lower_node = lower_it.iter_;
-    SwapParents(upper_it, lower_it);
+  void RotateRight(iterator upper_node, iterator lower_node) {
+    SwapParents(upper_node, lower_node);
     upper_node->left_ = lower_node->right_;
     if (upper_node->left_) upper_node->left_->parent_ = upper_node;
     lower_node->right_ = upper_node;
   }
 
-  void SwapParents(iterator upper_it, iterator lower_it) {
-    TNode *upper_node = upper_it.iter_;
-    TNode *lower_node = lower_it.iter_;
+  void SwapParents(iterator upper_node, iterator lower_node) {
     lower_node->parent_ = upper_node->parent_;
     if (upper_node->parent_ == nullptr) {
       head_ = lower_node;
@@ -186,8 +167,7 @@ class Tree {
     upper_node->parent_ = lower_node;
   }
 
-  void BalanceTree(iterator target_iter) {
-    TNode *target_node = target_iter.iter_;
+  void BalanceTree(iterator target_node) {
     /* Father and son are red, need to balance */
     while (target_node->IsParentRed()) {
       /* :1:&:4: Uncle is red, no matter whether son is left or right,
@@ -202,18 +182,18 @@ class Tree {
          * :5:->:6: Second 2 cases, father is right child of grandfother
          * No uncle or uncle black, check if son is right or left son */
         bool is_left_father = target_node->IsLeftFather();
-        bool is_left_son = target_node->IsLeftSon();
+        bool is_left_son = !target_node->IsRightSon();
         /* :3: Son is left, father is left
          * :6: Son is right, father is right */
         if ((is_left_father && is_left_son) ||
             (!is_left_father && !is_left_son)) {
           target_node->parent_->color_ = kBlack;
           target_node->parent_->parent_->color_ = kRed;
-          RotateNodes(iterator(target_node->parent_->parent_),
-                      iterator(target_node->parent_));
+          RotateNodes(target_node->parent_->parent_,
+                      target_node->parent_);
         } else {
           /* :2:&&:5: Son and father not in one line, convert to :3:||:6: */
-          RotateNodes(iterator(target_node->parent_), iterator(target_node));
+          RotateNodes(target_node->parent_, target_node);
           if (is_left_father && !is_left_son) {
             target_node = target_node->left_;
           } else if (!is_left_father && is_left_son) {
@@ -225,21 +205,20 @@ class Tree {
     if (head_->color_ == kRed) head_->color_ = kBlack;
   }
 
-  void DeleteNode(iterator target) {
-    TNode *remove_node = target.iter_;
+  void DeleteNode(iterator remove_node) {
     size_type children_num = remove_node->CountChildren();
     /* :3: RB2, red or black node with 2 children:
      * Check if maximum value of left tree is red and delete it
      * Otherwise, go to minumum value of right tree, call this function
      * and repeat the whole algorithm */
     if (children_num == 2) {
-      iterator swap_node = MaxNode(iterator(remove_node->left_));
-      if (swap_node.iter_->color_ == kRed) {
-        remove_node->data_ = swap_node.iter_->data_;
+      iterator swap_node = MaxNode(remove_node->left_);
+      if (swap_node->color_ == kRed) {
+        remove_node->data_ = swap_node->data_;
         DeleteNode(swap_node);
       } else {
-        swap_node = MinNode(iterator(remove_node->right_));
-        remove_node->data_ = swap_node.iter_->data_;
+        swap_node = MinNode(remove_node->right_);
+        remove_node->data_ = swap_node->data_;
         DeleteNode(swap_node);
       }
       /* :1: R0, red node without children
@@ -252,21 +231,20 @@ class Tree {
     } else if (remove_node->color_ == kBlack && children_num == 1) {
       if (remove_node->right_) {
         remove_node->data_ = remove_node->right_->data_;
-        DeleteNode(iterator(remove_node->right_));
+        DeleteNode(remove_node->right_);
       } else {
         remove_node->data_ = remove_node->left_->data_;
-        DeleteNode(iterator(remove_node->left_));
+        DeleteNode(remove_node->left_);
       }
       /* :5: B0, black node without children */
     } else {
       TNode *brother = remove_node->GetBrother();
       remove_node->EraseNode();
-      RebalanceBrother(iterator(brother));
+      RebalanceBrother(brother);
     }
   }
 
-  void RebalanceBrother(iterator target) { /* :B0.1: Brother is black */
-    TNode *brother = target.iter_;
+  void RebalanceBrother(iterator brother) { /* :B0.1: Brother is black */
     if (brother->color_ == kBlack) {
       TNode *far_nephew = brother->GetFarNephew();
       TNode *near_nephew = brother->GetNearNephew();
@@ -275,13 +253,13 @@ class Tree {
         brother->color_ = brother->parent_->color_;
         brother->parent_->color_ = kBlack;
         far_nephew->color_ = kBlack;
-        RotateNodes(iterator(brother->parent_), iterator(brother));
+        RotateNodes(brother->parent_, brother);
         /* Far newphew is black, near nephew is red */
       } else if (near_nephew && near_nephew->color_ == kRed) {
         brother->color_ = kRed;
         near_nephew->color_ = kBlack;
-        RotateNodes(iterator(brother), iterator(near_nephew));
-        RebalanceBrother(iterator(near_nephew));
+        RotateNodes(brother, near_nephew);
+        RebalanceBrother(near_nephew);
         /* Both nephews are black */
       } else {
         brother->color_ = kRed;
@@ -289,7 +267,7 @@ class Tree {
           brother->parent_->color_ = kBlack;
         } else {
           brother = brother->parent_->GetBrother();
-          RebalanceBrother(iterator(brother));
+          RebalanceBrother(brother);
         }
       }
       /* :B0.2: Brother is red */
@@ -298,8 +276,8 @@ class Tree {
       brother->parent_->color_ = kRed;
       /* Near nephew becomes new brother, then goes new rebalancing */
       TNode *new_brother = brother->GetNearNephew();
-      RotateNodes(iterator(brother->parent_), iterator(brother));
-      RebalanceBrother(iterator(new_brother));
+      RotateNodes(brother->parent_, brother);
+      RebalanceBrother(new_brother);
     }
   }
 
@@ -315,45 +293,6 @@ class Tree {
   };
 
  private:
-  class TreeIterator {
-   public:
-    TreeIterator(){};
-    explicit TreeIterator(TNode *tree_node) noexcept : iter_(tree_node){};
-    TreeIterator(const TreeIterator &other) noexcept : iter_(other.iter_){};
-    TreeIterator(TreeIterator &&other) noexcept {
-      std::swap(iter_, other.iter_);
-    }
-
-    TreeIterator &operator=(const TreeIterator &other) noexcept {
-      if (this != &other) iter_ = other.iter_;
-
-      return *this;
-    }
-    TreeIterator &operator=(TreeIterator &&other) noexcept {
-      if (this != &other) std::swap(iter_, other.iter_);
-
-      return *this;
-    }
-    operator bool() noexcept { return (iter_); }
-    operator bool() const noexcept { return (iter_); }
-    const_reference operator*() const { return iter_->data_; }
-    reference operator*() { return iter_->data_; }
-
-    TNode *iter_;
-  };
-
-  class ConstTreeIterator {
-   public:
-    ConstTreeIterator(){};
-    explicit ConstTreeIterator(const iterator &other) noexcept
-        : iter_(other.iter_){};
-
-    operator bool() noexcept { return (iter_); }
-    const_reference operator*() const { return iter_->data_; }
-
-    TNode *iter_;
-  };
-
   enum TColor { kBlack, kRed };
   struct TNode {
     TNode *parent_ = nullptr;
@@ -373,8 +312,6 @@ class Tree {
       return false;
     }
 
-    bool IsRightFather() { return !IsLeftFather(); }
-
     bool IsParentRed() {
       if (parent_ && parent_->color_ == kRed) {
         return true;
@@ -384,24 +321,6 @@ class Tree {
 
     bool IsRightSon() {
       if (parent_ && parent_->right_ == this) {
-        return true;
-      }
-      return false;
-    }
-
-    bool IsLeftSon() { return !IsRightSon(); }
-
-    bool IsRightUncleRed() {
-      if (parent_->parent_ && parent_->parent_->right_ &&
-          parent_->parent_->right_->color_ == kRed) {
-        return true;
-      }
-      return false;
-    }
-
-    bool IsLeftUncleRed() {
-      if (parent_->parent_ && parent_->parent_->left_ &&
-          parent_->parent_->left_->color_ == kRed) {
         return true;
       }
       return false;
@@ -474,16 +393,16 @@ class Tree {
       if (pivot) {
         output[h - 1].push_back(std::to_string(pivot->data_));
         if (pivot->color_ == kBlack) {
-          output[h - 1].back() += "B";
+          output[h - 1].back() += "B ";
         } else {
-          output[h - 1].back() += "R";
+          output[h - 1].back() += "R ";
         }
         PrintTree(pivot->left_, h + 1, output);
         PrintTree(pivot->right_, h + 1, output);
       } else {
-        output[h - 1].push_back("x");
-        output[h].push_back("y");
-        output[h].push_back("y");
+        output[h - 1].push_back("x ");
+        output[h].push_back("y ");
+        output[h].push_back("y ");
       }
 
       return h;
