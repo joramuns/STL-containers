@@ -280,58 +280,65 @@ class Tree {
         if (remove_node->IsRightSon()) {
           TNode *brother = remove_node->parent_->left_;
           remove_node->EraseNode();
-          RebalanceLeftBrother(iterator(brother));
+          RebalanceBrother(iterator(brother));
 
           /* This node is left */
         } else {
           TNode *brother = remove_node->parent_->right_;
           remove_node->EraseNode();
-          RebalanceRightBrother(iterator(brother));
+          RebalanceBrother(iterator(brother));
         }
       }
     }
   }
 
-  void RebalanceLeftBrother(iterator target) { /* :B0.1: Brother is black */
+  void RebalanceBrother(iterator target) { /* :B0.1: Brother is black */
     TNode *brother = target.iter_;
     if (brother->color_ == kBlack) {
+      TNode *far_nephew = brother->GetFarNephew();
+      TNode *near_nephew = brother->GetNearNephew();
       /* Left nephew is red, right nephew's color doesn't matter */
-      if (brother->left_ && brother->left_->color_ == kRed) {
+      if (far_nephew && far_nephew->color_ == kRed) {
         brother->color_ = brother->parent_->color_;
         brother->parent_->color_ = kBlack;
-        brother->left_->color_ = kBlack;
-        RotateRight(iterator(brother->parent_), iterator(brother));
+        far_nephew->color_ = kBlack;
+        if (brother->IsRightSon()) {
+          RotateLeft(iterator(brother->parent_), iterator(brother));
+        } else {
+          RotateRight(iterator(brother->parent_), iterator(brother));
+        }
         /* Left newphew is black, right nephew is red */
-      } else if (brother->right_ && brother->right_->color_ == kRed) {
-        TNode *nephew = brother->right_;
+      } else if (near_nephew && near_nephew->color_ == kRed) {
         brother->color_ = kRed;
-        nephew->color_ = kBlack;
-        RotateLeft(iterator(brother), iterator(nephew));
-        RebalanceLeftBrother(iterator(nephew));
+        near_nephew->color_ = kBlack;
+        if (brother->IsRightSon()) {
+          RotateRight(iterator(brother), iterator(near_nephew));
+        } else {
+          RotateLeft(iterator(brother), iterator(near_nephew));
+        }
+        RebalanceBrother(iterator(near_nephew));
         /* Both nephews are black */
       } else {
         brother->color_ = kRed;
         if (brother->parent_->color_ == kRed) {
           brother->parent_->color_ = kBlack;
         } else {
-          TNode *fake_remove_node = brother->parent_;
-          if (fake_remove_node->IsRightSon()) {
-            brother = fake_remove_node->parent_->left_;
-            RebalanceLeftBrother(iterator(brother));
-          } else {
-            brother = fake_remove_node->parent_->right_;
-            RebalanceRightBrother(iterator(brother));
-          }
+          brother = brother->parent_->GetBrother();
+          RebalanceBrother(iterator(brother));
         }
       }
       /* :B0.2: Brother is red */
     } else {
       brother->color_ = kBlack;
       brother->parent_->color_ = kRed;
-      /* Right nephew becomes new brother, then goes new rebalancing */
-      TNode *new_brother = brother->right_;
-      RotateRight(iterator(brother->parent_), iterator(brother));
-      RebalanceLeftBrother(iterator(new_brother));
+      /* Near nephew becomes new brother, then goes new rebalancing */
+      TNode *new_brother = brother->GetNearNephew();
+      if (brother->IsRightSon()) {
+        RotateLeft(iterator(brother->parent_), iterator(brother));
+      } else {
+        RotateRight(iterator(brother->parent_), iterator(brother));
+      }
+      RebalanceBrother(iterator(new_brother));
     }
   }
 
@@ -476,6 +483,30 @@ class Tree {
         return true;
       }
       return false;
+    }
+
+    TNode *GetBrother() {
+      if (IsRightSon()) {
+        return parent_->left_;
+      } else {
+        return parent_->right_;
+      }
+    }
+
+    TNode *GetFarNephew() {
+      if (IsRightSon()) {
+        return right_;
+      } else {
+        return left_;
+      }
+    }
+
+    TNode *GetNearNephew() {
+      if (IsRightSon()) {
+        return left_;
+      } else {
+        return right_;
+      }
     }
 
     size_type CountChildren() {
