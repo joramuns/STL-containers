@@ -190,49 +190,33 @@ class Tree {
     TNode *target_node = target_iter.iter_;
     /* Father and son are red, need to balance */
     while (target_node->IsParentRed()) {
-      /* :1-3: First 3 cases, father is left child of grandfother */
-      if (target_node->IsLeftFather()) {
-        /* :1: Uncle (right) is red, no matter whether son is left or right
-         * child */
-        if (target_node->IsRightUncleRed()) {
-          target_node->parent_->color_ = kBlack;
-          target_node->parent_->parent_->right_->color_ = kBlack;
-          target_node->parent_->parent_->color_ = kRed;
-          target_node = target_node->parent_->parent_;
-          /* :2-3: No uncle or uncle black, check if son is left or right son */
-        } else {
-          /* :2: Son is right, need to convert to 3 case */
-          if (target_node->IsRightSon()) {
-            RotateLeft(iterator(target_node->parent_), iterator(target_node));
-            target_node = target_node->left_;
-            /* :3: Son is left */
-          } else {
-            target_node->parent_->color_ = kBlack;
-            target_node->parent_->parent_->color_ = kRed;
-            RotateRight(iterator(target_node->parent_->parent_),
-                        iterator(target_node->parent_));
-          }
-        }
-        /* :4-6: Second 3 cases, father is right child of grandfother */
+      /* :1:&:4: Uncle is red, no matter whether son is left or right,
+       * difference is in being father left or right child */
+      if (target_node->IsUncleRed()) {
+        target_node->parent_->color_ = kBlack;
+        target_node->GetUncle()->color_ = kBlack;
+        target_node->parent_->parent_->color_ = kRed;
+        target_node = target_node->parent_->parent_;
       } else {
-        /* :4: Uncle (left) is red, no matter whether son is left or right child
-         */
-        if (target_node->IsLeftUncleRed()) {
+        /* :2:->:3: First 2 cases, father is left child of grandfother
+         * :5:->:6: Second 2 cases, father is right child of grandfother
+         * No uncle or uncle black, check if son is right or left son */
+        bool is_left_father = target_node->IsLeftFather();
+        bool is_left_son = target_node->IsLeftSon();
+        /* :3: Son is left, father is left
+         * :6: Son is right, father is right */
+        if ((is_left_father && is_left_son) ||
+            (!is_left_father && !is_left_son)) {
           target_node->parent_->color_ = kBlack;
-          target_node->parent_->parent_->left_->color_ = kBlack;
           target_node->parent_->parent_->color_ = kRed;
-          target_node = target_node->parent_->parent_;
-          /* :5-6: No uncle or uncle black, check if son is right or left son */
+          RotateNodes(iterator(target_node->parent_->parent_),
+                      iterator(target_node->parent_));
         } else {
-          /* :6: Son is right */
-          if (target_node->IsRightSon()) {
-            target_node->parent_->color_ = kBlack;
-            target_node->parent_->parent_->color_ = kRed;
-            RotateLeft(iterator(target_node->parent_->parent_),
-                       iterator(target_node->parent_));
-            /* :5: Son is left, need to convert to 6 case */
-          } else {
-            RotateRight(iterator(target_node->parent_), iterator(target_node));
+          /* :2:&&:5: Son and father not in one line, convert to :3:||:6: */
+          RotateNodes(iterator(target_node->parent_), iterator(target_node));
+          if (is_left_father && !is_left_son) {
+            target_node = target_node->left_;
+          } else if (!is_left_father && is_left_son) {
             target_node = target_node->right_;
           }
         }
@@ -244,7 +228,6 @@ class Tree {
   void DeleteNode(iterator target) {
     TNode *remove_node = target.iter_;
     size_type children_num = remove_node->CountChildren();
-
     /* :3: RB2, red or black node with 2 children:
      * Check if maximum value of left tree is red and delete it
      * Otherwise, go to minumum value of right tree, call this function
@@ -389,6 +372,9 @@ class Tree {
       }
       return false;
     }
+
+    bool IsRightFather() { return !IsLeftFather(); }
+
     bool IsParentRed() {
       if (parent_ && parent_->color_ == kRed) {
         return true;
@@ -402,6 +388,8 @@ class Tree {
       }
       return false;
     }
+
+    bool IsLeftSon() { return !IsRightSon(); }
 
     bool IsRightUncleRed() {
       if (parent_->parent_ && parent_->parent_->right_ &&
@@ -417,6 +405,23 @@ class Tree {
         return true;
       }
       return false;
+    }
+
+    bool IsUncleRed() {
+      TNode *uncle_node = GetUncle();
+      if (uncle_node && uncle_node->color_ == kRed) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    TNode *GetUncle() {
+      if (parent_->IsRightSon()) {
+        return parent_->parent_->left_;
+      } else {
+        return parent_->parent_->right_;
+      }
     }
 
     TNode *GetBrother() {
