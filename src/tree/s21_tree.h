@@ -143,11 +143,10 @@ class Tree {
   }
 
   void RotateNodes(iterator upper_it, iterator lower_it) {
-    TNode *upper_node = upper_it.iter_;
     TNode *lower_node = lower_it.iter_;
-    if (upper_node->right_ == lower_node) {
+    if (lower_node->IsRightSon()) {
       RotateLeft(upper_it, lower_it);
-    } else if (upper_node->left_ == lower_node) {
+    } else {
       RotateRight(upper_it, lower_it);
     }
   }
@@ -155,45 +154,36 @@ class Tree {
   void RotateLeft(iterator upper_it, iterator lower_it) {
     TNode *upper_node = upper_it.iter_;
     TNode *lower_node = lower_it.iter_;
-    if (upper_node->right_ == lower_node) {
-      lower_node->parent_ = upper_node->parent_;
-      if (upper_node->parent_ == nullptr) {
-        head_ = lower_node;
-        lower_node->color_ = kBlack;
-      } else {
-        if (upper_node->parent_->right_ == upper_node) {
-          upper_node->parent_->right_ = lower_node;
-        } else {
-          upper_node->parent_->left_ = lower_node;
-        }
-      }
-      upper_node->right_ = lower_node->left_;
-      if (upper_node->right_) upper_node->right_->parent_ = upper_node;
-      lower_node->left_ = upper_node;
-      upper_node->parent_ = lower_node;
-    }
+    SwapParents(upper_it, lower_it);
+    upper_node->right_ = lower_node->left_;
+    if (upper_node->right_) upper_node->right_->parent_ = upper_node;
+    lower_node->left_ = upper_node;
   }
 
   void RotateRight(iterator upper_it, iterator lower_it) {
     TNode *upper_node = upper_it.iter_;
     TNode *lower_node = lower_it.iter_;
-    if (upper_node->left_ == lower_node) {
-      lower_node->parent_ = upper_node->parent_;
-      if (upper_node->parent_ == nullptr) {
-        head_ = lower_node;
-        lower_node->color_ = kBlack;
+    SwapParents(upper_it, lower_it);
+    upper_node->left_ = lower_node->right_;
+    if (upper_node->left_) upper_node->left_->parent_ = upper_node;
+    lower_node->right_ = upper_node;
+  }
+
+  void SwapParents(iterator upper_it, iterator lower_it) {
+    TNode *upper_node = upper_it.iter_;
+    TNode *lower_node = lower_it.iter_;
+    lower_node->parent_ = upper_node->parent_;
+    if (upper_node->parent_ == nullptr) {
+      head_ = lower_node;
+      lower_node->color_ = kBlack;
+    } else {
+      if (upper_node->IsRightSon()) {
+        upper_node->parent_->right_ = lower_node;
       } else {
-        if (upper_node->parent_->right_ == upper_node) {
-          upper_node->parent_->right_ = lower_node;
-        } else {
-          upper_node->parent_->left_ = lower_node;
-        }
+        upper_node->parent_->left_ = lower_node;
       }
-      upper_node->left_ = lower_node->right_;
-      if (upper_node->left_) upper_node->left_->parent_ = upper_node;
-      lower_node->right_ = upper_node;
-      upper_node->parent_ = lower_node;
     }
+    upper_node->parent_ = lower_node;
   }
 
   void BalanceTree(iterator target_iter) {
@@ -270,26 +260,25 @@ class Tree {
         DeleteNode(swap_node);
       }
       /* :1: R0, red node without children
+       * It is impossible for red node to have one child
        * Simply erase this node            */
     } else if (remove_node->color_ == kRed) {
       remove_node->EraseNode();
       /* :4-5: Delete black node */
-    } else if (remove_node->color_ == kBlack) {
       /* :4: B1, black node with one child */
-      if (children_num == 1) {
-        if (remove_node->right_) {
-          remove_node->data_ = remove_node->right_->data_;
-          DeleteNode(iterator(remove_node->right_));
-        } else {
-          remove_node->data_ = remove_node->left_->data_;
-          DeleteNode(iterator(remove_node->left_));
-        }
-        /* :5: B0, black node without children */
+    } else if (remove_node->color_ == kBlack && children_num == 1) {
+      if (remove_node->right_) {
+        remove_node->data_ = remove_node->right_->data_;
+        DeleteNode(iterator(remove_node->right_));
       } else {
-        TNode *brother = remove_node->GetBrother();
-        remove_node->EraseNode();
-        RebalanceBrother(iterator(brother));
+        remove_node->data_ = remove_node->left_->data_;
+        DeleteNode(iterator(remove_node->left_));
       }
+      /* :5: B0, black node without children */
+    } else {
+      TNode *brother = remove_node->GetBrother();
+      remove_node->EraseNode();
+      RebalanceBrother(iterator(brother));
     }
   }
 
@@ -328,50 +317,6 @@ class Tree {
       TNode *new_brother = brother->GetNearNephew();
       RotateNodes(iterator(brother->parent_), iterator(brother));
       RebalanceBrother(iterator(new_brother));
-    }
-  }
-
-  void RebalanceRightBrother(iterator target) {
-    TNode *brother = target.iter_;
-    /* :B0.1: Brother is black */
-    if (brother->color_ == kBlack) {
-      /* Right nephew is red, left nephew's color doesn't matter */
-      if (brother->right_ && brother->right_->color_ == kRed) {
-        brother->color_ = brother->parent_->color_;
-        brother->parent_->color_ = kBlack;
-        brother->right_->color_ = kBlack;
-        RotateLeft(iterator(brother->parent_), iterator(brother));
-        /* Right newphew is black, left nephew is red */
-      } else if (brother->left_ && brother->left_->color_ == kRed) {
-        TNode *nephew = brother->left_;
-        brother->color_ = kRed;
-        nephew->color_ = kBlack;
-        RotateRight(iterator(brother), iterator(nephew));
-        RebalanceRightBrother(iterator(nephew));
-        /* Both nephews are black */
-      } else {
-        brother->color_ = kRed;
-        if (brother->parent_->color_ == kRed) {
-          brother->parent_->color_ = kBlack;
-        } else {
-          TNode *fake_remove_node = brother->parent_;
-          if (fake_remove_node->IsRightSon()) {
-            brother = fake_remove_node->parent_->left_;
-            RebalanceLeftBrother(iterator(brother));
-          } else {
-            brother = fake_remove_node->parent_->right_;
-            RebalanceRightBrother(iterator(brother));
-          }
-        }
-      }
-      /* :B0.2: Brother is red */
-    } else {
-      brother->color_ = kBlack;
-      brother->parent_->color_ = kRed;
-      /* Left nephew becomes new brother, then goes new rebalancing */
-      TNode *new_brother = brother->left_;
-      RotateLeft(iterator(brother->parent_), iterator(brother));
-      RebalanceRightBrother(iterator(new_brother));
     }
   }
 
