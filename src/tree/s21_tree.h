@@ -39,20 +39,25 @@ class Tree {
 
   virtual ~Tree() { head_->DeleteTree(head_); };
 
+  std::pair<iterator, bool> MultiInsertNode(value_type value) {
+    std::pair<iterator, bool> result = InsertNode(value);
+    while (result.second == false) {
+      if (result.first->right_) {
+        result = InsertNode(value, result.first->right_);
+      } else {
+        result.first->right_ = new TNode(result.first, value);
+        result.second = true;
+        BalanceTree(result.first->right_);
+      }
+    }
+
+    return result;
+  }
+
   std::pair<iterator, bool> InsertNode(value_type value) {
     std::pair<iterator, bool> result;
     if (head_) {
-      TNode *search = FindNode(value);
-      if (value > search->data_) {
-        search->right_ = new TNode(search, value);
-        result.first = search->right_;
-        result.second = true;
-      } else if (value < search->data_) {
-        search->left_ = new TNode(search, value);
-        result.first = search->left_;
-        result.second = true;
-      }
-      if (result.second) BalanceTree(result.first);
+      result = InsertNode(value, head_);
     } else {
       head_ = new TNode(value);
       head_->color_ = kBlack;
@@ -61,10 +66,31 @@ class Tree {
     }
 
     return result;
+  };
+
+  std::pair<iterator, bool> InsertNode(value_type value, TNode *root) {
+    TNode *search = FindNode(value, root);
+    std::pair<iterator, bool> result = {search, false};
+    if (value > search->data_) {
+      search->right_ = new TNode(search, value);
+      result.first = search->right_;
+      result.second = true;
+    } else if (value < search->data_) {
+      search->left_ = new TNode(search, value);
+      result.first = search->left_;
+      result.second = true;
+    }
+    if (result.second) BalanceTree(result.first);
+
+    return result;
   }
 
   iterator FindNode(value_type value) const noexcept {
-    TNode *parent = head_;
+    return FindNode(value, head_);
+  };
+
+  iterator FindNode(value_type value, TNode *root) const noexcept {
+    TNode *parent = root;
     TNode *child = parent;
     bool not_found = true;
     while (child && not_found) {
