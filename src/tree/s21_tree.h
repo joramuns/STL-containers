@@ -26,7 +26,7 @@ class Tree {
   // Broken ctor
   Tree(const Tree &other){};
 
-  Tree(Tree &&other) { std::swap(head_, other.head_); }
+  Tree(Tree &&other) { std::swap(head_, other.head_); };
 
   // Broken assop
   Tree &operator=(const Tree &other) {
@@ -40,16 +40,19 @@ class Tree {
 
   Tree &operator=(Tree &&other) { return *this; };
 
-  virtual ~Tree() { head_->DeleteTree(head_); };
+  virtual ~Tree() { DeleteTree(head_); };
 
+  /* Overload for multiset, inserts multi node with key and value = key */
   std::pair<iterator, bool> MultiInsertNode(key_type key) {
     return MultiInsertNode(key, key);
   };
 
+  /* Overload for set, inserts unique node with key and value = key */
   std::pair<iterator, bool> InsertNode(key_type key) {
     return InsertNode(key, key);
   };
 
+  /* Inserts multi node */
   std::pair<iterator, bool> MultiInsertNode(key_type key, value_type value) {
     std::pair<iterator, bool> result = InsertNode(key);
     while (result.second == false) {
@@ -63,8 +66,10 @@ class Tree {
     }
 
     return result;
-  }
+  };
 
+  /* Inserts unique node from root, redirects to next
+   * overloaded function with root as subtree argument */
   std::pair<iterator, bool> InsertNode(key_type key, value_type value) {
     std::pair<iterator, bool> result;
     if (head_) {
@@ -79,6 +84,8 @@ class Tree {
     return result;
   };
 
+  /* Overload for inserting node not only from root, but from
+   * subtrees in order to insert nodes with repeating keys */
   std::pair<iterator, bool> InsertNode(key_type key, value_type value,
                                        TNode *root) {
     TNode *search = FindNode(key, root);
@@ -95,12 +102,15 @@ class Tree {
     if (result.second) BalanceTree(result.first);
 
     return result;
-  }
+  };
 
+  /* Overload of search function to find node from root */
   iterator FindNode(key_type key) const noexcept {
     return FindNode(key, head_);
   };
 
+  /* Overload for searching key node
+   * in subtrees for multi version of container */
   iterator FindNode(key_type key, TNode *root) const noexcept {
     TNode *parent = root;
     TNode *child = parent;
@@ -117,7 +127,7 @@ class Tree {
     }
 
     return parent;
-  }
+  };
 
   iterator MinNode(iterator root_node) const noexcept {
     while (root_node->left_) {
@@ -125,7 +135,7 @@ class Tree {
     }
 
     return root_node;
-  }
+  };
 
   iterator MaxNode(iterator root_node) const noexcept {
     while (root_node->right_) {
@@ -133,7 +143,7 @@ class Tree {
     }
 
     return root_node;
-  }
+  };
 
   iterator NextNode(iterator next_node) {
     if (next_node->right_) {
@@ -148,7 +158,7 @@ class Tree {
     }
 
     return next_node;
-  }
+  };
 
   iterator PrevNode(iterator prev_node) {
     if (prev_node->left_) {
@@ -163,30 +173,34 @@ class Tree {
     }
 
     return prev_node;
-  }
+  };
 
+  /* Universal function for rotating nodes,
+   * based on mutual arrangement of upper and
+   * lower nodes determines which side rotation should be called */
   void RotateNodes(iterator upper_node, iterator lower_node) {
     if (lower_node->IsRightSon()) {
       RotateLeft(upper_node, lower_node);
     } else {
       RotateRight(upper_node, lower_node);
     }
-  }
+  };
 
   void RotateLeft(iterator upper_node, iterator lower_node) {
     SwapParents(upper_node, lower_node);
     upper_node->right_ = lower_node->left_;
     if (upper_node->right_) upper_node->right_->parent_ = upper_node;
     lower_node->left_ = upper_node;
-  }
+  };
 
   void RotateRight(iterator upper_node, iterator lower_node) {
     SwapParents(upper_node, lower_node);
     upper_node->left_ = lower_node->right_;
     if (upper_node->left_) upper_node->left_->parent_ = upper_node;
     lower_node->right_ = upper_node;
-  }
+  };
 
+  /* Common decomposed algorithm for both rotations */
   void SwapParents(iterator upper_node, iterator lower_node) {
     lower_node->parent_ = upper_node->parent_;
     if (upper_node->parent_ == nullptr) {
@@ -200,7 +214,7 @@ class Tree {
       }
     }
     upper_node->parent_ = lower_node;
-  }
+  };
 
   void BalanceTree(iterator target_node) {
     /* Father and son are red, need to balance */
@@ -237,7 +251,7 @@ class Tree {
       }
     }
     if (head_->color_ == kRed) head_->color_ = kBlack;
-  }
+  };
 
   void DeleteNode(iterator remove_node) {
     size_type children_num = remove_node->CountChildren();
@@ -276,8 +290,9 @@ class Tree {
       remove_node->EraseNode();
       RebalanceBrother(brother);
     }
-  }
+  };
 
+  /* Rebalance tree function after deleting a node */
   void RebalanceBrother(iterator brother) { /* :B0.1: Brother is black */
     if (brother->color_ == kBlack) {
       TNode *far_nephew = brother->GetFarNephew();
@@ -313,7 +328,15 @@ class Tree {
       RotateNodes(brother->parent_, brother);
       RebalanceBrother(new_brother);
     }
-  }
+  };
+
+  void DeleteTree(TNode *pivot) {
+    if (pivot) {
+      DeleteTree(pivot->left_);
+      DeleteTree(pivot->right_);
+      delete pivot;
+    }
+  };
 
  protected:
   enum TColor { kBlack, kRed };
@@ -327,28 +350,29 @@ class Tree {
 
     TNode(const_key_reference key, const_value_reference value)
         : key_(key), value_(value){};
-    TNode(TNode *parent, const_key_reference key, const_value_reference value) : parent_(parent), key_(key), value_(value){};
+    TNode(TNode *parent, const_key_reference key, const_value_reference value)
+        : parent_(parent), key_(key), value_(value){};
 
     bool IsLeftFather() {
       if (parent_ && parent_->parent_ && parent_->parent_->left_ == parent_) {
         return true;
       }
       return false;
-    }
+    };
 
     bool IsParentRed() {
       if (parent_ && parent_->color_ == kRed) {
         return true;
       }
       return false;
-    }
+    };
 
     bool IsRightSon() {
       if (parent_ && parent_->right_ == this) {
         return true;
       }
       return false;
-    }
+    };
 
     bool IsUncleRed() {
       TNode *uncle_node = GetUncle();
@@ -357,7 +381,7 @@ class Tree {
       } else {
         return false;
       }
-    }
+    };
 
     TNode *GetUncle() {
       if (parent_->IsRightSon()) {
@@ -365,7 +389,7 @@ class Tree {
       } else {
         return parent_->parent_->right_;
       }
-    }
+    };
 
     TNode *GetBrother() {
       if (IsRightSon()) {
@@ -373,7 +397,7 @@ class Tree {
       } else {
         return parent_->right_;
       }
-    }
+    };
 
     TNode *GetFarNephew() {
       if (IsRightSon()) {
@@ -381,7 +405,7 @@ class Tree {
       } else {
         return left_;
       }
-    }
+    };
 
     TNode *GetNearNephew() {
       if (IsRightSon()) {
@@ -389,7 +413,7 @@ class Tree {
       } else {
         return right_;
       }
-    }
+    };
 
     size_type CountChildren() {
       size_type count = 0;
@@ -397,7 +421,7 @@ class Tree {
       if (right_) ++count;
 
       return count;
-    }
+    };
 
     void EraseNode() {
       if (IsRightSon()) {
@@ -406,15 +430,7 @@ class Tree {
         parent_->left_ = nullptr;
       }
       delete this;
-    }
-
-    void DeleteTree(TNode *pivot) {
-      if (pivot) {
-        DeleteTree(pivot->left_);
-        DeleteTree(pivot->right_);
-        delete pivot;
-      }
-    }
+    };
   };
   TNode *head_ = nullptr;
 };
