@@ -1,16 +1,13 @@
 #ifndef CPP2_S21_CONTAINERS_0_TREE_S21_TREE_H_
 #define CPP2_S21_CONTAINERS_0_TREE_S21_TREE_H_
 
+#include <algorithm>
 #include <initializer_list>
-#include <iostream>
-
-// Temp for print
-#include <deque>
-#include <string>
 
 namespace s21 {
 template <typename T>
 class Tree {
+ protected:
   struct TNode;
 
  public:
@@ -189,8 +186,7 @@ class Tree {
             (!is_left_father && !is_left_son)) {
           target_node->parent_->color_ = kBlack;
           target_node->parent_->parent_->color_ = kRed;
-          RotateNodes(target_node->parent_->parent_,
-                      target_node->parent_);
+          RotateNodes(target_node->parent_->parent_, target_node->parent_);
         } else {
           /* :2:&&:5: Son and father not in one line, convert to :3:||:6: */
           RotateNodes(target_node->parent_, target_node);
@@ -281,18 +277,7 @@ class Tree {
     }
   }
 
-  void PrintTree() {
-    std::deque<std::deque<std::string>> printout;
-    head_->PrintTree(head_, 1, printout);
-    for (const auto &item : printout) {
-      for (const auto &str_item : item) {
-        std::cout << str_item;
-      }
-      std::cout << std::endl;
-    }
-  };
-
- private:
+ protected:
   enum TColor { kBlack, kRed };
   struct TNode {
     TNode *parent_ = nullptr;
@@ -383,30 +368,6 @@ class Tree {
       }
       delete this;
     }
-
-    size_type PrintTree(TNode *pivot, size_type h,
-                        std::deque<std::deque<std::string>> &output) {
-      if (output.size() <= h) {
-        output.push_back({});
-        output.push_back({});
-      }
-      if (pivot) {
-        output[h - 1].push_back(std::to_string(pivot->data_));
-        if (pivot->color_ == kBlack) {
-          output[h - 1].back() += "B ";
-        } else {
-          output[h - 1].back() += "R ";
-        }
-        PrintTree(pivot->left_, h + 1, output);
-        PrintTree(pivot->right_, h + 1, output);
-      } else {
-        output[h - 1].push_back("x ");
-        output[h].push_back("y ");
-        output[h].push_back("y ");
-      }
-
-      return h;
-    };
 
     void DeleteTree(TNode *pivot) {
       if (pivot) {
