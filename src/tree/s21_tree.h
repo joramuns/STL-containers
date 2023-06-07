@@ -5,15 +5,18 @@
 #include <initializer_list>
 
 namespace s21 {
-template <typename T>
+template <typename T, typename N>
 class Tree {
  protected:
   struct TNode;
 
  public:
-  using value_type = T;
-  using reference = T &;
-  using const_reference = const T &;
+  using key_type = T;
+  using key_reference = T &;
+  using const_key_reference = const T &;
+  using value_type = N;
+  using value_reference = N &;
+  using const_value_reference = const N &;
   using size_type = std::size_t;
   using iterator = TNode *;
   using const_iterator = const TNode *;
@@ -39,13 +42,21 @@ class Tree {
 
   virtual ~Tree() { head_->DeleteTree(head_); };
 
-  std::pair<iterator, bool> MultiInsertNode(value_type value) {
-    std::pair<iterator, bool> result = InsertNode(value);
+  std::pair<iterator, bool> MultiInsertNode(key_type key) {
+    return MultiInsertNode(key, key);
+  };
+
+  std::pair<iterator, bool> InsertNode(key_type key) {
+    return InsertNode(key, key);
+  };
+
+  std::pair<iterator, bool> MultiInsertNode(key_type key, value_type value) {
+    std::pair<iterator, bool> result = InsertNode(key);
     while (result.second == false) {
       if (result.first->right_) {
-        result = InsertNode(value, result.first->right_);
+        result = InsertNode(key, value, result.first->right_);
       } else {
-        result.first->right_ = new TNode(result.first, value);
+        result.first->right_ = new TNode(result.first, key, value);
         result.second = true;
         BalanceTree(result.first->right_);
       }
@@ -54,12 +65,12 @@ class Tree {
     return result;
   }
 
-  std::pair<iterator, bool> InsertNode(value_type value) {
+  std::pair<iterator, bool> InsertNode(key_type key, value_type value) {
     std::pair<iterator, bool> result;
     if (head_) {
-      result = InsertNode(value, head_);
+      result = InsertNode(key, value, head_);
     } else {
-      head_ = new TNode(value);
+      head_ = new TNode(key, value);
       head_->color_ = kBlack;
       result.first = head_;
       result.second = false;
@@ -68,15 +79,16 @@ class Tree {
     return result;
   };
 
-  std::pair<iterator, bool> InsertNode(value_type value, TNode *root) {
-    TNode *search = FindNode(value, root);
+  std::pair<iterator, bool> InsertNode(key_type key, value_type value,
+                                       TNode *root) {
+    TNode *search = FindNode(key, root);
     std::pair<iterator, bool> result = {search, false};
-    if (value > search->data_) {
-      search->right_ = new TNode(search, value);
+    if (key > search->key_) {
+      search->right_ = new TNode(search, key, value);
       result.first = search->right_;
       result.second = true;
-    } else if (value < search->data_) {
-      search->left_ = new TNode(search, value);
+    } else if (key < search->key_) {
+      search->left_ = new TNode(search, key, value);
       result.first = search->left_;
       result.second = true;
     }
@@ -85,19 +97,19 @@ class Tree {
     return result;
   }
 
-  iterator FindNode(value_type value) const noexcept {
-    return FindNode(value, head_);
+  iterator FindNode(key_type key) const noexcept {
+    return FindNode(key, head_);
   };
 
-  iterator FindNode(value_type value, TNode *root) const noexcept {
+  iterator FindNode(key_type key, TNode *root) const noexcept {
     TNode *parent = root;
     TNode *child = parent;
     bool not_found = true;
     while (child && not_found) {
       parent = child;
-      if (value > parent->data_) {
+      if (key > parent->key_) {
         child = parent->right_;
-      } else if (value < parent->data_) {
+      } else if (key < parent->key_) {
         child = parent->left_;
       } else {
         not_found = false;
@@ -230,17 +242,17 @@ class Tree {
   void DeleteNode(iterator remove_node) {
     size_type children_num = remove_node->CountChildren();
     /* :3: RB2, red or black node with 2 children:
-     * Check if maximum value of left tree is red and delete it
-     * Otherwise, go to minumum value of right tree, call this function
+     * Check if maximum key of left tree is red and delete it
+     * Otherwise, go to minumum key of right tree, call this function
      * and repeat the whole algorithm */
     if (children_num == 2) {
       iterator swap_node = MaxNode(remove_node->left_);
       if (swap_node->color_ == kRed) {
-        remove_node->data_ = swap_node->data_;
+        remove_node->key_ = swap_node->key_;
         DeleteNode(swap_node);
       } else {
         swap_node = MinNode(remove_node->right_);
-        remove_node->data_ = swap_node->data_;
+        remove_node->key_ = swap_node->key_;
         DeleteNode(swap_node);
       }
       /* :1: R0, red node without children
@@ -252,10 +264,10 @@ class Tree {
       /* :4: B1, black node with one child */
     } else if (remove_node->color_ == kBlack && children_num == 1) {
       if (remove_node->right_) {
-        remove_node->data_ = remove_node->right_->data_;
+        remove_node->key_ = remove_node->right_->key_;
         DeleteNode(remove_node->right_);
       } else {
-        remove_node->data_ = remove_node->left_->data_;
+        remove_node->key_ = remove_node->left_->key_;
         DeleteNode(remove_node->left_);
       }
       /* :5: B0, black node without children */
@@ -309,12 +321,13 @@ class Tree {
     TNode *parent_ = nullptr;
     TNode *left_ = nullptr;
     TNode *right_ = nullptr;
-    value_type data_;
+    key_type key_;
+    value_type value_;
     bool color_ = kRed;
 
-    explicit TNode(const_reference value) : data_(value){};
-    TNode(TNode *parent, const_reference value)
-        : parent_(parent), data_(value){};
+    TNode(const_key_reference key, const_value_reference value)
+        : key_(key), value_(value){};
+    TNode(TNode *parent, const_key_reference key, const_value_reference value) : parent_(parent), key_(key), value_(value){};
 
     bool IsLeftFather() {
       if (parent_ && parent_->parent_ && parent_->parent_->left_ == parent_) {

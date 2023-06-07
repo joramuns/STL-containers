@@ -7,15 +7,15 @@
 #include "s21_tree.h"
 
 namespace s21 {
-template <typename T>
-class DTree : public Tree<T> {
+template <typename T, typename N>
+class DTree : public Tree<T, N> {
  public:
   using value_type = T;
   using size_type = std::size_t;
 
   void OutputTree() {
     std::deque<std::deque<std::string>> printout;
-    PrintTree(Tree<T>::head_, 1, printout);
+    PrintTree(Tree<T, N>::head_, 1, printout);
     for (const auto &item : printout) {
       for (const auto &str_item : item) {
         std::cout << str_item;
@@ -24,15 +24,15 @@ class DTree : public Tree<T> {
     }
   };
 
-  size_type PrintTree(typename Tree<T>::TNode *pivot, size_type h,
+  size_type PrintTree(typename Tree<T, N>::TNode *pivot, size_type h,
                       std::deque<std::deque<std::string>> &output) {
     if (output.size() <= h) {
       output.push_back({});
       output.push_back({});
     }
     if (pivot) {
-      output[h - 1].push_back(std::to_string(pivot->data_));
-      if (pivot->color_ == Tree<T>::kBlack) {
+      output[h - 1].push_back(std::to_string(pivot->key_));
+      if (pivot->color_ == Tree<T, N>::kBlack) {
         output[h - 1].back() += "B ";
       } else {
         output[h - 1].back() += "R ";
