@@ -9,6 +9,7 @@ template <typename T, typename N>
 class Tree {
  protected:
   struct TNode;
+  class TreeIterator;
 
  public:
   using key_type = T;
@@ -18,7 +19,7 @@ class Tree {
   using value_reference = N &;
   using const_value_reference = const N &;
   using size_type = std::size_t;
-  using iterator = TNode *;
+  using iterator = TreeIterator;
   using const_iterator = const TNode *;
 
   Tree(){};
@@ -49,12 +50,12 @@ class Tree {
 
   /* Overload for set, inserts unique node with key and value = key */
   std::pair<iterator, bool> InsertNode(key_type key) {
-    return InsertNode(key, key);
+    return (std::pair<iterator, bool>)InsertNode(key, key);
   };
 
   /* Inserts multi node */
-  std::pair<iterator, bool> MultiInsertNode(key_type key, value_type value) {
-    std::pair<iterator, bool> result = InsertNode(key);
+  std::pair<TNode *, bool> MultiInsertNode(key_type key, value_type value) {
+    std::pair<TNode *, bool> result = InsertNode(key);
     while (result.second == false) {
       if (result.first->right_) {
         result = InsertNode(key, value, result.first->right_);
@@ -70,8 +71,8 @@ class Tree {
 
   /* Inserts unique node from root, redirects to next
    * overloaded function with root as subtree argument */
-  std::pair<iterator, bool> InsertNode(key_type key, value_type value) {
-    std::pair<iterator, bool> result;
+  std::pair<TNode *, bool> InsertNode(key_type key, value_type value) {
+    std::pair<TNode *, bool> result;
     if (head_) {
       result = InsertNode(key, value, head_);
     } else {
@@ -86,10 +87,10 @@ class Tree {
 
   /* Overload for inserting node not only from root, but from
    * subtrees in order to insert nodes with repeating keys */
-  std::pair<iterator, bool> InsertNode(key_type key, value_type value,
-                                       TNode *root) {
+  std::pair<TNode *, bool> InsertNode(key_type key, value_type value,
+                                      TNode *root) {
     TNode *search = FindNode(key, root);
-    std::pair<iterator, bool> result = {search, false};
+    std::pair<TNode *, bool> result = {search, false};
     if (key > search->key_) {
       search->right_ = new TNode(search, key, value);
       result.first = search->right_;
@@ -105,13 +106,11 @@ class Tree {
   };
 
   /* Overload of search function to find node from root */
-  iterator FindNode(key_type key) const noexcept {
-    return FindNode(key, head_);
-  };
+  iterator FindNode(key_type key) const noexcept { return (iterator)FindNode(key, head_); };
 
   /* Overload for searching key node
    * in subtrees for multi version of container */
-  iterator FindNode(key_type key, TNode *root) const noexcept {
+  TNode *FindNode(key_type key, TNode *root) const noexcept {
     TNode *parent = root;
     TNode *child = parent;
     bool not_found = true;
@@ -129,7 +128,7 @@ class Tree {
     return parent;
   };
 
-  iterator MinNode(iterator root_node) const noexcept {
+  TNode *MinNode(TNode *root_node) const noexcept {
     while (root_node->left_) {
       root_node = root_node->left_;
     }
@@ -137,7 +136,7 @@ class Tree {
     return root_node;
   };
 
-  iterator MaxNode(iterator root_node) const noexcept {
+  TNode *MaxNode(TNode *root_node) const noexcept {
     while (root_node->right_) {
       root_node = root_node->right_;
     }
@@ -145,7 +144,7 @@ class Tree {
     return root_node;
   };
 
-  iterator NextNode(iterator next_node) {
+  TNode *NextNode(TNode *next_node) {
     if (next_node->right_) {
       next_node = MinNode(next_node->right_);
     } else if (next_node->parent_ && !next_node->IsRightSon()) {
@@ -160,7 +159,7 @@ class Tree {
     return next_node;
   };
 
-  iterator PrevNode(iterator prev_node) {
+  TNode *PrevNode(TNode *prev_node) {
     if (prev_node->left_) {
       prev_node = MaxNode(prev_node->left_);
     } else if (prev_node->parent_ && prev_node->IsRightSon()) {
@@ -178,7 +177,7 @@ class Tree {
   /* Universal function for rotating nodes,
    * based on mutual arrangement of upper and
    * lower nodes determines which side rotation should be called */
-  void RotateNodes(iterator upper_node, iterator lower_node) {
+  void RotateNodes(TNode *upper_node, TNode *lower_node) {
     if (lower_node->IsRightSon()) {
       RotateLeft(upper_node, lower_node);
     } else {
@@ -186,14 +185,14 @@ class Tree {
     }
   };
 
-  void RotateLeft(iterator upper_node, iterator lower_node) {
+  void RotateLeft(TNode *upper_node, TNode *lower_node) {
     SwapParents(upper_node, lower_node);
     upper_node->right_ = lower_node->left_;
     if (upper_node->right_) upper_node->right_->parent_ = upper_node;
     lower_node->left_ = upper_node;
   };
 
-  void RotateRight(iterator upper_node, iterator lower_node) {
+  void RotateRight(TNode *upper_node, TNode *lower_node) {
     SwapParents(upper_node, lower_node);
     upper_node->left_ = lower_node->right_;
     if (upper_node->left_) upper_node->left_->parent_ = upper_node;
@@ -201,7 +200,7 @@ class Tree {
   };
 
   /* Common decomposed algorithm for both rotations */
-  void SwapParents(iterator upper_node, iterator lower_node) {
+  void SwapParents(TNode *upper_node, TNode *lower_node) {
     lower_node->parent_ = upper_node->parent_;
     if (upper_node->parent_ == nullptr) {
       head_ = lower_node;
@@ -216,7 +215,7 @@ class Tree {
     upper_node->parent_ = lower_node;
   };
 
-  void BalanceTree(iterator target_node) {
+  void BalanceTree(TNode *target_node) {
     /* Father and son are red, need to balance */
     while (target_node->IsParentRed()) {
       /* :1:&:4: Uncle is red, no matter whether son is left or right,
@@ -253,14 +252,14 @@ class Tree {
     if (head_->color_ == kRed) head_->color_ = kBlack;
   };
 
-  void DeleteNode(iterator remove_node) {
+  void DeleteNode(TNode *remove_node) {
     size_type children_num = remove_node->CountChildren();
     /* :3: RB2, red or black node with 2 children:
      * Check if maximum key of left tree is red and delete it
      * Otherwise, go to minumum key of right tree, call this function
      * and repeat the whole algorithm */
     if (children_num == 2) {
-      iterator swap_node = MaxNode(remove_node->left_);
+      TNode *swap_node = MaxNode(remove_node->left_);
       if (swap_node->color_ == kRed) {
         remove_node->key_ = swap_node->key_;
         DeleteNode(swap_node);
@@ -293,7 +292,7 @@ class Tree {
   };
 
   /* Rebalance tree function after deleting a node */
-  void RebalanceBrother(iterator brother) { /* :B0.1: Brother is black */
+  void RebalanceBrother(TNode *brother) { /* :B0.1: Brother is black */
     if (brother->color_ == kBlack) {
       TNode *far_nephew = brother->GetFarNephew();
       TNode *near_nephew = brother->GetNearNephew();
@@ -340,6 +339,26 @@ class Tree {
 
  protected:
   enum TColor { kBlack, kRed };
+
+  class TreeIterator {
+   public:
+    TreeIterator(){};
+
+    explicit TreeIterator(TNode *node) : iter_(node){};
+    /* explicit TreeIterator(iterator &other) : iter_(other.iter_){}; */
+
+    iterator &operator=(const iterator &other) {
+      iter_ = other.iter_;
+      return *this;
+    }
+
+
+    value_reference operator*() { return iter_->value_; }
+
+   private:
+    TNode *iter_;
+  };
+
   struct TNode {
     TNode *parent_ = nullptr;
     TNode *left_ = nullptr;
@@ -350,8 +369,11 @@ class Tree {
 
     TNode(const_key_reference key, const_value_reference value)
         : key_(key), value_(value){};
+
     TNode(TNode *parent, const_key_reference key, const_value_reference value)
         : parent_(parent), key_(key), value_(value){};
+
+    /* operator TreeIterator() { return TreeIterator(this); } */
 
     bool IsLeftFather() {
       if (parent_ && parent_->parent_ && parent_->parent_->left_ == parent_) {
@@ -432,6 +454,7 @@ class Tree {
       delete this;
     };
   };
+
   TNode *head_ = nullptr;
 };
 }  // namespace s21
