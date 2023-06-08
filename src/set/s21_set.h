@@ -8,18 +8,16 @@
 
 namespace s21 {
 template <typename T>
-class set {
+class set : public Tree<T, T> {
   /*** Forward declaration of nested classes ***/
-  class SetIterator;
-  class ConstSetIterator;
 
  public:
   using key_type = T;
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
-  using iterator = SetIterator;
-  using const_iterator = ConstSetIterator;
+  using iterator = typename Tree<T, T>::TreeIterator;
+  /* using const_iterator = ConstSetIterator; */
   using size_type = std::size_t;
 
   /* Set member functions */
@@ -34,33 +32,31 @@ class set {
   /* Set iterators */
   iterator begin() noexcept;
   iterator end() noexcept;
-  const_iterator begin() const noexcept;
-  const_iterator end() const noexcept;
+  /* const_iterator begin() const noexcept; */
+  /* const_iterator end() const noexcept; */
 
   /* Set capacity */
-  bool empty() noexcept;
   bool empty() const noexcept;
-  size_type size() noexcept;
   size_type size() const noexcept;
-  size_type max_size() noexcept;
   size_type max_size() const noexcept;
 
   /* Set modifiers */
   void clear();
-  std::pair<iterator, bool> insert(const value_type &value);
+  std::pair<iterator, bool> insert(const value_type &value) {
+    return rb_tree_.InsertNode(value);
+  };
   void erase(iterator pos);
   void swap(set &other);
   void merge(set &other);
 
   /* Set lookup */
-  iterator find(const key_type &key) noexcept;
-  iterator find(const key_type &key) const noexcept;
-  bool contains(const key_type &key) noexcept;
+  iterator find(const key_type &key) const noexcept {
+    return rb_tree_.FindNode(key);
+  };
   bool contains(const key_type &key) const noexcept;
 
  private:
-  class SetIterator {};
-  class ConstSetIterator {};
+  Tree<T, T> rb_tree_;
   size_type size_;
 };
 }  // namespace s21
