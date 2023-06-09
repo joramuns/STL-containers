@@ -49,7 +49,7 @@ class Tree {
     delete tail_;
   };
 
-  iterator begin() const noexcept {
+  iterator Begin() const noexcept {
     TNode *result;
     if (head_) {
       result = head_->MinNode();
@@ -60,7 +60,7 @@ class Tree {
     return iterator(result);
   }
 
-  iterator end() const noexcept { return iterator(tail_); }
+  iterator End() const noexcept { return iterator(tail_); }
 
   /* Overload for multiset, inserts multi node with key and value = key */
   std::pair<iterator, bool> MultiInsertNode(key_type key) {
@@ -82,8 +82,8 @@ class Tree {
         result.first->right_ = new TNode(result.first, key, value);
         result.second = true;
         BalanceTree(result.first->right_);
-        tail_->left_ = head_->MaxNode();
-        tail_->right_ = head_->MinNode();
+        RefreshTail();
+        ++size_;
       }
     }
 
@@ -100,10 +100,10 @@ class Tree {
       head_ = new TNode(key, value);
       head_->color_ = kBlack;
       head_->parent_ = tail_;
-      tail_->left_ = head_->MaxNode();
-      tail_->right_ = head_->MinNode();
+      RefreshTail();
       result.first = head_;
-      result.second = false;
+      result.second = true;
+      ++size_;
     }
 
     return result;
@@ -126,8 +126,8 @@ class Tree {
     }
     if (result.second) {
       BalanceTree(result.first);
-      tail_->left_ = head_->MaxNode();
-      tail_->right_ = head_->MinNode();
+      RefreshTail();
+      ++size_;
     }
 
     return result;
@@ -136,7 +136,7 @@ class Tree {
   iterator FindKey(key_type key) const noexcept {
     iterator result = FindNode(key);
     if (*result != key) {
-      result = end();
+      result = End();
     }
 
     return result;
@@ -245,47 +245,51 @@ class Tree {
     if (head_->color_ == kRed) head_->color_ = kBlack;
   };
 
-  void DeleteNode(TNode *remove_node) {
+  void DeleteNode(iterator remove_iter) {
+    TNode *remove_node = remove_iter.GetNode();
     size_type children_num = remove_node->CountChildren();
     /* :3: RB2, red or black node with 2 children:
      * Check if maximum key of left tree is red and delete it
      * Otherwise, go to minumum key of right tree, call this function
      * and repeat the whole algorithm */
     if (children_num == 2) {
-      TNode *swap_node = remove_node->left_.MaxNode();
+      TNode *swap_node = remove_node->left_->MaxNode();
       if (swap_node->color_ == kRed) {
         remove_node->key_ = swap_node->key_;
         remove_node->value_ = swap_node->value_;
-        DeleteNode(swap_node);
+        DeleteNode(iterator(swap_node));
       } else {
-        swap_node = remove_node->right_.MinNode();
+        swap_node = remove_node->right_->MinNode();
         remove_node->key_ = swap_node->key_;
         remove_node->value_ = swap_node->value_;
-        DeleteNode(swap_node);
+        DeleteNode(iterator(swap_node));
       }
       /* :1: R0, red node without children
        * It is impossible for red node to have one child
        * Simply erase this node            */
     } else if (remove_node->color_ == kRed) {
       remove_node->EraseNode();
+      --size_;
       /* :4-5: Delete black node */
       /* :4: B1, black node with one child */
     } else if (remove_node->color_ == kBlack && children_num == 1) {
       if (remove_node->right_) {
         remove_node->key_ = remove_node->right_->key_;
         remove_node->value_ = remove_node->right_->value_;
-        DeleteNode(remove_node->right_);
+        DeleteNode(iterator(remove_node->right_));
       } else {
         remove_node->key_ = remove_node->left_->key_;
         remove_node->value_ = remove_node->left_->value_;
-        DeleteNode(remove_node->left_);
+        DeleteNode(iterator(remove_node->left_));
       }
       /* :5: B0, black node without children */
     } else {
       TNode *brother = remove_node->GetBrother();
       remove_node->EraseNode();
+      --size_;
       RebalanceBrother(brother);
     }
+    RefreshTail();
   };
 
   /* Rebalance tree function after deleting a node */
@@ -310,7 +314,8 @@ class Tree {
         brother->color_ = kRed;
         if (brother->parent_->color_ == kRed) {
           brother->parent_->color_ = kBlack;
-        } else {
+        } else if (brother->parent_->parent_ &&
+                   !brother->parent_->IsFatherFake()) {
           brother = brother->parent_->GetBrother();
           RebalanceBrother(brother);
         }
@@ -327,12 +332,18 @@ class Tree {
   };
 
   void DeleteTree(TNode *pivot) {
-    if (pivot) {
+    if (size_) {
       DeleteTree(pivot->left_);
       DeleteTree(pivot->right_);
       delete pivot;
     }
   };
+
+  void RefreshTail() {
+    tail_->left_ = head_->MaxNode();
+    tail_->right_ = head_->MinNode();
+  };
+
   class TreeIterator {
    public:
     TreeIterator(){};
@@ -346,6 +357,8 @@ class Tree {
     }
 
     ~TreeIterator(){};
+
+    TNode *GetNode() { return iter_; }
 
     iterator operator++() {
       *this = this->iter_->NextNode();
@@ -526,6 +539,7 @@ class Tree {
 
   TNode *head_ = nullptr;
   TNode *tail_ = new TNode({}, {});
+  size_type size_ = 0;
 };
 }  // namespace s21
 
