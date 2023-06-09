@@ -332,7 +332,7 @@ class Tree {
   };
 
   void DeleteTree(TNode *pivot) {
-    if (size_) {
+    if (pivot && size_) {
       DeleteTree(pivot->left_);
       DeleteTree(pivot->right_);
       delete pivot;
