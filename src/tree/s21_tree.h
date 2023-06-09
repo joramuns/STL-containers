@@ -49,7 +49,7 @@ class Tree {
     delete tail_;
   };
 
-  iterator begin() {
+  iterator begin() const noexcept {
     TNode *result;
     if (head_) {
       result = head_->MinNode();
@@ -60,7 +60,7 @@ class Tree {
     return iterator(result);
   }
 
-  iterator end() { return iterator(tail_); }
+  iterator end() const noexcept { return iterator(tail_); }
 
   /* Overload for multiset, inserts multi node with key and value = key */
   std::pair<iterator, bool> MultiInsertNode(key_type key) {
