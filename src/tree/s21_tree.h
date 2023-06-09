@@ -135,7 +135,7 @@ class Tree {
 
   iterator FindKey(key_type key) const noexcept {
     iterator result = FindNode(key);
-    if (*result != key) {
+    if (!size_ || *result != key) {
       result = End();
     }
 
@@ -246,8 +246,12 @@ class Tree {
   };
 
   void DeleteNode(iterator remove_iter) {
-    TNode *remove_node = remove_iter.GetNode();
-    size_type children_num = remove_node->CountChildren();
+    TNode *remove_node = nullptr;
+    size_type children_num = 3;
+    if (remove_iter != End()) {
+      remove_node = remove_iter.GetNode();
+      children_num = remove_node->CountChildren();
+    }
     /* :3: RB2, red or black node with 2 children:
      * Check if maximum key of left tree is red and delete it
      * Otherwise, go to minumum key of right tree, call this function
@@ -267,12 +271,12 @@ class Tree {
       /* :1: R0, red node without children
        * It is impossible for red node to have one child
        * Simply erase this node            */
-    } else if (remove_node->color_ == kRed) {
+    } else if (children_num == 0 && remove_node->color_ == kRed) {
       remove_node->EraseNode();
       --size_;
       /* :4-5: Delete black node */
       /* :4: B1, black node with one child */
-    } else if (remove_node->color_ == kBlack && children_num == 1) {
+    } else if (children_num == 1 && remove_node->color_ == kBlack) {
       if (remove_node->right_) {
         remove_node->key_ = remove_node->right_->key_;
         remove_node->value_ = remove_node->right_->value_;
@@ -283,7 +287,7 @@ class Tree {
         DeleteNode(iterator(remove_node->left_));
       }
       /* :5: B0, black node without children */
-    } else {
+    } else if (children_num == 0) {
       TNode *brother = remove_node->GetBrother();
       remove_node->EraseNode();
       --size_;
@@ -340,8 +344,10 @@ class Tree {
   };
 
   void RefreshTail() {
-    tail_->left_ = head_->MaxNode();
-    tail_->right_ = head_->MinNode();
+    if (size_) {
+      tail_->left_ = head_->MaxNode();
+      tail_->right_ = head_->MinNode();
+    }
   };
 
   class TreeIterator {
