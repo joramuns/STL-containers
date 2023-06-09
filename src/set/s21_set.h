@@ -39,16 +39,19 @@ class set {
   const iterator end() const noexcept { return rb_tree_.End(); };
 
   /* Set capacity */
-  bool empty() const noexcept;
-  size_type size() const noexcept;
+  bool empty() const noexcept { return rb_tree_.Empty(); };
+  size_type size() const noexcept { return rb_tree_.GetSize(); };
   size_type max_size() const noexcept;
 
   /* Set modifiers */
   void clear();
+
   std::pair<iterator, bool> insert(const value_type &value) {
     return rb_tree_.InsertNode(value);
   };
+
   void erase(iterator pos) { rb_tree_.DeleteNode(pos); };
+
   void swap(set &other);
   void merge(set &other);
 
