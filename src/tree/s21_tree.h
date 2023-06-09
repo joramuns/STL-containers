@@ -4,14 +4,17 @@
 #include <algorithm>
 #include <initializer_list>
 
+// temp
+#include <iostream>
+
 namespace s21 {
 template <typename T, typename N>
 class Tree {
  protected:
   struct TNode;
-  class TreeIterator;
 
  public:
+  class TreeIterator;
   using key_type = T;
   using key_reference = T &;
   using const_key_reference = const T &;
@@ -22,7 +25,7 @@ class Tree {
   using iterator = TreeIterator;
   using const_iterator = const TNode *;
 
-  Tree(){};
+  Tree() { tail_->is_fake_ = true; };
 
   // Broken ctor
   Tree(const Tree &other){};
@@ -41,7 +44,23 @@ class Tree {
 
   Tree &operator=(Tree &&other) { return *this; };
 
-  virtual ~Tree() { DeleteTree(head_); };
+  virtual ~Tree() {
+    DeleteTree(head_);
+    delete tail_;
+  };
+
+  iterator begin() {
+    TNode *result;
+    if (head_) {
+      result = head_->MinNode();
+    } else {
+      result = tail_;
+    }
+
+    return iterator(result);
+  }
+
+  iterator end() { return iterator(tail_); }
 
   /* Overload for multiset, inserts multi node with key and value = key */
   std::pair<iterator, bool> MultiInsertNode(key_type key) {
@@ -63,6 +82,8 @@ class Tree {
         result.first->right_ = new TNode(result.first, key, value);
         result.second = true;
         BalanceTree(result.first->right_);
+        tail_->left_ = head_->MaxNode();
+        tail_->right_ = head_->MinNode();
       }
     }
 
@@ -78,6 +99,9 @@ class Tree {
     } else {
       head_ = new TNode(key, value);
       head_->color_ = kBlack;
+      head_->parent_ = tail_;
+      tail_->left_ = head_->MaxNode();
+      tail_->right_ = head_->MinNode();
       result.first = head_;
       result.second = false;
     }
@@ -100,13 +124,19 @@ class Tree {
       result.first = search->left_;
       result.second = true;
     }
-    if (result.second) BalanceTree(result.first);
+    if (result.second) {
+      BalanceTree(result.first);
+      tail_->left_ = head_->MaxNode();
+      tail_->right_ = head_->MinNode();
+    }
 
     return result;
   };
 
   /* Overload of search function to find node from root */
-  iterator FindNode(key_type key) const noexcept { return (iterator)FindNode(key, head_); };
+  iterator FindNode(key_type key) const noexcept {
+    return (iterator)FindNode(key, head_);
+  };
 
   /* Overload for searching key node
    * in subtrees for multi version of container */
@@ -126,52 +156,6 @@ class Tree {
     }
 
     return parent;
-  };
-
-  TNode *MinNode(TNode *root_node) const noexcept {
-    while (root_node->left_) {
-      root_node = root_node->left_;
-    }
-
-    return root_node;
-  };
-
-  TNode *MaxNode(TNode *root_node) const noexcept {
-    while (root_node->right_) {
-      root_node = root_node->right_;
-    }
-
-    return root_node;
-  };
-
-  TNode *NextNode(TNode *next_node) {
-    if (next_node->right_) {
-      next_node = MinNode(next_node->right_);
-    } else if (next_node->parent_ && !next_node->IsRightSon()) {
-      next_node = next_node->parent_;
-    } else {
-      while (next_node->parent_ && next_node->IsRightSon()) {
-        next_node = next_node->parent_;
-      }
-      next_node = next_node->parent_;
-    }
-
-    return next_node;
-  };
-
-  TNode *PrevNode(TNode *prev_node) {
-    if (prev_node->left_) {
-      prev_node = MaxNode(prev_node->left_);
-    } else if (prev_node->parent_ && prev_node->IsRightSon()) {
-      prev_node = prev_node->parent_;
-    } else {
-      while (prev_node->parent_ && !prev_node->IsRightSon()) {
-        prev_node = prev_node->parent_;
-      }
-      prev_node = prev_node->parent_;
-    }
-
-    return prev_node;
   };
 
   /* Universal function for rotating nodes,
@@ -202,7 +186,7 @@ class Tree {
   /* Common decomposed algorithm for both rotations */
   void SwapParents(TNode *upper_node, TNode *lower_node) {
     lower_node->parent_ = upper_node->parent_;
-    if (upper_node->parent_ == nullptr) {
+    if (upper_node->IsFatherFake()) {
       head_ = lower_node;
       lower_node->color_ = kBlack;
     } else {
@@ -259,13 +243,15 @@ class Tree {
      * Otherwise, go to minumum key of right tree, call this function
      * and repeat the whole algorithm */
     if (children_num == 2) {
-      TNode *swap_node = MaxNode(remove_node->left_);
+      TNode *swap_node = remove_node->left_.MaxNode();
       if (swap_node->color_ == kRed) {
         remove_node->key_ = swap_node->key_;
+        remove_node->value_ = swap_node->value_;
         DeleteNode(swap_node);
       } else {
-        swap_node = MinNode(remove_node->right_);
+        swap_node = remove_node->right_.MinNode();
         remove_node->key_ = swap_node->key_;
+        remove_node->value_ = swap_node->value_;
         DeleteNode(swap_node);
       }
       /* :1: R0, red node without children
@@ -278,9 +264,11 @@ class Tree {
     } else if (remove_node->color_ == kBlack && children_num == 1) {
       if (remove_node->right_) {
         remove_node->key_ = remove_node->right_->key_;
+        remove_node->value_ = remove_node->right_->value_;
         DeleteNode(remove_node->right_);
       } else {
         remove_node->key_ = remove_node->left_->key_;
+        remove_node->value_ = remove_node->left_->value_;
         DeleteNode(remove_node->left_);
       }
       /* :5: B0, black node without children */
@@ -336,10 +324,6 @@ class Tree {
       delete pivot;
     }
   };
-
- protected:
-  enum TColor { kBlack, kRed };
-
   class TreeIterator {
    public:
     TreeIterator(){};
@@ -352,12 +336,33 @@ class Tree {
       return *this;
     }
 
+    ~TreeIterator(){};
+
+    iterator operator++() {
+      *this = this->iter_->NextNode();
+      /* *this = this->iter_->PrevNode(); */
+      return *this;
+    };
+
+    /* iterator operator++(int) {}; */
+    iterator operator--() {
+      *this = this->iter_->PrevNode();
+      return *this;
+    };
+    /* iterator operator--(int) {}; */
+
+    bool operator==(const iterator &other) { return iter_ == other.iter_; }
+
+    bool operator!=(const iterator &other) { return iter_ != other.iter_; }
 
     value_reference operator*() { return iter_->value_; }
 
    private:
     TNode *iter_;
   };
+
+ protected:
+  enum TColor { kBlack, kRed };
 
   struct TNode {
     TNode *parent_ = nullptr;
@@ -366,6 +371,7 @@ class Tree {
     key_type key_;
     value_type value_;
     bool color_ = kRed;
+    bool is_fake_ = false;
 
     TNode(const_key_reference key, const_value_reference value)
         : key_(key), value_(value){};
@@ -375,6 +381,60 @@ class Tree {
 
     /* operator TreeIterator() { return TreeIterator(this); } */
 
+    TNode *MinNode() noexcept {
+      TNode *root_node = this;
+      while (root_node->left_) {
+        root_node = root_node->left_;
+      }
+
+      return root_node;
+    };
+
+    TNode *MaxNode() noexcept {
+      TNode *root_node = this;
+      while (root_node->right_) {
+        root_node = root_node->right_;
+      }
+
+      return root_node;
+    };
+
+    iterator NextNode() {
+      TNode *next_node = this;
+      if (next_node->right_) {
+        next_node = next_node->right_->MinNode();
+      } else if (next_node->parent_ && !next_node->IsRightSon()) {
+        next_node = next_node->parent_;
+      } else {
+        while (next_node->parent_ && !next_node->IsFatherFake() &&
+               next_node->IsRightSon()) {
+          next_node = next_node->parent_;
+        }
+        next_node = next_node->parent_;
+      }
+
+      return iterator(next_node);
+    };
+
+    iterator PrevNode() {
+      TNode *prev_node = this;
+      if (prev_node->left_) {
+        prev_node = prev_node->left_->MaxNode();
+      } else if (prev_node->parent_ && prev_node->IsRightSon()) {
+        prev_node = prev_node->parent_;
+      } else {
+        while (prev_node->parent_ && !prev_node->IsFatherFake() &&
+               !prev_node->IsRightSon()) {
+          prev_node = prev_node->parent_;
+        }
+        prev_node = prev_node->parent_;
+      }
+
+      return iterator(prev_node);
+    };
+
+    bool IsFatherFake() { return this->parent_->is_fake_; }
+
     bool IsLeftFather() {
       if (parent_ && parent_->parent_ && parent_->parent_->left_ == parent_) {
         return true;
@@ -383,7 +443,7 @@ class Tree {
     };
 
     bool IsParentRed() {
-      if (parent_ && parent_->color_ == kRed) {
+      if (parent_ && !IsFatherFake() && parent_->color_ == kRed) {
         return true;
       }
       return false;
@@ -456,6 +516,7 @@ class Tree {
   };
 
   TNode *head_ = nullptr;
+  TNode *tail_ = new TNode({}, {});
 };
 }  // namespace s21
 
