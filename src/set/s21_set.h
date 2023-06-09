@@ -31,12 +31,12 @@ class set {
   /* set &operator=(set &&s){ return 0; }; */
 
   /* Set iterators */
-  iterator begin() noexcept { return rb_tree_.begin(); };
-  iterator end() noexcept { return rb_tree_.end(); };
+  iterator begin() noexcept { return rb_tree_.Begin(); };
+  iterator end() noexcept { return rb_tree_.End(); };
   /* const_iterator begin() const noexcept; */
   /* const_iterator end() const noexcept; */
-  const iterator begin() const noexcept { return rb_tree_.begin(); };
-  const iterator end() const noexcept { return rb_tree_.end(); };
+  const iterator begin() const noexcept { return rb_tree_.Begin(); };
+  const iterator end() const noexcept { return rb_tree_.End(); };
 
   /* Set capacity */
   bool empty() const noexcept;
@@ -48,7 +48,7 @@ class set {
   std::pair<iterator, bool> insert(const value_type &value) {
     return rb_tree_.InsertNode(value);
   };
-  void erase(iterator pos);
+  void erase(iterator pos) { rb_tree_.DeleteNode(pos); };
   void swap(set &other);
   void merge(set &other);
 
@@ -63,7 +63,6 @@ class set {
 
  private:
   tree_type rb_tree_;
-  size_type size_;
 };
 }  // namespace s21
 
