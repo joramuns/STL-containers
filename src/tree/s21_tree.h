@@ -133,6 +133,15 @@ class Tree {
     return result;
   };
 
+  iterator FindKey(key_type key) const noexcept {
+    iterator result = FindNode(key);
+    if (*result != key) {
+      result = end();
+    }
+
+    return result;
+  }
+
   /* Overload of search function to find node from root */
   iterator FindNode(key_type key) const noexcept {
     return (iterator)FindNode(key, head_);
