@@ -349,6 +349,10 @@ class Tree {
       tail_->right_ = head_->MinNode();
     }
   };
+  
+  size_type GetSize() { return size_; }
+
+  bool Empty() { return size_ == 0; }
 
   class TreeIterator {
    public:
