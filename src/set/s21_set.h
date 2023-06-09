@@ -8,7 +8,7 @@
 
 namespace s21 {
 template <typename T>
-class set : public Tree<T, T> {
+class set {
   /*** Forward declaration of nested classes ***/
 
  public:
@@ -30,8 +30,8 @@ class set : public Tree<T, T> {
   /* set &operator=(set &&s){ return 0; }; */
 
   /* Set iterators */
-  iterator begin() noexcept;
-  iterator end() noexcept;
+  iterator begin() noexcept { return rb_tree_.begin(); };
+  iterator end() noexcept { return rb_tree_.end(); };
   /* const_iterator begin() const noexcept; */
   /* const_iterator end() const noexcept; */
 
