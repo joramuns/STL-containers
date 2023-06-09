@@ -16,7 +16,8 @@ class set {
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
-  using iterator = typename Tree<T, T>::TreeIterator;
+  using tree_type = Tree<T, T>;
+  using iterator = typename tree_type::TreeIterator;
   /* using const_iterator = ConstSetIterator; */
   using size_type = std::size_t;
 
@@ -34,6 +35,8 @@ class set {
   iterator end() noexcept { return rb_tree_.end(); };
   /* const_iterator begin() const noexcept; */
   /* const_iterator end() const noexcept; */
+  const iterator begin() const noexcept { return rb_tree_.begin(); };
+  const iterator end() const noexcept { return rb_tree_.end(); };
 
   /* Set capacity */
   bool empty() const noexcept;
@@ -51,12 +54,15 @@ class set {
 
   /* Set lookup */
   iterator find(const key_type &key) const noexcept {
-    return rb_tree_.FindNode(key);
+    return rb_tree_.FindKey(key);
   };
-  bool contains(const key_type &key) const noexcept;
+
+  bool contains(const key_type &key) const noexcept {
+    return find(key) != end();
+  };
 
  private:
-  Tree<T, T> rb_tree_;
+  tree_type rb_tree_;
   size_type size_;
 };
 }  // namespace s21
