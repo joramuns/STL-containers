@@ -14,13 +14,17 @@ class DTree : public Tree<T, N> {
   using size_type = std::size_t;
 
   void OutputTree() {
-    std::deque<std::deque<std::string>> printout;
-    PrintTree(Tree<T, N>::head_, 1, printout);
-    for (const auto &item : printout) {
-      for (const auto &str_item : item) {
-        std::cout << str_item;
+    if (Tree<T, N>::size_) {
+      std::deque<std::deque<std::string>> printout;
+      PrintTree(Tree<T, N>::head_, 1, printout);
+      for (const auto &item : printout) {
+        for (const auto &str_item : item) {
+          std::cout << str_item;
+        }
+        std::cout << std::endl;
       }
-      std::cout << std::endl;
+    } else {
+      std::cout << "Tree is empty!" << std::endl;
     }
   };
 
