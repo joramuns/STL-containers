@@ -350,9 +350,9 @@ class Tree {
     }
   };
   
-  size_type GetSize() { return size_; }
+  size_type GetSize() const noexcept { return size_; }
 
-  bool Empty() { return size_ == 0; }
+  bool Empty() const noexcept { return size_ == 0; }
 
   class TreeIterator {
    public:
