@@ -12,9 +12,9 @@ template <typename T, typename N>
 class Tree {
  protected:
   struct TNode;
-  class TreeIterator;
 
  public:
+  class TreeIterator;
   using key_type = T;
   using key_reference = T &;
   using const_key_reference = const T &;
@@ -49,6 +49,19 @@ class Tree {
     delete tail_;
   };
 
+  iterator begin() {
+    TNode *result;
+    if (head_) {
+      result = head_->MinNode();
+    } else {
+      result = tail_;
+    }
+
+    return iterator(result);
+  }
+
+  iterator end() { return iterator(tail_); }
+
   /* Overload for multiset, inserts multi node with key and value = key */
   std::pair<iterator, bool> MultiInsertNode(key_type key) {
     return MultiInsertNode(key, key);
@@ -69,6 +82,8 @@ class Tree {
         result.first->right_ = new TNode(result.first, key, value);
         result.second = true;
         BalanceTree(result.first->right_);
+        tail_->left_ = head_->MaxNode();
+        tail_->right_ = head_->MinNode();
       }
     }
 
@@ -85,6 +100,8 @@ class Tree {
       head_ = new TNode(key, value);
       head_->color_ = kBlack;
       head_->parent_ = tail_;
+      tail_->left_ = head_->MaxNode();
+      tail_->right_ = head_->MinNode();
       result.first = head_;
       result.second = false;
     }
@@ -107,9 +124,11 @@ class Tree {
       result.first = search->left_;
       result.second = true;
     }
-    if (result.second) BalanceTree(result.first);
-    tail_->left_ = head_->MaxNode();
-    tail_->right_ = head_->MinNode();
+    if (result.second) {
+      BalanceTree(result.first);
+      tail_->left_ = head_->MaxNode();
+      tail_->right_ = head_->MinNode();
+    }
 
     return result;
   };
@@ -305,10 +324,6 @@ class Tree {
       delete pivot;
     }
   };
-
- protected:
-  enum TColor { kBlack, kRed };
-
   class TreeIterator {
    public:
     TreeIterator(){};
@@ -335,11 +350,19 @@ class Tree {
       return *this;
     };
     /* iterator operator--(int) {}; */
+
+    bool operator==(const iterator &other) { return iter_ == other.iter_; }
+
+    bool operator!=(const iterator &other) { return iter_ != other.iter_; }
+
     value_reference operator*() { return iter_->value_; }
 
    private:
     TNode *iter_;
   };
+
+ protected:
+  enum TColor { kBlack, kRed };
 
   struct TNode {
     TNode *parent_ = nullptr;
