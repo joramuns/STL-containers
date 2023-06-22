@@ -16,7 +16,9 @@ public:
 
   // vector member function
 
-  vector() : sz_(0), cpct_(0){};
+  vector() : sz_(0), cpct_(0){
+    InitVector();
+  };
 
   explicit vector(size_type n) : sz_(n), cpct_(n) {
     InitVector();
@@ -59,7 +61,7 @@ public:
 
       sz_ = std::move(v.sz_);
       cpct_ = std::move(v.cpct_);
-      arr_ = std::move(a.arr_);
+      arr_ = std::move(v.arr_);
 
       v.sz_ = 0;
       v.cpct_ = 0;
@@ -102,13 +104,24 @@ public:
   size_type max_size() const noexcept { return 0; };
 
   void reserve(size_type size){
-
+    T* tmp = new T[size]();
+    for(size_t i = 0; i < size; ++i){
+      tmp[i] = arr_[i];
+    }
+    arr_ = std::move(tmp);
+    sz_ = size;
+    cpct_ = size;
   };
 
   size_type capacity() const noexcept { return cpct_; };
 
   void shrink_to_fit(){
-
+    cpct_ = sz_;
+    T* tmp = new T[sz_]();
+    for (size_t i = 0; i < sz_; ++i){
+      tmp[i] = arr_[i];
+    }
+    arr_ = std::move(tmp);
   };
 
   // vector modifiers
