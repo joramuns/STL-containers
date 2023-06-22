@@ -40,7 +40,11 @@ public:
     CopyArr(v);
   };
 
-  vector(vector &&v) : sz_(std::move(v.sz_)), cpct_(std::move(v.cpct_)), arr_(std::move(v.arr_)){};
+  vector(vector &&v) : sz_(std::move(v.sz_)), cpct_(std::move(v.cpct_)), arr_(std::move(v.arr_)){
+    v.sz_ = 0;
+    v.cpct_ = 0;
+    v.arr_ = nullptr;
+  };
 
   ~vector() {
     delete[] arr_;
@@ -49,13 +53,13 @@ public:
     arr_ = nullptr;
   };
 
-  vector operator=(vector &&v) noexcept {
+  vector& operator=(vector &&v) noexcept {
     if (this != &v) {
       delete[] arr_;
 
-      sz_ = v.sz_;
-      cpct_ = v.cpct_;
-      CopyArr(v);
+      sz_ = std::move(v.sz_);
+      cpct_ = std::move(v.cpct_);
+      arr_ = std::move(a.arr_);
 
       v.sz_ = 0;
       v.cpct_ = 0;
@@ -86,7 +90,6 @@ public:
   iterator begin() noexcept { return arr_; };
 
   iterator end() noexcept {
-    iterator tmp = arr_;
     return (tmp + sz_);
   };
 
