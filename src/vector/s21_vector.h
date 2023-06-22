@@ -8,10 +8,10 @@ namespace s21 {
 template <typename T> class vector {
 public:
   using value_type = T;
-  using reference = T &;
-  using const_reference = const T &;
-  using iterator = T *;
-  using const_iterator = const T *;
+  using reference = T&;
+  using const_reference = const T&;
+  using iterator = T*;
+  using const_iterator = const T*;
   using size_type = std::size_t;
 
   // vector member function
@@ -40,12 +40,7 @@ public:
     CopyArr(v);
   };
 
-  vector(vector &&v) : vector() {
-    std::swap(sz_, v.sz_);
-    std::swap(cpct_, v.cpct_);
-    InitVector();
-    std::swap(arr_, v.arr_);
-  };
+  vector(vector &&v) : sz_(std::move(v.sz_)), cpct_(std::move(v.cpct_)), arr_(std::move(v.arr_)){};
 
   ~vector() {
     delete[] arr_;
