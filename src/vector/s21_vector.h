@@ -90,7 +90,7 @@ public:
   iterator begin() noexcept { return arr_; };
 
   iterator end() noexcept {
-    return (tmp + sz_);
+    return (arr_ + sz_);
   };
 
   // vector capacity
