@@ -127,7 +127,7 @@ public:
   // vector modifiers
 
   void clear() noexcept {
-
+    this->~vector();
   };
 
   iterator insert(iterator pos, const_reference value) {
@@ -155,7 +155,9 @@ public:
   void pop_back() { erase(end()); };
 
   void swap(vector &other) noexcept {
-
+    std::swap(sz_, other.sz_);
+    std::swap(cpct_, other.cpct_);
+    std::swap(arr_, other.arr_);
   };
 
 private:
