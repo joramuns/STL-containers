@@ -64,7 +64,7 @@ class Tree {
 
   /* Overload for multiset, inserts multi node with key and value = key */
   std::pair<iterator, bool> MultiInsertNode(key_type key) {
-    return MultiInsertNode(key, key);
+    return (std::pair<iterator, bool>)MultiInsertNode(key, key);
   };
 
   /* Overload for set, inserts unique node with key and value = key */
@@ -74,12 +74,14 @@ class Tree {
 
   /* Inserts multi node */
   std::pair<TNode *, bool> MultiInsertNode(key_type key, value_type value) {
-    std::pair<TNode *, bool> result = InsertNode(key);
+    TNode *insert_node = new TNode(key, value);
+    std::pair<TNode *, bool> result = InsertNode(insert_node);
     while (result.second == false) {
       if (result.first->right_) {
-        result = InsertNode(key, value, result.first->right_);
+        result = InsertNode(insert_node, result.first->right_);
       } else {
-        result.first->right_ = new TNode(result.first, key, value);
+        result.first->right_ = insert_node;
+        insert_node->parent_ = result.first;
         result.second = true;
         BalanceTree(result.first->right_);
         RefreshTail();
@@ -93,11 +95,18 @@ class Tree {
   /* Inserts unique node from root, redirects to next
    * overloaded function with root as subtree argument */
   std::pair<TNode *, bool> InsertNode(key_type key, value_type value) {
-    std::pair<TNode *, bool> result;
+    TNode *insert_node = new TNode(key, value);
+    std::pair<TNode *, bool> result = InsertNode(insert_node);
+    if (!result.second) delete insert_node;
+    return result;
+  }
+
+  std::pair<TNode *, bool> InsertNode(TNode *insert_node) {
+    std::pair<TNode *, bool> result = {insert_node, false};
     if (head_) {
-      result = InsertNode(key, value, head_);
+      result = InsertNode(insert_node, head_);
     } else {
-      head_ = new TNode(key, value);
+      head_ = insert_node;
       head_->color_ = kBlack;
       head_->parent_ = tail_;
       RefreshTail();
@@ -111,16 +120,18 @@ class Tree {
 
   /* Overload for inserting node not only from root, but from
    * subtrees in order to insert nodes with repeating keys */
-  std::pair<TNode *, bool> InsertNode(key_type key, value_type value,
-                                      TNode *root) {
+  std::pair<TNode *, bool> InsertNode(TNode *insert_node, TNode *root) {
+    key_type key = insert_node->key_;
     TNode *search = FindNode(key, root);
     std::pair<TNode *, bool> result = {search, false};
     if (key > search->key_) {
-      search->right_ = new TNode(search, key, value);
+      search->right_ = insert_node;
+      insert_node->parent_ = search;
       result.first = search->right_;
       result.second = true;
     } else if (key < search->key_) {
-      search->left_ = new TNode(search, key, value);
+      search->left_ = insert_node;
+      insert_node->parent_ = search;
       result.first = search->left_;
       result.second = true;
     }
@@ -245,7 +256,16 @@ class Tree {
     if (head_->color_ == kRed) head_->color_ = kBlack;
   };
 
-  void DeleteNode(iterator remove_iter) {
+  /* Separate function for deleting node from tree, first find it with the help
+   * of ExtractNode function, then delete it. This approach allows merging two
+   * containers without invalidating iterators. */
+  void DeleteNode(const iterator remove_iter) {
+    TNode *target = ExtractNode(remove_iter);
+    if (target) delete target;
+    ;
+  }
+
+  TNode *ExtractNode(iterator remove_iter) {
     TNode *remove_node = nullptr;
     size_type children_num = 3;
     if (remove_iter != End()) {
@@ -261,18 +281,18 @@ class Tree {
       if (swap_node->color_ == kRed) {
         remove_node->key_ = swap_node->key_;
         remove_node->value_ = swap_node->value_;
-        DeleteNode(iterator(swap_node));
+        remove_node = ExtractNode(iterator(swap_node));
       } else {
         swap_node = remove_node->right_->MinNode();
         remove_node->key_ = swap_node->key_;
         remove_node->value_ = swap_node->value_;
-        DeleteNode(iterator(swap_node));
+        remove_node = ExtractNode(iterator(swap_node));
       }
       /* :1: R0, red node without children
        * It is impossible for red node to have one child
        * Simply erase this node            */
     } else if (children_num == 0 && remove_node->color_ == kRed) {
-      remove_node->EraseNode();
+      remove_node->DetachNode();
       --size_;
       /* :4-5: Delete black node */
       /* :4: B1, black node with one child */
@@ -280,20 +300,22 @@ class Tree {
       if (remove_node->right_) {
         remove_node->key_ = remove_node->right_->key_;
         remove_node->value_ = remove_node->right_->value_;
-        DeleteNode(iterator(remove_node->right_));
+        remove_node = ExtractNode(iterator(remove_node->right_));
       } else {
         remove_node->key_ = remove_node->left_->key_;
         remove_node->value_ = remove_node->left_->value_;
-        DeleteNode(iterator(remove_node->left_));
+        remove_node = ExtractNode(iterator(remove_node->left_));
       }
       /* :5: B0, black node without children */
     } else if (children_num == 0) {
       TNode *brother = remove_node->GetBrother();
-      remove_node->EraseNode();
+      remove_node->DetachNode();
       --size_;
       RebalanceBrother(brother);
     }
     RefreshTail();
+
+    return remove_node;
   };
 
   /* Rebalance tree function after deleting a node */
@@ -349,7 +371,7 @@ class Tree {
       tail_->right_ = head_->MinNode();
     }
   };
-  
+
   size_type GetSize() const noexcept { return size_; }
 
   bool Empty() const noexcept { return size_ == 0; }
@@ -537,13 +559,12 @@ class Tree {
       return count;
     };
 
-    void EraseNode() {
+    void DetachNode() {
       if (IsRightSon()) {
         parent_->right_ = nullptr;
       } else if (parent_) {
         parent_->left_ = nullptr;
       }
-      delete this;
     };
   };
 
