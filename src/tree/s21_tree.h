@@ -101,6 +101,10 @@ class Tree {
     return result;
   }
 
+  std::pair<TNode *, bool> InsertNode(iterator insert_iter) {
+    return InsertNode(insert_iter.GetNode());
+  }
+
   std::pair<TNode *, bool> InsertNode(TNode *insert_node) {
     std::pair<TNode *, bool> result = {insert_node, false};
     if (head_) {
