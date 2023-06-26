@@ -97,8 +97,7 @@ class Tree {
   std::pair<TNode *, bool> InsertNode(key_type key, value_type value) {
     TNode *insert_node = new TNode(key, value);
     std::pair<TNode *, bool> result = InsertNode(insert_node);
-    if (!result.second)
-      delete insert_node;
+    if (!result.second) delete insert_node;
     return result;
   }
 
@@ -121,8 +120,7 @@ class Tree {
 
   /* Overload for inserting node not only from root, but from
    * subtrees in order to insert nodes with repeating keys */
-  std::pair<TNode *, bool> InsertNode(TNode *insert_node,
-                                      TNode *root) {
+  std::pair<TNode *, bool> InsertNode(TNode *insert_node, TNode *root) {
     key_type key = insert_node->key_;
     TNode *search = FindNode(key, root);
     std::pair<TNode *, bool> result = {search, false};
@@ -258,7 +256,16 @@ class Tree {
     if (head_->color_ == kRed) head_->color_ = kBlack;
   };
 
-  void DeleteNode(iterator remove_iter) {
+  /* Separate function for deleting node from tree, first find it with the help
+   * of ExtractNode function, then delete it. This approach allows merging two
+   * containers without invalidating iterators. */
+  void DeleteNode(const iterator remove_iter) {
+    TNode *target = ExtractNode(remove_iter);
+    if (target) delete target;
+    ;
+  }
+
+  TNode *ExtractNode(iterator remove_iter) {
     TNode *remove_node = nullptr;
     size_type children_num = 3;
     if (remove_iter != End()) {
@@ -274,18 +281,18 @@ class Tree {
       if (swap_node->color_ == kRed) {
         remove_node->key_ = swap_node->key_;
         remove_node->value_ = swap_node->value_;
-        DeleteNode(iterator(swap_node));
+        remove_node = ExtractNode(iterator(swap_node));
       } else {
         swap_node = remove_node->right_->MinNode();
         remove_node->key_ = swap_node->key_;
         remove_node->value_ = swap_node->value_;
-        DeleteNode(iterator(swap_node));
+        remove_node = ExtractNode(iterator(swap_node));
       }
       /* :1: R0, red node without children
        * It is impossible for red node to have one child
        * Simply erase this node            */
     } else if (children_num == 0 && remove_node->color_ == kRed) {
-      remove_node->EraseNode();
+      remove_node->DetachNode();
       --size_;
       /* :4-5: Delete black node */
       /* :4: B1, black node with one child */
@@ -293,20 +300,22 @@ class Tree {
       if (remove_node->right_) {
         remove_node->key_ = remove_node->right_->key_;
         remove_node->value_ = remove_node->right_->value_;
-        DeleteNode(iterator(remove_node->right_));
+        remove_node = ExtractNode(iterator(remove_node->right_));
       } else {
         remove_node->key_ = remove_node->left_->key_;
         remove_node->value_ = remove_node->left_->value_;
-        DeleteNode(iterator(remove_node->left_));
+        remove_node = ExtractNode(iterator(remove_node->left_));
       }
       /* :5: B0, black node without children */
     } else if (children_num == 0) {
       TNode *brother = remove_node->GetBrother();
-      remove_node->EraseNode();
+      remove_node->DetachNode();
       --size_;
       RebalanceBrother(brother);
     }
     RefreshTail();
+
+    return remove_node;
   };
 
   /* Rebalance tree function after deleting a node */
@@ -362,7 +371,7 @@ class Tree {
       tail_->right_ = head_->MinNode();
     }
   };
-  
+
   size_type GetSize() const noexcept { return size_; }
 
   bool Empty() const noexcept { return size_ == 0; }
@@ -550,13 +559,12 @@ class Tree {
       return count;
     };
 
-    void EraseNode() {
+    void DetachNode() {
       if (IsRightSon()) {
         parent_->right_ = nullptr;
       } else if (parent_) {
         parent_->left_ = nullptr;
       }
-      delete this;
     };
   };
 
