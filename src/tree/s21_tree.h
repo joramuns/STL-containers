@@ -64,7 +64,7 @@ class Tree {
 
   /* Overload for multiset, inserts multi node with key and value = key */
   std::pair<iterator, bool> MultiInsertNode(key_type key) {
-    return MultiInsertNode(key, key);
+    return (std::pair<iterator, bool>)MultiInsertNode(key, key);
   };
 
   /* Overload for set, inserts unique node with key and value = key */
@@ -74,12 +74,14 @@ class Tree {
 
   /* Inserts multi node */
   std::pair<TNode *, bool> MultiInsertNode(key_type key, value_type value) {
-    std::pair<TNode *, bool> result = InsertNode(key);
+    TNode *insert_node = new TNode(key, value);
+    std::pair<TNode *, bool> result = InsertNode(insert_node);
     while (result.second == false) {
       if (result.first->right_) {
-        result = InsertNode(key, value, result.first->right_);
+        result = InsertNode(insert_node, result.first->right_);
       } else {
-        result.first->right_ = new TNode(result.first, key, value);
+        result.first->right_ = insert_node;
+        insert_node->parent_ = result.first;
         result.second = true;
         BalanceTree(result.first->right_);
         RefreshTail();
@@ -93,11 +95,19 @@ class Tree {
   /* Inserts unique node from root, redirects to next
    * overloaded function with root as subtree argument */
   std::pair<TNode *, bool> InsertNode(key_type key, value_type value) {
-    std::pair<TNode *, bool> result;
+    TNode *insert_node = new TNode(key, value);
+    std::pair<TNode *, bool> result = InsertNode(insert_node);
+    if (!result.second)
+      delete insert_node;
+    return result;
+  }
+
+  std::pair<TNode *, bool> InsertNode(TNode *insert_node) {
+    std::pair<TNode *, bool> result = {insert_node, false};
     if (head_) {
-      result = InsertNode(key, value, head_);
+      result = InsertNode(insert_node, head_);
     } else {
-      head_ = new TNode(key, value);
+      head_ = insert_node;
       head_->color_ = kBlack;
       head_->parent_ = tail_;
       RefreshTail();
@@ -111,16 +121,19 @@ class Tree {
 
   /* Overload for inserting node not only from root, but from
    * subtrees in order to insert nodes with repeating keys */
-  std::pair<TNode *, bool> InsertNode(key_type key, value_type value,
+  std::pair<TNode *, bool> InsertNode(TNode *insert_node,
                                       TNode *root) {
+    key_type key = insert_node->key_;
     TNode *search = FindNode(key, root);
     std::pair<TNode *, bool> result = {search, false};
     if (key > search->key_) {
-      search->right_ = new TNode(search, key, value);
+      search->right_ = insert_node;
+      insert_node->parent_ = search;
       result.first = search->right_;
       result.second = true;
     } else if (key < search->key_) {
-      search->left_ = new TNode(search, key, value);
+      search->left_ = insert_node;
+      insert_node->parent_ = search;
       result.first = search->left_;
       result.second = true;
     }
