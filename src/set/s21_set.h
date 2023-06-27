@@ -53,7 +53,22 @@ class set {
   void erase(iterator pos) { rb_tree_.DeleteNode(pos); };
 
   void swap(set &other);
-  void merge(set &other);
+  void merge(set &other) {
+    iterator iter = other.begin();
+    iterator iter_end = other.end();
+    std::cout << "Merge here: " << std::endl;
+    while (iter != iter_end) {
+      if (!contains(*iter)) {
+        iterator temp = iter;
+        ++iter;
+        std::cout << *temp << " iter " << *iter << std::endl;
+        rb_tree_.InsertNode(other.rb_tree_.ExtractNode(temp));
+      } else {
+        ++iter;
+      }
+    }
+    std::cout << "Merge out" << std::endl;
+  };
 
   /* Set lookup */
   iterator find(const key_type &key) const noexcept {
