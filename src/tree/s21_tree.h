@@ -84,8 +84,8 @@ class Tree {
         insert_node->parent_ = result.first;
         result.second = true;
         BalanceTree(result.first->right_);
-        RefreshTail();
         ++size_;
+        RefreshTail();
       }
     }
 
@@ -113,10 +113,10 @@ class Tree {
       head_ = insert_node;
       head_->color_ = kBlack;
       head_->parent_ = tail_;
+      ++size_;
       RefreshTail();
       result.first = head_;
       result.second = true;
-      ++size_;
     }
 
     return result;
@@ -141,8 +141,8 @@ class Tree {
     }
     if (result.second) {
       BalanceTree(result.first);
-      RefreshTail();
       ++size_;
+      RefreshTail();
     }
 
     return result;
@@ -283,14 +283,16 @@ class Tree {
     if (children_num == 2) {
       TNode *swap_node = remove_node->left_->MaxNode();
       if (swap_node->color_ == kRed) {
-        remove_node->key_ = swap_node->key_;
-        remove_node->value_ = swap_node->value_;
-        remove_node = ExtractNode(iterator(swap_node));
+        if (head_ == remove_node)
+          head_ = swap_node;
+        remove_node->SwapNode(swap_node);
+        remove_node = ExtractNode(iterator(remove_node));
       } else {
+        if (head_ == remove_node)
+          head_ = swap_node;
         swap_node = remove_node->right_->MinNode();
-        remove_node->key_ = swap_node->key_;
-        remove_node->value_ = swap_node->value_;
-        remove_node = ExtractNode(iterator(swap_node));
+        remove_node->SwapNode(swap_node);
+        remove_node = ExtractNode(iterator(remove_node));
       }
       /* :1: R0, red node without children
        * It is impossible for red node to have one child
@@ -302,20 +304,24 @@ class Tree {
       /* :4: B1, black node with one child */
     } else if (children_num == 1 && remove_node->color_ == kBlack) {
       if (remove_node->right_) {
-        remove_node->key_ = remove_node->right_->key_;
-        remove_node->value_ = remove_node->right_->value_;
-        remove_node = ExtractNode(iterator(remove_node->right_));
+        TNode *swap_node = remove_node->right_;
+        if (head_ == remove_node)
+          head_ = swap_node;
+        remove_node->SwapNode(swap_node);
+        remove_node = ExtractNode(iterator(remove_node));
       } else {
-        remove_node->key_ = remove_node->left_->key_;
-        remove_node->value_ = remove_node->left_->value_;
-        remove_node = ExtractNode(iterator(remove_node->left_));
+        TNode *swap_node = remove_node->left_;
+        if (head_ == remove_node)
+          head_ = swap_node;
+        remove_node->SwapNode(swap_node);
+        remove_node = ExtractNode(iterator(remove_node));
       }
       /* :5: B0, black node without children */
     } else if (children_num == 0) {
       TNode *brother = remove_node->GetBrother();
       remove_node->DetachNode();
       --size_;
-      RebalanceBrother(brother);
+      if (brother) RebalanceBrother(brother);
     }
     RefreshTail();
 
@@ -373,6 +379,10 @@ class Tree {
     if (size_) {
       tail_->left_ = head_->MaxNode();
       tail_->right_ = head_->MinNode();
+    } else {
+      tail_->left_ = tail_;
+      tail_->right_ = tail_;
+      head_ = nullptr;
     }
   };
 
@@ -490,6 +500,36 @@ class Tree {
 
       return iterator(prev_node);
     };
+
+    void SwapNode(TNode *other) {
+      /* std::swap(key_, other->key_); */
+      /* std::swap(key_, other->value_); */
+      if (IsRightSon()) {
+        parent_->right_ = other;
+      } else if (parent_) {
+        parent_->left_ = other;
+      }
+      if (other->IsRightSon()) {
+        other->parent_->right_ = this;
+      } else if (other->parent_) {
+        other->parent_->left_ = this;
+      }
+      std::swap(right_, other->right_);
+      std::swap(left_, other->left_);
+      std::swap(parent_, other->parent_);
+      if (right_) {
+        right_->parent_ = this;
+      }
+      if (left_) {
+        left_->parent_ = this;
+      }
+      if (other->right_) {
+        other->right_->parent_ = other;
+      }
+      if (other->left_) {
+        other->left_->parent_ = other;
+      }
+    }
 
     bool IsFatherFake() { return this->parent_->is_fake_; }
 
