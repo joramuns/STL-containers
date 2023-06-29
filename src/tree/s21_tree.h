@@ -263,7 +263,7 @@ class Tree {
   /* Separate function for deleting node from tree, first find it with the help
    * of ExtractNode function, then delete it. This approach allows merging two
    * containers without invalidating iterators. */
-  void DeleteNode(const iterator remove_iter) {
+  void DeleteNode(iterator remove_iter) {
     TNode *target = ExtractNode(remove_iter);
     if (target) delete target;
     ;
@@ -353,7 +353,7 @@ class Tree {
         } else if (brother->parent_->parent_ &&
                    !brother->parent_->IsFatherFake()) {
           brother = brother->parent_->GetBrother();
-          RebalanceBrother(brother);
+          if (brother) RebalanceBrother(brother);
         }
       }
       /* :B0.2: Brother is red */
@@ -363,7 +363,7 @@ class Tree {
       /* Near nephew becomes new brother, then goes new rebalancing */
       TNode *new_brother = brother->GetNearNephew();
       RotateNodes(brother->parent_, brother);
-      RebalanceBrother(new_brother);
+      if (new_brother) RebalanceBrother(new_brother);
     }
   };
 
@@ -385,6 +385,13 @@ class Tree {
       head_ = nullptr;
     }
   };
+
+  void ClearTree() noexcept {
+    while (size_) {
+      DeleteNode(Begin());
+      std::cout << size_ << " ";
+    }
+  }
 
   size_type GetSize() const noexcept { return size_; }
 
