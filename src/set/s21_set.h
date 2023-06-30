@@ -18,29 +18,59 @@ class set {
   using const_reference = const T &;
   using tree_type = Tree<T, T>;
   using iterator = typename tree_type::TreeIterator;
-  /* using const_iterator = ConstSetIterator; */
+  using const_iterator = typename tree_type::ConstTreeIterator;
   using size_type = std::size_t;
 
   /* Set member functions */
   set(){};
-  explicit set(std::initializer_list<value_type> const &items){};
-  set(const set &s) = default;
-  set(set &&s) = default;
-  ~set(){ delete rb_tree_; };
-  /* set &operator=(const set &s){ return 0; }; */
-  /* set &operator=(set &&s){ return 0; }; */
+
+  explicit set(std::initializer_list<value_type> const &items) {
+    for (const auto &item : items) {
+      insert(item);
+    }
+  };
+
+  set(const set &s) {
+    if (rb_tree_ != s.rb_tree_) {
+      clear();
+      for (const auto &item : s) {
+        insert(item);
+      }
+    }
+  };
+
+  set(set &&s) {
+    if (rb_tree_ != s.rb_tree_) {
+      std::swap(rb_tree_, s.rb_tree_);
+    }
+  };
+
+  ~set() { delete rb_tree_; };
+
+  set &operator=(const set &s) {
+    *rb_tree_ = *s.rb_tree_;
+    return *this;
+  };
+
+  set &operator=(set &&s) {
+    *rb_tree_ = std::move(*s.rb_tree_);
+    return *this;
+  };
 
   /* Set iterators */
   iterator begin() noexcept { return rb_tree_->Begin(); };
+
   iterator end() noexcept { return rb_tree_->End(); };
-  /* const_iterator begin() const noexcept; */
-  /* const_iterator end() const noexcept; */
-  const iterator begin() const noexcept { return rb_tree_->Begin(); };
-  const iterator end() const noexcept { return rb_tree_->End(); };
+
+  const_iterator begin() const noexcept { return rb_tree_->Begin(); };
+
+  const_iterator end() const noexcept { return rb_tree_->End(); };
 
   /* Set capacity */
   bool empty() const noexcept { return rb_tree_->Empty(); };
+
   size_type size() const noexcept { return rb_tree_->GetSize(); };
+
   size_type max_size() const noexcept;
 
   /* Set modifiers */
@@ -53,7 +83,9 @@ class set {
   void erase(iterator pos) { rb_tree_->DeleteNode(pos); };
 
   void swap(set &other) {
-    std::swap(rb_tree_, other.rb_tree_);
+    if (rb_tree_ != other.rb_tree_) {
+      std::swap(rb_tree_, other.rb_tree_);
+    }
   };
 
   void merge(set &other) {
@@ -71,7 +103,11 @@ class set {
   };
 
   /* Set lookup */
-  iterator find(const key_type &key) const noexcept {
+  iterator find(const key_type &key) noexcept {
+    return rb_tree_->FindKey(key);
+  };
+
+  const_iterator find(const key_type &key) const noexcept {
     return rb_tree_->FindKey(key);
   };
 
