@@ -50,7 +50,7 @@ class Tree {
     delete tail_;
   };
 
-  iterator Begin() const noexcept {
+  iterator Begin() noexcept {
     TNode *result;
     if (head_) {
       result = head_->MinNode();
@@ -61,7 +61,20 @@ class Tree {
     return iterator(result);
   }
 
-  iterator End() const noexcept { return iterator(tail_); }
+  iterator End() noexcept { return iterator(tail_); }
+
+  const_iterator Begin() const noexcept {
+    TNode *result;
+    if (head_) {
+      result = head_->MinNode();
+    } else {
+      result = tail_;
+    }
+
+    return iterator(result);
+  }
+
+  const_iterator End() const noexcept { return iterator(tail_); }
 
   /* Overload for multiset, inserts multi node with key and value = key */
   std::pair<iterator, bool> MultiInsertNode(key_type key) {
@@ -149,7 +162,16 @@ class Tree {
     return result;
   };
 
-  iterator FindKey(key_type key) const noexcept {
+  iterator FindKey(key_type key) noexcept {
+    iterator result = FindNode(key);
+    if (!size_ || *result != key) {
+      result = End();
+    }
+
+    return result;
+  }
+
+  const_iterator FindKey(key_type key) const noexcept {
     iterator result = FindNode(key);
     if (!size_ || *result != key) {
       result = End();
@@ -159,7 +181,11 @@ class Tree {
   }
 
   /* Overload of search function to find node from root */
-  iterator FindNode(key_type key) const noexcept {
+  iterator FindNode(key_type key) noexcept {
+    return (iterator)FindNode(key, head_);
+  };
+
+  const_iterator FindNode(key_type key) const noexcept {
     return (iterator)FindNode(key, head_);
   };
 
@@ -414,7 +440,7 @@ class Tree {
     TNode *GetNode() { return iter_; }
 
     iterator &operator++() {
-      iter_ = iter_->NextNode();
+      iter_ = iter_->NextNode().GetNode();
       return *this;
     };
 
@@ -425,7 +451,7 @@ class Tree {
     };
 
     iterator &operator--() {
-      iter_ = iter_->PrevNode();
+      iter_ = iter_->PrevNode().GetNode();
       return *this;
     };
     iterator operator--(int) {
