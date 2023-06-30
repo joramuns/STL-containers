@@ -15,6 +15,7 @@ class Tree {
 
  public:
   class TreeIterator;
+  class ConstTreeIterator;
   using key_type = T;
   using key_reference = T &;
   using const_key_reference = const T &;
@@ -23,7 +24,7 @@ class Tree {
   using const_value_reference = const N &;
   using size_type = std::size_t;
   using iterator = TreeIterator;
-  using const_iterator = const TNode *;
+  using const_iterator = ConstTreeIterator;
 
   Tree() { tail_->is_fake_ = true; };
 
@@ -389,7 +390,6 @@ class Tree {
   void ClearTree() noexcept {
     while (size_) {
       DeleteNode(Begin());
-      std::cout << size_ << " ";
     }
   }
 
@@ -413,18 +413,26 @@ class Tree {
 
     TNode *GetNode() { return iter_; }
 
-    iterator operator++() {
-      *this = this->iter_->NextNode();
-      /* *this = this->iter_->PrevNode(); */
+    iterator &operator++() {
+      iter_ = iter_->NextNode();
       return *this;
     };
 
-    /* iterator operator++(int) {}; */
-    iterator operator--() {
-      *this = this->iter_->PrevNode();
+    iterator operator++(int) {
+      iterator post_increment = *this;
+      ++(*this);
+      return post_increment;
+    };
+
+    iterator &operator--() {
+      iter_ = iter_->PrevNode();
       return *this;
     };
-    /* iterator operator--(int) {}; */
+    iterator operator--(int) {
+      iterator post_decrement = *this;
+      ++(*this);
+      return post_decrement;
+    };
 
     bool operator==(const iterator &other) { return iter_ == other.iter_; }
 
@@ -434,6 +442,55 @@ class Tree {
 
    private:
     TNode *iter_;
+  };
+
+  class ConstTreeIterator {
+   public:
+    ConstTreeIterator() = delete;
+
+    explicit ConstTreeIterator(const TNode *node) noexcept : iter_(node){};
+
+    explicit ConstTreeIterator(const iterator &other) noexcept : iter_(other.iter_){};
+
+    iterator &operator=(const const_iterator &other) noexcept {
+      iter_ = other.iter_;
+      return *this;
+    }
+
+    ~ConstTreeIterator() noexcept {};
+
+    const TNode *GetNode() noexcept { return iter_; }
+
+    const_iterator &operator++() {
+      *this = this->iter_->NextNode();
+      return *this;
+    };
+
+    const_iterator operator++(int) {
+      const_iterator post_increment = *this;
+      ++(*this);
+      return post_increment;
+    };
+
+    const_iterator &operator--() {
+      *this = this->iter_->PrevNode();
+      return *this;
+    };
+    
+    const_iterator operator--(int) {
+      const_iterator post_decrement = *this;
+      ++(*this);
+      return post_decrement;
+    };
+
+    bool operator==(const const_iterator &other) { return iter_ == other.iter_; }
+
+    bool operator!=(const const_iterator &other) { return iter_ != other.iter_; }
+
+    const_value_reference operator*() { return iter_->value_; }
+
+   private:
+    const TNode *iter_;
   };
 
  protected:
