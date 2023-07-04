@@ -28,29 +28,56 @@ class Tree {
 
   Tree() { tail_->is_fake_ = true; };
 
-  // Broken ctor
-  Tree(const Tree &other){};
+  Tree(const Tree &other) {
+    if (this != &other) {
+      CopyTree(other);
+    }
+  };
 
-  Tree(Tree &&other) { std::swap(head_, other.head_); };
+  Tree(Tree &&other) {
+    if (this != &other) {
+      SwapTree(other);
+    }
+  };
 
-  // Broken assop
   Tree &operator=(const Tree &other) {
     if (this != &other) {
-      delete head_;
-      head_ = other.head_;
+      CopyTree(other);
     }
 
     return *this;
   };
 
-  Tree &operator=(Tree &&other) { return *this; };
+  Tree &operator=(Tree &&other) {
+    if (this != &other) {
+      SwapTree(other);
+    }
+    return *this;
+  };
 
   virtual ~Tree() {
     DeleteTree(head_);
     delete tail_;
   };
 
-  iterator Begin() noexcept {
+  void CopyTree(const Tree &other) {
+    ClearTree();
+    const_iterator other_start = other.begin();
+    const_iterator other_end = other.end();
+    /* while (other_start != other_end) { */
+    /* const TNode *this_node = other_start.GetNode(); */
+    /* TNode *copy_node = new TNode(this_node->key_, this_node->value_); */
+    /* InsertNode(iterator(copy_node)); */
+    ++other_start;
+    /* } */
+  }
+
+  void SwapTree(Tree &other) {
+    std::swap(head_, other.head_);
+    std::swap(tail_, other.tail_);
+    std::swap(size_, other.size_);
+  }
+
     TNode *result;
     if (head_) {
       result = head_->MinNode();
