@@ -474,7 +474,7 @@ class Tree {
     };
     iterator operator--(int) {
       iterator post_decrement = *this;
-      ++(*this);
+      --(*this);
       return post_decrement;
     };
 
