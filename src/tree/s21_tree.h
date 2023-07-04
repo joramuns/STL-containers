@@ -342,8 +342,8 @@ class Tree {
         remove_node->SwapNode(swap_node);
         remove_node = ExtractNode(iterator(remove_node));
       } else {
-        if (head_ == remove_node) head_ = swap_node;
         swap_node = remove_node->right_->MinNode();
+        if (head_ == remove_node) head_ = swap_node;
         remove_node->SwapNode(swap_node);
         remove_node = ExtractNode(iterator(remove_node));
       }
@@ -478,9 +478,9 @@ class Tree {
       return post_decrement;
     };
 
-    bool operator==(const iterator &other) { return iter_ == other.iter_; }
+    bool operator==(const iterator &other) const noexcept { return iter_ == other.iter_; }
 
-    bool operator!=(const iterator &other) { return iter_ != other.iter_; }
+    bool operator!=(const iterator &other) const noexcept { return iter_ != other.iter_; }
 
     value_reference operator*() { return iter_->value_; }
 
