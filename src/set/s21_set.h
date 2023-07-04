@@ -33,9 +33,8 @@ class set {
   set(const set &s) {
     if (rb_tree_ != s.rb_tree_) {
       clear();
-      for (const auto &item : s) {
-        insert(item);
-      }
+      delete rb_tree_;
+      rb_tree_ = new tree_type(*s.rb_tree_);
     }
   };
 
@@ -48,23 +47,28 @@ class set {
   ~set() { delete rb_tree_; };
 
   set &operator=(const set &s) {
-    *rb_tree_ = *s.rb_tree_;
+    if (this != &s) {
+      delete rb_tree_;
+      rb_tree_ = new tree_type(*s.rb_tree_);
+    }
     return *this;
   };
 
   set &operator=(set &&s) {
-    *rb_tree_ = std::move(*s.rb_tree_);
+    if (this != &s) {
+      *rb_tree_ = std::move(*s.rb_tree_);
+    }
     return *this;
   };
 
   /* Set iterators */
-  iterator begin() noexcept { return rb_tree_->Begin(); };
+  iterator begin() noexcept { return rb_tree_->begin(); };
 
-  iterator end() noexcept { return rb_tree_->End(); };
+  iterator end() noexcept { return rb_tree_->end(); };
 
-  const_iterator begin() const noexcept { return rb_tree_->Begin(); };
+  const_iterator begin() const noexcept { return rb_tree_->begin(); };
 
-  const_iterator end() const noexcept { return rb_tree_->End(); };
+  const_iterator end() const noexcept { return rb_tree_->end(); };
 
   /* Set capacity */
   bool empty() const noexcept { return rb_tree_->Empty(); };
