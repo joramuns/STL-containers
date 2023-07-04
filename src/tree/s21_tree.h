@@ -629,6 +629,7 @@ class Tree {
     }
 
     void SwapNode(TNode *other) {
+      std::swap(color_, other->color_);
       /* std::swap(key_, other->key_); */
       /* std::swap(key_, other->value_); */
       if (IsRightSon()) {
