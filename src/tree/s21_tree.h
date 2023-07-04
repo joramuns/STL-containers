@@ -28,7 +28,7 @@ class Tree {
 
   Tree() { tail_->is_fake_ = true; };
 
-  Tree(const Tree &other) {
+  Tree(const Tree &other) : Tree() {
     if (this != &other) {
       CopyTree(other);
     }
@@ -64,12 +64,12 @@ class Tree {
     ClearTree();
     const_iterator other_start = other.begin();
     const_iterator other_end = other.end();
-    /* while (other_start != other_end) { */
-    /* const TNode *this_node = other_start.GetNode(); */
-    /* TNode *copy_node = new TNode(this_node->key_, this_node->value_); */
-    /* InsertNode(iterator(copy_node)); */
-    ++other_start;
-    /* } */
+    while (other_start != other_end) {
+      const TNode *this_node = other_start.GetNode();
+      InsertNode(this_node->key_, this_node->value_);
+      ++other_start;
+    }
+    RefreshTail();
   }
 
   void SwapTree(Tree &other) {
@@ -454,10 +454,10 @@ class Tree {
     explicit TreeIterator(TNode *node) : iter_(node){};
     /* explicit TreeIterator(iterator &other) : iter_(other.iter_){}; */
 
-    iterator &operator=(const iterator &other) {
-      iter_ = other.iter_;
-      return *this;
-    }
+    /* iterator &operator=(const iterator &other) { */
+    /*   iter_ = other.iter_; */
+    /* return *this; */
+    /* } */
 
     ~TreeIterator(){};
 
