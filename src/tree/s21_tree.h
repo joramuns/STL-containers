@@ -52,6 +52,7 @@ class Tree {
     if (this != &other) {
       SwapTree(other);
     }
+
     return *this;
   };
 
@@ -69,7 +70,6 @@ class Tree {
       InsertNode(this_node->key_, this_node->value_);
       ++other_start;
     }
-    RefreshTail();
   }
 
   void SwapTree(Tree &other) {
@@ -452,12 +452,6 @@ class Tree {
     TreeIterator(){};
 
     explicit TreeIterator(TNode *node) : iter_(node){};
-    /* explicit TreeIterator(iterator &other) : iter_(other.iter_){}; */
-
-    /* iterator &operator=(const iterator &other) { */
-    /*   iter_ = other.iter_; */
-    /* return *this; */
-    /* } */
 
     ~TreeIterator(){};
 
@@ -567,8 +561,6 @@ class Tree {
 
     TNode(const TNode &other) : key_(other.key_), value_(other.value_){};
 
-    /* operator TreeIterator() { return TreeIterator(this); } */
-
     TNode *MinNode() noexcept {
       TNode *root_node = this;
       while (root_node->left_) {
@@ -631,8 +623,6 @@ class Tree {
 
     void SwapNode(TNode *other) {
       std::swap(color_, other->color_);
-      /* std::swap(key_, other->key_); */
-      /* std::swap(key_, other->value_); */
       if (IsRightSon()) {
         parent_->right_ = other;
       } else if (parent_) {
