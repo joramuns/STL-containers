@@ -28,29 +28,57 @@ class Tree {
 
   Tree() { tail_->is_fake_ = true; };
 
-  // Broken ctor
-  Tree(const Tree &other){};
+  Tree(const Tree &other) {
+    if (this != &other) {
+      CopyTree(other);
+    }
+  };
 
-  Tree(Tree &&other) { std::swap(head_, other.head_); };
+  Tree(Tree &&other) {
+    if (this != &other) {
+      SwapTree(other);
+    }
+  };
 
-  // Broken assop
   Tree &operator=(const Tree &other) {
     if (this != &other) {
-      delete head_;
-      head_ = other.head_;
+      CopyTree(other);
     }
 
     return *this;
   };
 
-  Tree &operator=(Tree &&other) { return *this; };
+  Tree &operator=(Tree &&other) {
+    if (this != &other) {
+      SwapTree(other);
+    }
+    return *this;
+  };
 
   virtual ~Tree() {
     DeleteTree(head_);
     delete tail_;
   };
 
-  iterator Begin() noexcept {
+  void CopyTree(const Tree &other) {
+    ClearTree();
+    const_iterator other_start = other.begin();
+    const_iterator other_end = other.end();
+    /* while (other_start != other_end) { */
+    /* const TNode *this_node = other_start.GetNode(); */
+    /* TNode *copy_node = new TNode(this_node->key_, this_node->value_); */
+    /* InsertNode(iterator(copy_node)); */
+    ++other_start;
+    /* } */
+  }
+
+  void SwapTree(Tree &other) {
+    std::swap(head_, other.head_);
+    std::swap(tail_, other.tail_);
+    std::swap(size_, other.size_);
+  }
+
+  iterator begin() noexcept {
     TNode *result;
     if (head_) {
       result = head_->MinNode();
@@ -61,9 +89,9 @@ class Tree {
     return iterator(result);
   }
 
-  iterator End() noexcept { return iterator(tail_); }
+  iterator end() noexcept { return iterator(tail_); }
 
-  const_iterator Begin() const noexcept {
+  const_iterator begin() const noexcept {
     TNode *result;
     if (head_) {
       result = head_->MinNode();
@@ -71,10 +99,10 @@ class Tree {
       result = tail_;
     }
 
-    return iterator(result);
+    return const_iterator(result);
   }
 
-  const_iterator End() const noexcept { return iterator(tail_); }
+  const_iterator end() const noexcept { return const_iterator(tail_); }
 
   /* Overload for multiset, inserts multi node with key and value = key */
   std::pair<iterator, bool> MultiInsertNode(key_type key) {
@@ -165,7 +193,7 @@ class Tree {
   iterator FindKey(key_type key) noexcept {
     iterator result = FindNode(key);
     if (!size_ || *result != key) {
-      result = End();
+      result = end();
     }
 
     return result;
@@ -174,7 +202,7 @@ class Tree {
   const_iterator FindKey(key_type key) const noexcept {
     iterator result = FindNode(key);
     if (!size_ || *result != key) {
-      result = End();
+      result = end();
     }
 
     return result;
@@ -299,7 +327,7 @@ class Tree {
   TNode *ExtractNode(iterator remove_iter) {
     TNode *remove_node = nullptr;
     size_type children_num = 3;
-    if (remove_iter != End()) {
+    if (remove_iter != end()) {
       remove_node = remove_iter.GetNode();
       children_num = remove_node->CountChildren();
     }
@@ -310,13 +338,11 @@ class Tree {
     if (children_num == 2) {
       TNode *swap_node = remove_node->left_->MaxNode();
       if (swap_node->color_ == kRed) {
-        if (head_ == remove_node)
-          head_ = swap_node;
+        if (head_ == remove_node) head_ = swap_node;
         remove_node->SwapNode(swap_node);
         remove_node = ExtractNode(iterator(remove_node));
       } else {
-        if (head_ == remove_node)
-          head_ = swap_node;
+        if (head_ == remove_node) head_ = swap_node;
         swap_node = remove_node->right_->MinNode();
         remove_node->SwapNode(swap_node);
         remove_node = ExtractNode(iterator(remove_node));
@@ -332,14 +358,12 @@ class Tree {
     } else if (children_num == 1 && remove_node->color_ == kBlack) {
       if (remove_node->right_) {
         TNode *swap_node = remove_node->right_;
-        if (head_ == remove_node)
-          head_ = swap_node;
+        if (head_ == remove_node) head_ = swap_node;
         remove_node->SwapNode(swap_node);
         remove_node = ExtractNode(iterator(remove_node));
       } else {
         TNode *swap_node = remove_node->left_;
-        if (head_ == remove_node)
-          head_ = swap_node;
+        if (head_ == remove_node) head_ = swap_node;
         remove_node->SwapNode(swap_node);
         remove_node = ExtractNode(iterator(remove_node));
       }
@@ -415,7 +439,7 @@ class Tree {
 
   void ClearTree() noexcept {
     while (size_) {
-      DeleteNode(Begin());
+      DeleteNode(begin());
     }
   }
 
@@ -466,6 +490,8 @@ class Tree {
 
     value_reference operator*() { return iter_->value_; }
 
+    operator ConstTreeIterator() const { return ConstTreeIterator(*this); }
+
    private:
     TNode *iter_;
   };
@@ -476,7 +502,8 @@ class Tree {
 
     explicit ConstTreeIterator(const TNode *node) noexcept : iter_(node){};
 
-    explicit ConstTreeIterator(const iterator &other) noexcept : iter_(other.iter_){};
+    explicit ConstTreeIterator(iterator other) noexcept
+        : ConstTreeIterator(other.GetNode()){};
 
     iterator &operator=(const const_iterator &other) noexcept {
       iter_ = other.iter_;
@@ -485,10 +512,10 @@ class Tree {
 
     ~ConstTreeIterator() noexcept {};
 
-    const TNode *GetNode() noexcept { return iter_; }
+    const TNode *GetNode() const noexcept { return iter_; }
 
     const_iterator &operator++() {
-      *this = this->iter_->NextNode();
+      iter_ = iter_->NextNode().GetNode();
       return *this;
     };
 
@@ -499,19 +526,23 @@ class Tree {
     };
 
     const_iterator &operator--() {
-      *this = this->iter_->PrevNode();
+      iter_ = iter_->PrevNode().GetNode();
       return *this;
     };
-    
+
     const_iterator operator--(int) {
       const_iterator post_decrement = *this;
       ++(*this);
       return post_decrement;
     };
 
-    bool operator==(const const_iterator &other) { return iter_ == other.iter_; }
+    bool operator==(const const_iterator &other) {
+      return iter_ == other.iter_;
+    }
 
-    bool operator!=(const const_iterator &other) { return iter_ != other.iter_; }
+    bool operator!=(const const_iterator &other) {
+      return iter_ != other.iter_;
+    }
 
     const_value_reference operator*() { return iter_->value_; }
 
@@ -534,8 +565,7 @@ class Tree {
     TNode(const_key_reference key, const_value_reference value)
         : key_(key), value_(value){};
 
-    TNode(TNode *parent, const_key_reference key, const_value_reference value)
-        : parent_(parent), key_(key), value_(value){};
+    TNode(const TNode &other) : key_(other.key_), value_(other.value_){};
 
     /* operator TreeIterator() { return TreeIterator(this); } */
 
@@ -574,6 +604,10 @@ class Tree {
       return iterator(next_node);
     };
 
+    const_iterator NextNode() const {
+      return const_iterator(const_cast<TNode *>(this)->NextNode());
+    }
+
     iterator PrevNode() {
       TNode *prev_node = this;
       if (prev_node->left_) {
@@ -591,7 +625,12 @@ class Tree {
       return iterator(prev_node);
     };
 
+    const_iterator PrevNode() const {
+      return const_iterator(const_cast<TNode *>(this)->PrevNode());
+    }
+
     void SwapNode(TNode *other) {
+      std::swap(color_, other->color_);
       /* std::swap(key_, other->key_); */
       /* std::swap(key_, other->value_); */
       if (IsRightSon()) {
