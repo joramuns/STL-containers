@@ -338,13 +338,11 @@ class Tree {
     if (children_num == 2) {
       TNode *swap_node = remove_node->left_->MaxNode();
       if (swap_node->color_ == kRed) {
-        if (head_ == remove_node)
-          head_ = swap_node;
+        if (head_ == remove_node) head_ = swap_node;
         remove_node->SwapNode(swap_node);
         remove_node = ExtractNode(iterator(remove_node));
       } else {
-        if (head_ == remove_node)
-          head_ = swap_node;
+        if (head_ == remove_node) head_ = swap_node;
         swap_node = remove_node->right_->MinNode();
         remove_node->SwapNode(swap_node);
         remove_node = ExtractNode(iterator(remove_node));
@@ -360,14 +358,12 @@ class Tree {
     } else if (children_num == 1 && remove_node->color_ == kBlack) {
       if (remove_node->right_) {
         TNode *swap_node = remove_node->right_;
-        if (head_ == remove_node)
-          head_ = swap_node;
+        if (head_ == remove_node) head_ = swap_node;
         remove_node->SwapNode(swap_node);
         remove_node = ExtractNode(iterator(remove_node));
       } else {
         TNode *swap_node = remove_node->left_;
-        if (head_ == remove_node)
-          head_ = swap_node;
+        if (head_ == remove_node) head_ = swap_node;
         remove_node->SwapNode(swap_node);
         remove_node = ExtractNode(iterator(remove_node));
       }
@@ -495,6 +491,7 @@ class Tree {
     value_reference operator*() { return iter_->value_; }
 
     operator ConstTreeIterator() const { return ConstTreeIterator(*this); }
+
    private:
     TNode *iter_;
   };
@@ -505,7 +502,8 @@ class Tree {
 
     explicit ConstTreeIterator(const TNode *node) noexcept : iter_(node){};
 
-    explicit ConstTreeIterator(const iterator &other) noexcept : iter_(other.iter_){};
+    explicit ConstTreeIterator(iterator other) noexcept
+        : ConstTreeIterator(other.GetNode()){};
 
     iterator &operator=(const const_iterator &other) noexcept {
       iter_ = other.iter_;
@@ -538,9 +536,13 @@ class Tree {
       return post_decrement;
     };
 
-    bool operator==(const const_iterator &other) { return iter_ == other.iter_; }
+    bool operator==(const const_iterator &other) {
+      return iter_ == other.iter_;
+    }
 
-    bool operator!=(const const_iterator &other) { return iter_ != other.iter_; }
+    bool operator!=(const const_iterator &other) {
+      return iter_ != other.iter_;
+    }
 
     const_value_reference operator*() { return iter_->value_; }
 
@@ -563,8 +565,7 @@ class Tree {
     TNode(const_key_reference key, const_value_reference value)
         : key_(key), value_(value){};
 
-    TNode(TNode *parent, const_key_reference key, const_value_reference value)
-        : parent_(parent), key_(key), value_(value){};
+    TNode(const TNode &other) : key_(other.key_), value_(other.value_){};
 
     /* operator TreeIterator() { return TreeIterator(this); } */
 
