@@ -154,7 +154,7 @@ class list {
         move_pos.GetNode()->LinkNodes(this_pos.GetNode());
         ++m_size_;
         --other.m_size_;
-      }  
+      }
     }
   };
 
@@ -185,7 +185,21 @@ class list {
     }
   };
 
-  void unique();
+  void unique() {
+    iterator pos = begin();
+    iterator prev_pos = pos;
+    ++pos;
+    iterator end_pos = end();
+    while (pos != end_pos) {
+      if (*pos == *prev_pos) {
+        iterator del_pos = pos;
+        erase(del_pos);
+      } else {
+        ++prev_pos;
+      }
+      ++pos;
+    }
+  };
   void sort();
 
  private:
