@@ -139,7 +139,24 @@ class list {
     }
   };
 
-  void merge(list &other);
+  void merge(list &other) {
+    iterator this_pos = begin();
+    iterator this_end = end();
+    iterator other_pos = other.begin();
+    iterator other_end = other.end();
+    while (this_pos != this_end && other_pos != other_end) {
+      if (*other_pos >= *this_pos) {
+        ++this_pos;
+      } else {
+        iterator move_pos = other_pos;
+        ++other_pos;
+        move_pos.GetNode()->ExtractNode();
+        move_pos.GetNode()->LinkNodes(this_pos.GetNode());
+        ++m_size_;
+        --other.m_size_;
+      }  
+    }
+  };
 
   /* void splice(const_iterator pos, list &other) { */
   void splice(const_iterator pos, list &other) {
