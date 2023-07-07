@@ -104,7 +104,7 @@ class list {
   iterator insert(iterator pos, const_reference value) {
     Node *temp = new Node;
     temp->data_ = value;
-    temp->LinkNodes(pos.iter_);
+    temp->LinkNodes(pos.GetNode());
     ++m_size_;
 
     return iterator(temp);
@@ -114,9 +114,8 @@ class list {
     if (pos == end())
       throw std::invalid_argument(
           "Container is empty or trying to erase end iterator");
-    Node *temp = pos.iter_;
-    temp->prev_->next_ = temp->next_;
-    temp->next_->prev_ = temp->prev_;
+    Node *temp = pos.GetNode();
+    temp->ExtractNode();
     --m_size_;
     delete temp;
   };
@@ -139,6 +138,7 @@ class list {
       other.m_size_ = temp_size;
     }
   };
+
   void merge(list &other);
 
   /* void splice(const_iterator pos, list &other) { */
@@ -188,7 +188,12 @@ class list {
     void LinkOneSide(Node *other) {
       next_ = other;
       other->prev_ = this;
-    }
+    };
+
+    void ExtractNode() {
+      prev_->next_ = next_;
+      next_->prev_ = prev_;
+    };
   };
   class ListIterator {
    public:
@@ -245,6 +250,9 @@ class list {
       return iter_ != other.iter_;
     }
 
+    Node *GetNode() const noexcept { return iter_; }
+
+   private:
     Node *iter_;
   };
   class ConstListIterator {
@@ -293,6 +301,9 @@ class list {
       return iter_ != other.iter_;
     }
 
+    Node *GetNode() const noexcept { return iter_; }
+
+   private:
     const Node *iter_;
   };
 
