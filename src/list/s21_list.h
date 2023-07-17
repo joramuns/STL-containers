@@ -140,14 +140,15 @@ class list {
   };
 
   void merge(list &other) noexcept {
-    iterator this_pos = begin();
-    iterator this_end = end();
-    iterator other_pos = other.begin();
-    iterator other_end = other.end();
-    while (this_pos != this_end && other_pos != other_end) {
-      if (*other_pos >= *this_pos) {
-        ++this_pos;
-      } else {
+    if (this != &other) {
+      iterator this_pos = begin();
+      iterator this_end = end();
+      iterator other_pos = other.begin();
+      iterator other_end = other.end();
+      while (other_pos != other_end) {
+        while (*other_pos >= *this_pos && this_pos != this_end) {
+          ++this_pos;
+        }
         iterator move_pos = other_pos;
         ++other_pos;
         move_pos.GetNode()->ExtractNode();
