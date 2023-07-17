@@ -105,6 +105,57 @@ TEST(List, Empty_4) {
   ASSERT_EQ(aboba.empty(), true);
 }
 
+TEST(List, Merge_1) {
+  s21::list<int> aboba;
+  aboba.push_back(1);
+  aboba.push_back(3);
+  aboba.push_back(3);
+  aboba.push_back(5);
+  aboba.push_back(9);
+  s21::list<int> keka;
+  keka.push_back(2);
+  keka.push_back(3);
+  keka.push_back(4);
+  keka.push_back(4);
+  keka.push_back(7);
+  keka.push_back(8);
+  for (const auto& item : aboba) {
+    std::cout << item << " ";
+  }
+  std::cout << std::endl;
+  for (const auto& item : keka) {
+    std::cout << item << " ";
+  }
+  std::cout << std::endl;
+  aboba.merge(keka);
+  for (const auto& item : aboba) {
+    std::cout << item << " ";
+  }
+  std::cout << std::endl;
+}
+
+TEST(List, Unique_1) {
+  s21::list<int> aboba;
+  aboba.push_back(1);
+  aboba.push_back(2);
+  aboba.push_back(2);
+  aboba.push_back(3);
+  aboba.push_back(3);
+  aboba.push_back(2);
+  aboba.push_back(1);
+  aboba.push_back(1);
+  aboba.push_back(2);
+  for (const auto& item : aboba) {
+    std::cout << item << " ";
+  }
+  std::cout << std::endl;
+  aboba.unique();
+  for (const auto& item : aboba) { 
+    std::cout << item << " ";
+  }
+  std::cout << std::endl;
+}
+
 /* TEST(List, Exception_1) { */
 /*   s21::list<int> aboba; */
 /*   EXPECT_THROW(aboba.pop_back(), std::invalid_argument); */
