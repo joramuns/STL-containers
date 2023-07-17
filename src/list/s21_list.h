@@ -88,6 +88,7 @@ class list {
   };
 
   const_iterator end() const noexcept { return const_iterator(head_); };
+
   /*** List capacity ***/
   bool empty() const noexcept { return m_size_ == 0; };
 
@@ -127,7 +128,7 @@ class list {
 
   void pop_front() { erase(begin()); };
 
-  void swap(list &other) {
+  void swap(list &other) noexcept {
     if (this != &other) {
       Node *temp = head_;
       head_ = other.head_;
@@ -138,7 +139,7 @@ class list {
     }
   };
 
-  void merge(list &other) {
+  void merge(list &other) noexcept {
     iterator this_pos = begin();
     iterator this_end = end();
     iterator other_pos = other.begin();
@@ -157,8 +158,7 @@ class list {
     }
   };
 
-  /* void splice(const_iterator pos, list &other) { */
-  void splice(const_iterator pos, list &other) {
+  void splice(const_iterator pos, list &other) noexcept {
     if (this != &other) {
       iterator non_const_pos{const_cast<Node *>(pos.iter_)};
       Node *lnode = non_const_pos.iter_->prev_;
@@ -225,6 +225,7 @@ class list {
       next_->prev_ = prev_;
     };
   };
+
   class ListIterator {
    public:
     /* using iterator_category = std::bidirectional_iterator_tag; */
@@ -285,6 +286,7 @@ class list {
    private:
     Node *iter_;
   };
+
   class ConstListIterator {
    public:
     /* using iterator_category = std::bidirectional_iterator_tag; */
@@ -338,7 +340,7 @@ class list {
   };
 
   void SwapPrevNode(const iterator &pos) {
-    Node *target = pos.iter_;
+    Node *target = pos.GetNode();
     Node *temp = target->prev_;
     target->prev_ = target->next_;
     target->next_ = temp;
