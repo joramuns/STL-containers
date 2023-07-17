@@ -102,8 +102,7 @@ class list {
   };
 
   iterator insert(iterator pos, const_reference value) {
-    Node *temp = new Node;
-    temp->data_ = value;
+    Node *temp = new Node(value);
     temp->LinkNodes(pos.GetNode());
     ++m_size_;
 
@@ -208,6 +207,7 @@ class list {
     Node *prev_;
     value_type data_{};
     Node() : next_(this), prev_(this){};
+    explicit Node(value_type value) : next_(this), prev_(this), data_(value){};
 
     void LinkNodes(Node *pos) {
       prev_ = pos->prev_;
