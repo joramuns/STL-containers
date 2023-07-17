@@ -234,19 +234,8 @@ class list {
     /* using value_type = list::value_type; */
     /* using pointer = value_type *; */
     /* using reference = value_type &; */
-    ListIterator(){};
+    ListIterator() = delete;
     explicit ListIterator(Node *list_node) noexcept : iter_(list_node){};
-    ListIterator(const ListIterator &other) noexcept : iter_(other.iter_){};
-    ListIterator(ListIterator &&other) noexcept { *this = std::move(other); };
-    ListIterator &operator=(const ListIterator &other) noexcept {
-      if (*this != other) iter_ = other.iter_;
-      return *this;
-    };
-    ListIterator operator=(ListIterator &&other) noexcept {
-      if (*this != other) *this = std::move(other);
-      return *this;
-    };
-    ~ListIterator() noexcept {};
 
     operator ConstListIterator() const { return ConstListIterator(*this); };
 
@@ -300,7 +289,6 @@ class list {
         : iter_(list_node){};
     explicit ConstListIterator(const iterator &other) noexcept
         : iter_(other.GetNode()){};
-    ~ConstListIterator() noexcept {};
 
     value_type operator*() const noexcept { return iter_->data_; }
 
