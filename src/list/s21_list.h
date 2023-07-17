@@ -161,13 +161,13 @@ class list {
 
   void splice(const_iterator pos, list &other) noexcept {
     if (this != &other) {
-      iterator non_const_pos{const_cast<Node *>(pos.iter_)};
-      Node *lnode = non_const_pos.iter_->prev_;
-      Node *rnode = other.begin().iter_;
+      iterator non_const_pos{const_cast<Node *>(pos.GetNode())};
+      Node *lnode = non_const_pos.GetNode()->prev_;
+      Node *rnode = other.begin().GetNode();
       lnode->LinkOneSide(rnode);
 
-      lnode = other.end().iter_->prev_;
-      rnode = non_const_pos.iter_;
+      lnode = other.end().GetNode()->prev_;
+      rnode = non_const_pos.GetNode();
       lnode->LinkOneSide(rnode);
 
       m_size_ += other.size();
@@ -299,7 +299,7 @@ class list {
     explicit ConstListIterator(const Node *list_node) noexcept
         : iter_(list_node){};
     explicit ConstListIterator(const iterator &other) noexcept
-        : iter_(other.iter_){};
+        : iter_(other.GetNode()){};
     ~ConstListIterator() noexcept {};
 
     value_type operator*() const noexcept { return iter_->data_; }
@@ -334,7 +334,7 @@ class list {
       return iter_ != other.iter_;
     }
 
-    Node *GetNode() const noexcept { return iter_; }
+    const Node *GetNode() const noexcept { return iter_; }
 
    private:
     const Node *iter_;
