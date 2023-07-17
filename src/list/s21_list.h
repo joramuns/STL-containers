@@ -28,7 +28,7 @@ class list {
 
   explicit list(size_type n) : list() {
     while (n--) {
-      push_back(0);
+      push_back({});
     }
   };
 
@@ -206,8 +206,8 @@ class list {
   struct Node {
     Node *next_;
     Node *prev_;
-    value_type data_;
-    Node() : next_(this), prev_(this), data_(0){};
+    value_type data_{};
+    Node() : next_(this), prev_(this){};
 
     void LinkNodes(Node *pos) {
       prev_ = pos->prev_;
