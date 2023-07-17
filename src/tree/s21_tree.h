@@ -449,11 +449,9 @@ class Tree {
 
   class TreeIterator {
    public:
-    TreeIterator(){};
+    TreeIterator() = default;
 
     explicit TreeIterator(TNode *node) : iter_(node){};
-
-    ~TreeIterator(){};
 
     TNode *GetNode() { return iter_; }
 
@@ -484,27 +482,15 @@ class Tree {
 
     value_reference operator*() { return iter_->value_; }
 
-    operator ConstTreeIterator() const { return ConstTreeIterator(*this); }
-
    private:
-    TNode *iter_;
+    TNode *iter_ = nullptr;
   };
 
   class ConstTreeIterator {
    public:
-    ConstTreeIterator() = delete;
+    ConstTreeIterator() = default;
 
     explicit ConstTreeIterator(const TNode *node) noexcept : iter_(node){};
-
-    explicit ConstTreeIterator(iterator other) noexcept
-        : ConstTreeIterator(other.GetNode()){};
-
-    iterator &operator=(const const_iterator &other) noexcept {
-      iter_ = other.iter_;
-      return *this;
-    }
-
-    ~ConstTreeIterator() noexcept {};
 
     const TNode *GetNode() const noexcept { return iter_; }
 
@@ -541,7 +527,7 @@ class Tree {
     const_value_reference operator*() { return iter_->value_; }
 
    private:
-    const TNode *iter_;
+    const TNode *iter_ = nullptr;
   };
 
  protected:
