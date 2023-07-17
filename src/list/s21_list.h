@@ -24,7 +24,7 @@ class list {
   using size_type = std::size_t;
 
   /*** List functions ***/
-  list() : head_(new Node), m_size_(0){};
+  list() : head_(new Node){};
 
   explicit list(size_type n) : list() {
     while (n--) {
@@ -54,7 +54,6 @@ class list {
   list &operator=(const list &l) {
     if (this != &l) {
       clear();
-      m_size_ = 0;
       for (const auto &item : l) push_back(item);
     }
 
@@ -346,7 +345,7 @@ class list {
   };
 
   Node *head_;
-  size_type m_size_;
+  size_type m_size_ = 0;
 };
 }  // namespace s21
 
