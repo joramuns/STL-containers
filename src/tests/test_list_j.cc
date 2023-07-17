@@ -106,54 +106,33 @@ TEST(List, Empty_4) {
 }
 
 TEST(List, Merge_1) {
-  s21::list<int> aboba;
-  aboba.push_back(1);
-  aboba.push_back(3);
-  aboba.push_back(3);
-  aboba.push_back(5);
-  aboba.push_back(9);
-  s21::list<int> keka;
-  keka.push_back(2);
-  keka.push_back(3);
-  keka.push_back(4);
-  keka.push_back(4);
-  keka.push_back(7);
-  keka.push_back(8);
-  for (const auto& item : aboba) {
-    std::cout << item << " ";
-  }
-  std::cout << std::endl;
-  for (const auto& item : keka) {
-    std::cout << item << " ";
-  }
-  std::cout << std::endl;
+  s21::list<int> aboba{1, 3, 3, 5, 9};
+  s21::list<int> keka{2, 3, 4, 4, 7, 8};
+  std::list<int> std_aboba{1, 3, 3, 5, 9};
+  std::list<int> std_keka{2, 3, 4, 4, 7, 8};
   aboba.merge(keka);
-  for (const auto& item : aboba) {
-    std::cout << item << " ";
-  }
-  std::cout << std::endl;
+  std_aboba.merge(std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
 }
 
 TEST(List, Unique_1) {
-  s21::list<int> aboba;
-  aboba.push_back(1);
-  aboba.push_back(2);
-  aboba.push_back(2);
-  aboba.push_back(3);
-  aboba.push_back(3);
-  aboba.push_back(2);
-  aboba.push_back(1);
-  aboba.push_back(1);
-  aboba.push_back(2);
-  for (const auto& item : aboba) {
-    std::cout << item << " ";
-  }
-  std::cout << std::endl;
-  aboba.unique();
-  for (const auto& item : aboba) { 
-    std::cout << item << " ";
-  }
-  std::cout << std::endl;
+  s21::list<int> aboba{1, 2, 2, 3, 3, 2, 1, 1, 2};
+  std::list<int> std_aboba{1, 2, 2, 3, 3, 2, 1, 1, 2};
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
 }
 
 /* TEST(List, Exception_1) { */
