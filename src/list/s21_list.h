@@ -234,7 +234,7 @@ class list {
     /* using value_type = list::value_type; */
     /* using pointer = value_type *; */
     /* using reference = value_type &; */
-    ListIterator() = delete;
+    ListIterator() = default;
     explicit ListIterator(Node *list_node) noexcept : iter_(list_node){};
 
     operator ConstListIterator() const { return ConstListIterator(*this); };
@@ -274,7 +274,7 @@ class list {
     Node *GetNode() const noexcept { return iter_; }
 
    private:
-    Node *iter_;
+    Node *iter_ = nullptr;
   };
 
   class ConstListIterator {
@@ -284,7 +284,7 @@ class list {
     /* using value_type = list::value_type; */
     /* using pointer = value_type *; */
     /* using reference = value_type &; */
-    ConstListIterator() = delete;
+    ConstListIterator() = default;
     explicit ConstListIterator(const Node *list_node) noexcept
         : iter_(list_node){};
     explicit ConstListIterator(const iterator &other) noexcept
@@ -325,7 +325,7 @@ class list {
     const Node *GetNode() const noexcept { return iter_; }
 
    private:
-    const Node *iter_;
+    const Node *iter_ = nullptr;
   };
 
   void SwapPrevNode(const iterator &pos) {
