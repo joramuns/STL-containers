@@ -192,7 +192,7 @@ class Tree {
 
   iterator FindKey(key_type key) noexcept {
     iterator result = FindNode(key);
-    if (!size_ || *result != key) {
+    if (!size_ || result.GetKey() != key) {
       result = end();
     }
 
@@ -201,7 +201,7 @@ class Tree {
 
   const_iterator FindKey(key_type key) const noexcept {
     iterator result = FindNode(key);
-    if (!size_ || *result != key) {
+    if (!size_ || result.GetKey() != key) {
       result = end();
     }
 
