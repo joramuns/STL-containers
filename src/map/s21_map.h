@@ -58,12 +58,23 @@ class map {
 
   std::pair<iterator, bool> insert_or_assign(const key_type &key,
                                              const mapped_type &obj);
-  void erase(iterator pos);
-  void swap(map &other);
-  void merge(map &other);
+
+  void erase(iterator pos) { rb_tree_->DeleteNode(pos); };
+
+  void swap(map &other) {
+    if (rb_tree_ != other.rb_tree_) {
+      std::swap(rb_tree_, other->rb_tree_);
+    }
+  };
+
+  void merge(map &other) {
+    if (this != &other) {
+      rb_tree_->Merge(other->rb_tree_);
+    } 
+  };
 
   /*** Map lookup ***/
-  bool contains(const key_type &key);
+  bool contains(const key_type &key) { return rb_tree_->FindKey(key) != end(); };
 
  private:
   tree_type *rb_tree_ = new tree_type;
