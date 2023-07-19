@@ -114,6 +114,11 @@ class Tree {
     return (std::pair<iterator, bool>)InsertNode(key, key);
   };
 
+  /* Overload for map, inserts unique node with key and value from std::pair */
+  std::pair<iterator, bool> InsertNode(std::pair<key_type, value_type> data) {
+    return (std::pair<iterator, bool>)InsertNode(data.first, data.second);
+  };
+
   /* Inserts multi node */
   std::pair<TNode *, bool> MultiInsertNode(key_type key, value_type value) {
     TNode *insert_node = new TNode(key, value);
