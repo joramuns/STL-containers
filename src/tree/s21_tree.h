@@ -453,6 +453,8 @@ class Tree {
 
     explicit TreeIterator(TNode *node) : iter_(node){};
 
+    operator ConstTreeIterator() const { return ConstTreeIterator(*this); };
+
     TNode *GetNode() { return iter_; }
 
     iterator &operator++() {
@@ -491,6 +493,8 @@ class Tree {
     ConstTreeIterator() = default;
 
     explicit ConstTreeIterator(const TNode *node) noexcept : iter_(node){};
+
+    explicit ConstTreeIterator(const iterator &other) noexcept : iter_(other.GetNode()){};
 
     const TNode *GetNode() const noexcept { return iter_; }
 
