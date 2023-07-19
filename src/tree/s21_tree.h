@@ -423,6 +423,21 @@ class Tree {
     }
   };
 
+  void Merge(Tree &other) {
+    iterator iter = other.begin();
+    iterator iter_end = other.end();
+    iterator this_end = end();
+    while (iter != iter_end) {
+      if (FindKey(*iter) != this_end) {
+        iterator temp = iter;
+        ++iter;
+        InsertNode(other.ExtractNode(temp));
+      } else {
+        ++iter;
+      }
+    }
+  };
+
   void DeleteTree(TNode *pivot) {
     if (pivot && size_) {
       DeleteTree(pivot->left_);
@@ -483,9 +498,13 @@ class Tree {
       return post_decrement;
     };
 
-    bool operator==(const iterator &other) const noexcept { return iter_ == other.iter_; }
+    bool operator==(const iterator &other) const noexcept {
+      return iter_ == other.iter_;
+    }
 
-    bool operator!=(const iterator &other) const noexcept { return iter_ != other.iter_; }
+    bool operator!=(const iterator &other) const noexcept {
+      return iter_ != other.iter_;
+    }
 
     value_reference operator*() { return iter_->value_; }
 
@@ -499,7 +518,8 @@ class Tree {
 
     explicit ConstTreeIterator(const TNode *node) noexcept : iter_(node){};
 
-    explicit ConstTreeIterator(const iterator &other) noexcept : iter_(other.GetNode()){};
+    explicit ConstTreeIterator(const iterator &other) noexcept
+        : iter_(other.GetNode()){};
 
     const TNode *GetNode() const noexcept { return iter_; }
 
