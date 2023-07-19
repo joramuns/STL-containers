@@ -423,7 +423,7 @@ class Tree {
     iterator iter_end = other.end();
     iterator this_end = end();
     while (iter != iter_end) {
-      if (FindKey(iter->GetKey()) == this_end) {
+      if (FindKey(iter.GetKey()) == this_end) {
         iterator temp = iter;
         ++iter;
         InsertNode(other.ExtractNode(temp));
