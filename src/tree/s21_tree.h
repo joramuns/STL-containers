@@ -197,7 +197,7 @@ class Tree {
 
   iterator FindKey(key_type key) noexcept {
     iterator result = FindNode(key);
-    if (!size_ || *result != key) {
+    if (!size_ || result.GetKey() != key) {
       result = end();
     }
 
@@ -206,7 +206,7 @@ class Tree {
 
   const_iterator FindKey(key_type key) const noexcept {
     iterator result = FindNode(key);
-    if (!size_ || *result != key) {
+    if (!size_ || result.GetKey() != key) {
       result = end();
     }
 
@@ -428,7 +428,7 @@ class Tree {
     iterator iter_end = other.end();
     iterator this_end = end();
     while (iter != iter_end) {
-      if (FindKey(*iter) == this_end) {
+      if (FindKey(iter.GetKey()) == this_end) {
         iterator temp = iter;
         ++iter;
         InsertNode(other.ExtractNode(temp));
@@ -506,7 +506,9 @@ class Tree {
       return iter_ != other.iter_;
     }
 
-    value_reference operator*() { return iter_->value_; }
+    value_reference operator*() const noexcept { return iter_->value_; }
+
+    const_key_reference GetKey() const noexcept { return iter_->key_; }
 
    private:
     TNode *iter_ = nullptr;
@@ -554,6 +556,8 @@ class Tree {
     }
 
     const_value_reference operator*() { return iter_->value_; }
+
+    const_key_reference GetKey() const noexcept { return iter_->key_; }
 
    private:
     const TNode *iter_ = nullptr;
