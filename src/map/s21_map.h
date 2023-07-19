@@ -32,10 +32,13 @@ class map {
   mapped_type &operator[](const Key &key);
 
   /*** Map iterators ***/
-  iterator begin() noexcept;
-  iterator end() noexcept;
-  const_iterator begin() const noexcept;
-  const_iterator end() const noexcept;
+  iterator begin() noexcept { return rb_tree_->begin(); };
+
+  iterator end() noexcept { return rb_tree_->end(); };
+
+  const_iterator begin() const noexcept { return rb_tree_->begin(); };
+
+  const_iterator end() const noexcept { return rb_tree_->end(); };
 
   /*** Map capacity ***/
   bool empty() { return rb_tree_->Empty(); };
@@ -69,12 +72,14 @@ class map {
 
   void merge(map &other) {
     if (this != &other) {
-      rb_tree_->Merge(other->rb_tree_);
-    } 
+      rb_tree_->Merge(*other.rb_tree_);
+    }
   };
 
   /*** Map lookup ***/
-  bool contains(const key_type &key) { return rb_tree_->FindKey(key) != end(); };
+  bool contains(const key_type &key) {
+    return rb_tree_->FindKey(key) != end();
+  };
 
  private:
   tree_type *rb_tree_ = new tree_type;
