@@ -455,7 +455,7 @@ class Tree {
 
     operator ConstTreeIterator() const { return ConstTreeIterator(*this); };
 
-    TNode *GetNode() { return iter_; }
+    TNode *GetNode() const { return iter_; }
 
     iterator &operator++() {
       iter_ = iter_->NextNode().GetNode();
