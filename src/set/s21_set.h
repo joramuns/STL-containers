@@ -101,17 +101,7 @@ class set {
   };
 
   void merge(set &other) {
-    iterator iter = other.begin();
-    iterator iter_end = other.end();
-    while (iter != iter_end) {
-      if (!contains(*iter)) {
-        iterator temp = iter;
-        ++iter;
-        rb_tree_->InsertNode(other.rb_tree_->ExtractNode(temp));
-      } else {
-        ++iter;
-      }
-    }
+    rb_tree_->Merge(*other.rb_tree_);
   };
 
   /* Set lookup */
