@@ -22,7 +22,7 @@ class map {
   explicit map(std::initializer_list<value_type> const &items){};
   map(const map &m){};
   map(map &&m){};
-  ~map();
+  ~map() { delete rb_tree_; };
 
   map &operator=(const map &m);
   map &operator=(map &&m);
@@ -38,14 +38,24 @@ class map {
   const_iterator end() const noexcept;
 
   /*** Map capacity ***/
-  bool empty();
-  size_type size();
+  bool empty() { return rb_tree_->Empty(); };
+
+  size_type size() { return rb_tree_->GetSize(); };
+
   size_type max_size();
 
   /*** Map modifiers ***/
-  void clear();
-  std::pair<iterator, bool> insert(const value_type &value);
-  std::pair<iterator, bool> insert(const key_type &key, const mapped_type &obj);
+  void clear() { rb_tree_->ClearTree(); };
+
+  std::pair<iterator, bool> insert(const value_type &value) {
+    return rb_tree_->InsertNode(value);
+  };
+
+  std::pair<iterator, bool> insert(const key_type &key,
+                                   const mapped_type &obj) {
+    return rb_tree_->InsertNode((value_type{key, obj}));
+  };
+
   std::pair<iterator, bool> insert_or_assign(const key_type &key,
                                              const mapped_type &obj);
   void erase(iterator pos);
