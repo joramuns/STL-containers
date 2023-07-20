@@ -20,13 +20,13 @@ class map {
   /*** Map member functions ***/
   map() = default;
 
-  explicit map(std::initializer_list<value_type> const &items){
+  map(std::initializer_list<value_type> const &items) {
     for (const auto &item : items) {
       insert(item);
     }
   };
 
-  map(const map &m){
+  map(const map &m) {
     if (rb_tree_ != m.rb_tree_) {
       clear();
       delete rb_tree_;
@@ -34,7 +34,7 @@ class map {
     }
   };
 
-  map(map &&m){
+  map(map &&m) {
     if (rb_tree_ != m.rb_tree_) {
       std::swap(rb_tree_, m.rb_tree_);
     }
@@ -46,7 +46,7 @@ class map {
     if (this != &m) {
       clear();
       delete rb_tree_;
-      rb_tree_ = new tree_type(m.rb_tree_);
+      rb_tree_ = new tree_type(*m.rb_tree_);
     }
     return *this;
   };
@@ -64,9 +64,7 @@ class map {
     return *iter;
   };
 
-  mapped_type &operator[](const Key &key) {
-    return at(key);
-  };
+  mapped_type &operator[](const Key &key) { return at(key); };
 
   /*** Map iterators ***/
   iterator begin() noexcept { return rb_tree_->begin(); };
@@ -97,12 +95,12 @@ class map {
   };
 
   std::pair<iterator, bool> insert_or_assign(const key_type &key,
-      const mapped_type &obj) {
+                                             const mapped_type &obj) {
     auto insert_attempt = insert(key, obj);
     if (insert_attempt.second == false) {
       insert_attempt.first = (iterator)rb_tree_->FindKey(key);
       *insert_attempt.first = obj;
-      insert_attempt.second = true;
+      /* insert_attempt.second = true; */
     }
 
     return insert_attempt;
@@ -112,7 +110,7 @@ class map {
 
   void swap(map &other) {
     if (rb_tree_ != other.rb_tree_) {
-      std::swap(rb_tree_, other->rb_tree_);
+      std::swap(rb_tree_, other.rb_tree_);
     }
   };
 
