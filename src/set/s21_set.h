@@ -47,6 +47,7 @@ class set {
   ~set() { delete rb_tree_; };
 
   set &operator=(std::initializer_list<value_type> const &items) {
+    clear();
     for (const auto &item : items) {
       insert(item);
     }
