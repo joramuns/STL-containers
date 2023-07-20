@@ -18,14 +18,45 @@ class map {
   using size_type = std::size_t;
 
   /*** Map member functions ***/
-  map(){};
-  explicit map(std::initializer_list<value_type> const &items){};
-  map(const map &m){};
-  map(map &&m){};
+  map() = default;
+
+  explicit map(std::initializer_list<value_type> const &items){
+    for (const auto &item : items) {
+      insert(item);
+    }
+  };
+
+  map(const map &m){
+    if (rb_tree_ != m.rb_tree_) {
+      clear();
+      delete rb_tree_;
+      rb_tree_ = new tree_type(*m.rb_tree_);
+    }
+  };
+
+  map(map &&m){
+    if (rb_tree_ != m.rb_tree_) {
+      std::swap(rb_tree_, m.rb_tree_);
+    }
+  };
+
   ~map() { delete rb_tree_; };
 
-  map &operator=(const map &m);
-  map &operator=(map &&m);
+  map &operator=(const map &m) {
+    if (this != &m) {
+      clear();
+      delete rb_tree_;
+      rb_tree_ = new tree_type(m.rb_tree_);
+    }
+    return *this;
+  };
+
+  map &operator=(map &&m) {
+    if (this != &m) {
+      rb_tree_ = std::move(m.rb_tree_);
+    }
+    return *this;
+  };
 
   /*** Map element access ***/
   mapped_type &at(const Key &key) {
