@@ -20,7 +20,7 @@ class map {
   /*** Map member functions ***/
   map() = default;
 
-  map(std::initializer_list<value_type> const &items) {
+  explicit map(std::initializer_list<value_type> const &items) {
     for (const auto &item : items) {
       insert(item);
     }
