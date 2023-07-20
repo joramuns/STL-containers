@@ -5,151 +5,179 @@
 #include <iostream>
 
 namespace s21 {
-template <typename T> class vector {
-public:
+template <typename T>
+class vector {
+ public:
   using value_type = T;
-  using reference = T&;
-  using const_reference = const T&;
-  using iterator = T*;
-  using const_iterator = const T*;
+  using reference = T &;
+  using const_reference = const T &;
+  using iterator = T *;
+  using const_iterator = const T *;
   using size_type = std::size_t;
 
   // vector member function
 
-  vector() : sz_(0), cpct_(0){
-    InitVector();
-  };
+  vector() = default;
 
-  explicit vector(size_type n) : sz_(n), cpct_(n) {
-    InitVector();
-    for (size_type i = 0; i < n; ++i) {
-      arr_[i] = 0;
-    }
-  };
+  explicit vector(size_type n) : sz_(n), cpct_(n) { InitVector(); };
 
   explicit vector(std::initializer_list<value_type> const &items)
-      : sz_(0), cpct_(0) {
-    InitVector();
-    for (const auto &item : items) {
-      push_back(item);
-    }
+      : vector(items.size()) {
+    std::copy(items.begin(), items.end(), arr_);
   };
 
-  vector(const vector &v) {
-    sz_ = v.sz_;
-    cpct_ = v.cpct_;
+  vector(const vector &v) : sz_(v.sz_), cpct_(v.cpct_) {
     InitVector();
     CopyArr(v);
   };
 
-  vector(vector &&v) : sz_(std::move(v.sz_)), cpct_(std::move(v.cpct_)), arr_(std::move(v.arr_)){
-    v.sz_ = 0;
-    v.cpct_ = 0;
-    v.arr_ = nullptr;
-  };
-
-  ~vector() {
-    delete[] arr_;
-    sz_ = 0;
-    cpct_ = 0;
-    arr_ = nullptr;
-  };
-
-  vector& operator=(vector &&v) noexcept {
+  vector(vector &&v) noexcept {
     if (this != &v) {
-      delete[] arr_;
+      swap(v);
+    }
+  };
 
-      sz_ = std::move(v.sz_);
-      cpct_ = std::move(v.cpct_);
-      arr_ = std::move(v.arr_);
+  ~vector() { DestroyArr(); };
 
-      v.sz_ = 0;
-      v.cpct_ = 0;
-      v.arr_ = nullptr;
+  vector &operator=(const vector &v) noexcept {
+    if (this != &v) {
+      DestroyArr();
+      vector temp(v);
+      *this = temp;
+    }
+    return *this;
+  };
+
+  vector &operator=(vector &&v) noexcept {
+    if (this != &v) {
+      DestroyArr();
+      std::swap(sz_, v.sz_);
+      std::swap(cpct_, v.cpct_);
+      std::swap(arr_, v.arr_);
     }
     return *this;
   };
 
   // vector Elements access
-  reference at(size_type pos){
-    if (sz_ > pos) {
-      throw std::invalid_argument("\nWrong vector position\n");
+  reference at(size_type pos) {
+    if (pos >= sz_) {
+      throw std::out_of_range("\nWrong vector position\n");
     }
     return arr_[pos];
   };
 
-  reference operator[](size_type pos) { return arr_[pos]; };
-
-  const_reference front() const { return arr_[0]; };
-
-  const_reference back() const { return arr_[sz_ - 1]; };
-
-  T *data() noexcept {
-
+  const_reference at(size_type pos) const {
+    if (pos >= sz_) {
+      throw std::out_of_range("\nWrong vector position\n");
+    }
+    return arr_[pos];
   };
+
+  reference operator[](size_type pos) { return at(pos); };
+
+  const_reference operator[](size_type pos) const { return at(pos); };
+
+  reference front() {
+    if (!sz_) {
+      throw std::out_of_range("\nWrond vector position\n");
+    }
+    return arr_[0];
+  };
+
+  reference back() {
+    if (!sz_) {
+      throw std::out_of_range("\nWrond vector position\n");
+    }
+    return arr_[sz_ - 1];
+  };
+
+  const_reference front() const {
+    if (!sz_) {
+      throw std::out_of_range("\nWrond vector position\n");
+    }
+    return arr_[0];
+  };
+
+  const_reference back() const {
+    if (!sz_) {
+      throw std::out_of_range("\nWrond vector position\n");
+    }
+    return arr_[sz_ - 1];
+  };
+
+  iterator data() noexcept { return arr_; };
 
   // vector iterators
   iterator begin() noexcept { return arr_; };
 
-  iterator end() noexcept {
-    return (arr_ + sz_);
-  };
+  iterator end() noexcept { return (arr_ + sz_); };
+
+  const_iterator begin() const noexcept { return arr_; };
+
+  const_iterator end() const noexcept { return (arr_ + sz_); };
 
   // vector capacity
 
-  bool empty() const noexcept { return sz_ == 0 ? 1 : 0; };
+  bool empty() const noexcept { return sz_ == 0; };
 
   size_type size() const noexcept { return sz_; };
 
   size_type max_size() const noexcept { return 0; };
 
-  void reserve(size_type size){
-    T* tmp = new T[size]();
-    for(size_t i = 0; i < size; ++i){
-      tmp[i] = arr_[i];
+  void reserve(size_type size) {
+    if (size > cpct_) {
+      value_type *temp = new value_type[size];
+      std::copy(std::begin(arr_), std::end(arr_), temp);
+      delete[] arr_;
+      arr_ = std::move(temp);
+      cpct_ = size;
     }
-    arr_ = std::move(tmp);
-    sz_ = size;
-    cpct_ = size;
   };
 
   size_type capacity() const noexcept { return cpct_; };
 
-  void shrink_to_fit(){
-    cpct_ = sz_;
-    T* tmp = new T[sz_]();
-    for (size_t i = 0; i < sz_; ++i){
-      tmp[i] = arr_[i];
+  void shrink_to_fit() {
+    if (cpct_ > sz_) {
+      cpct_ = sz_;
+      value_type *tmp = new value_type[sz_]();
+      for (size_t i = 0; i < sz_; ++i) {
+        tmp[i] = arr_[i];
+      }
+      delete[] arr_;
+      arr_ = std::move(tmp);
     }
-    arr_ = std::move(tmp);
   };
 
   // vector modifiers
 
-  void clear() noexcept {
-    this->~vector();
-  };
+  void clear() noexcept { DestroyArr(); };
 
   iterator insert(iterator pos, const_reference value) {
     *(++pos) = value;
     return pos;
   };
 
-  // void erase(iterator pos){
-
-  // };
+  void erase(iterator pos) {
+    if (pos != end()) {
+      iterator new_pos = pos;
+      ++new_pos;
+      std::copy(new_pos, end(), pos);
+    }
+    --sz_;
+  };
 
   void push_back(const_reference value) {
-    ++sz_;
-    if (sz_ >= cpct_) {
-      vector tmp = *this;
-      this->~vector();
-      sz_ = tmp.sz_;
-      cpct_ = 2 * sz_;
-      InitVector();
-      CopyArr(tmp);
-    }
-    arr_[sz_ - 1] = value;
+    insert(end(), value);
+    /* ++sz_; */
+    /* if (sz_ >= cpct_) { */
+    /*   vector tmp = *this; */
+    /*   this->~vector(); */
+    /*   sz_ = tmp.sz_; */
+    /*   cpct_ = 2 * sz_; */
+    /*   InitVector(); */
+    /*   CopyArr(tmp); */
+    /* } */
+    /* arr_[sz_ - 1] = value; */
   };
 
   void pop_back() { erase(end()); };
@@ -160,19 +188,32 @@ public:
     std::swap(arr_, other.arr_);
   };
 
-private:
-  T *arr_;
-  size_type sz_;
-  size_type cpct_;
+ private:
+  T *arr_ = nullptr;
+  size_type sz_ = 0U;
+  size_type cpct_ = 0U;
 
-  void InitVector() { arr_ = new T[cpct_](); };
+  void InitVector() {
+    if (cpct_) {
+      arr_ = new T[cpct_]();
+    }
+  };
 
   void CopyArr(const vector &other) noexcept {
     for (size_type i = 0; i < other.sz_; ++i) {
       arr_[i] = other.arr_[i];
     }
   };
-};
-} // namespace s21
 
-#endif // CPP2_S21_CONTAINERS_0_VECTOR_S21_VECTOR_H_
+  void DestroyArr() noexcept {
+    if (cpct_) {
+      delete[] arr_;
+      arr_ = nullptr;
+      cpct_ = 0U;
+      sz_ = 0U;
+    }
+  };
+};
+}  // namespace s21
+
+#endif  // CPP2_S21_CONTAINERS_0_VECTOR_S21_VECTOR_H_
