@@ -28,8 +28,14 @@ class map {
   map &operator=(map &&m);
 
   /*** Map element access ***/
-  mapped_type &at(const Key &key);
-  mapped_type &operator[](const Key &key);
+  mapped_type &at(const Key &key) {
+    iterator iter = rb_tree_->FindKey(key);
+    return *iter;
+  };
+
+  mapped_type &operator[](const Key &key) {
+    return at(key);
+  };
 
   /*** Map iterators ***/
   iterator begin() noexcept { return rb_tree_->begin(); };
@@ -60,7 +66,16 @@ class map {
   };
 
   std::pair<iterator, bool> insert_or_assign(const key_type &key,
-                                             const mapped_type &obj);
+      const mapped_type &obj) {
+    auto insert_attempt = insert(key, obj);
+    if (insert_attempt.second == false) {
+      insert_attempt.first = (iterator)rb_tree_->FindKey(key);
+      *insert_attempt.first = obj;
+      insert_attempt.second = true;
+    }
+
+    return insert_attempt;
+  };
 
   void erase(iterator pos) { rb_tree_->DeleteNode(pos); };
 
