@@ -53,7 +53,7 @@ class map {
 
   map &operator=(map &&m) {
     if (this != &m) {
-      rb_tree_ = std::move(m.rb_tree_);
+      *rb_tree_ = std::move(*m.rb_tree_);
     }
     return *this;
   };
