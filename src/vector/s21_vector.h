@@ -1,6 +1,7 @@
 #ifndef CPP2_S21_CONTAINERS_0_VECTOR_S21_VECTOR_H_
 #define CPP2_S21_CONTAINERS_0_VECTOR_S21_VECTOR_H_
 
+#include <algorithm>
 #include <initializer_list>
 #include <iostream>
 
@@ -151,8 +152,20 @@ class vector {
   void clear() noexcept { sz_ = 0; };
 
   iterator insert(iterator pos, const_reference value) {
-    *(++pos) = value;
-    return pos;
+    iterator new_pos = pos, old_end = end();
+    if (++sz_ > cpct_) {
+      cpct_ *= 2;
+      value_type *temp = new value_type[cpct_];
+      new_pos = std::copy(arr_, pos, temp);
+      std::copy(pos, old_end, new_pos + 1);
+      delete[] arr_;
+      arr_ = temp;
+    } else {
+      std::copy(pos, old_end, new_pos + 1);
+    }
+    *new_pos = value;
+
+    return new_pos;
   };
 
   void erase(iterator pos) {
@@ -164,21 +177,9 @@ class vector {
     --sz_;
   };
 
-  void push_back(const_reference value) {
-    insert(end(), value);
-    /* ++sz_; */
-    /* if (sz_ >= cpct_) { */
-    /*   vector tmp = *this; */
-    /*   this->~vector(); */
-    /*   sz_ = tmp.sz_; */
-    /*   cpct_ = 2 * sz_; */
-    /*   InitVector(); */
-    /*   CopyArr(tmp); */
-    /* } */
-    /* arr_[sz_ - 1] = value; */
-  };
+  void push_back(const_reference value) { insert(end(), value); };
 
-  void pop_back() { erase(end()); };
+  void pop_back() { erase(--end()); };
 
   void swap(vector &other) noexcept {
     std::swap(sz_, other.sz_);
@@ -193,7 +194,7 @@ class vector {
 
   void InitVector() {
     if (cpct_) {
-      arr_ = new T[cpct_]();
+      arr_ = new value_type[cpct_]();
     }
   };
 
