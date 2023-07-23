@@ -43,8 +43,10 @@ class vector {
   vector &operator=(const vector &v) noexcept {
     if (this != &v) {
       DestroyArr();
-      vector temp(v);
-      *this = temp;
+      sz_ = v.sz_;
+      cpct_ = v.cpct_;
+      InitVector();
+      CopyArr(v);
     }
     return *this;
   };
@@ -179,7 +181,7 @@ class vector {
 
   void push_back(const_reference value) { insert(end(), value); };
 
-  void pop_back() { erase(--end()); };
+  void pop_back() { erase(&back()); };
 
   void swap(vector &other) noexcept {
     std::swap(sz_, other.sz_);
