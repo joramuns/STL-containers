@@ -51,9 +51,7 @@ class vector {
   vector &operator=(vector &&v) noexcept {
     if (this != &v) {
       DestroyArr();
-      std::swap(sz_, v.sz_);
-      std::swap(cpct_, v.cpct_);
-      std::swap(arr_, v.arr_);
+      swap(v);
     }
     return *this;
   };
@@ -127,7 +125,7 @@ class vector {
   void reserve(size_type size) {
     if (size > cpct_) {
       value_type *temp = new value_type[size];
-      std::copy(std::begin(arr_), std::end(arr_), temp);
+      std::copy_n(arr_, sz_, temp);
       delete[] arr_;
       arr_ = std::move(temp);
       cpct_ = size;
@@ -150,7 +148,7 @@ class vector {
 
   // vector modifiers
 
-  void clear() noexcept { DestroyArr(); };
+  void clear() noexcept { sz_ = 0; };
 
   iterator insert(iterator pos, const_reference value) {
     *(++pos) = value;
