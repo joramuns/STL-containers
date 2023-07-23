@@ -108,6 +108,8 @@ class vector {
 
   iterator data() noexcept { return arr_; };
 
+  const_iterator data() const noexcept { return arr_; };
+
   // vector iterators
   iterator begin() noexcept { return arr_; };
 
@@ -155,8 +157,11 @@ class vector {
 
   iterator insert(iterator pos, const_reference value) {
     iterator new_pos = pos, old_end = end();
+    if (pos > old_end || pos < begin()) {
+      throw std::out_of_range("\nOut of range\n");
+    }
     if (++sz_ > cpct_) {
-      cpct_ *= 2;
+      cpct_ = cpct_ ? cpct_ * 2 : 1;
       value_type *temp = new value_type[cpct_];
       new_pos = std::copy(arr_, pos, temp);
       std::copy(pos, old_end, new_pos + 1);
@@ -171,11 +176,12 @@ class vector {
   };
 
   void erase(iterator pos) {
-    if (pos != end()) {
-      iterator new_pos = pos;
-      ++new_pos;
-      std::copy(new_pos, end(), pos);
+    if (pos >= end() || pos < begin()) {
+      throw std::out_of_range("\nOut of range\n");
     }
+    iterator new_pos = pos;
+    ++new_pos;
+    std::copy(new_pos, end(), pos);
     --sz_;
   };
 
