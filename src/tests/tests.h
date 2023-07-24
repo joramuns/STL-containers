@@ -3,3 +3,4 @@
 #include <stack>
 
 #include "../s21_containers.h"
+#include <list>

@@ -105,6 +105,582 @@ TEST(List, Empty_4) {
   ASSERT_EQ(aboba.empty(), true);
 }
 
+TEST(List, Merge_1) {
+  s21::list<int> aboba{1, 3, 3, 5, 9};
+  s21::list<int> keka{2, 3, 4, 4, 7, 8};
+  std::list<int> std_aboba{1, 3, 3, 5, 9};
+  std::list<int> std_keka{2, 3, 4, 4, 7, 8};
+  aboba.merge(keka);
+  std_aboba.merge(std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Merge_2) {
+  s21::list<int> aboba{1};
+  s21::list<int> keka{2};
+  std::list<int> std_aboba{1};
+  std::list<int> std_keka{2};
+  aboba.merge(keka);
+  std_aboba.merge(std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Merge_3) {
+  s21::list<int> aboba{1, 2};
+  s21::list<int> keka{1, 2};
+  std::list<int> std_aboba{1, 2};
+  std::list<int> std_keka{1, 2};
+  aboba.merge(keka);
+  std_aboba.merge(std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Merge_4) {
+  s21::list<int> aboba{2, 1};
+  s21::list<int> keka{1, 2};
+  std::list<int> std_aboba{2, 1};
+  std::list<int> std_keka{1, 2};
+  aboba.merge(keka);
+  std_aboba.merge(std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Merge_5) {
+  s21::list<int> aboba;
+  s21::list<int> keka;
+  std::list<int> std_aboba;
+  std::list<int> std_keka;
+  aboba.merge(keka);
+  std_aboba.merge(std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Merge_6) {
+  s21::list<int> aboba{2, 1};
+  s21::list<int> keka{2, 1};
+  std::list<int> std_aboba{2, 1};
+  std::list<int> std_keka{2, 1};
+  aboba.merge(keka);
+  std_aboba.merge(std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Merge_7) {
+  s21::list<int> aboba{2, 1, 2, 1};
+  s21::list<int> keka{2, 1, 2, 1};
+  std::list<int> std_aboba{2, 1, 2, 1};
+  std::list<int> std_keka{2, 1, 2, 1};
+  aboba.merge(keka);
+  std_aboba.merge(std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Merge_8) {
+  s21::list<int> aboba{2};
+  s21::list<int> keka{2};
+  std::list<int> std_aboba{2};
+  std::list<int> std_keka{2};
+  aboba.merge(keka);
+  std_aboba.merge(std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Unique_1) {
+  s21::list<int> aboba{1, 2, 2, 3, 3, 2, 1, 1, 2};
+  std::list<int> std_aboba{1, 2, 2, 3, 3, 2, 1, 1, 2};
+  aboba.unique();
+  std_aboba.unique();
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Unique_2) {
+  s21::list<int> aboba{1};
+  std::list<int> std_aboba{1};
+  aboba.unique();
+  std_aboba.unique();
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Unique_3) {
+  s21::list<int> aboba{1, 1, 1, 1, 2, 1, 1, 1, 2, 2, 2, 2, 1};
+  s21::list<int> std_aboba{1, 1, 1, 1, 2, 1, 1, 1, 2, 2, 2, 2, 1};
+  aboba.unique();
+  std_aboba.unique();
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Unique_4) {
+  s21::list<int> aboba;
+  s21::list<int> std_aboba;
+  aboba.unique();
+  std_aboba.unique();
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Reverse_1) {
+  s21::list<int> aboba{1, 2, 2, 3, 3, 2, 1, 1, 2};
+  std::list<int> std_aboba{1, 2, 2, 3, 3, 2, 1, 1, 2};
+  aboba.reverse();
+  std_aboba.reverse();
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Reverse_2) {
+  s21::list<int> aboba{1};
+  std::list<int> std_aboba{1};
+  aboba.reverse();
+  std_aboba.reverse();
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Reverse_3) {
+  s21::list<int> aboba{1, 2};
+  std::list<int> std_aboba{1, 2};
+  aboba.reverse();
+  std_aboba.reverse();
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Reverse_4) {
+  s21::list<int> aboba;
+  std::list<int> std_aboba;
+  aboba.reverse();
+  std_aboba.reverse();
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Reverse_5) {
+  s21::list<int> aboba{1, 2, 3};
+  std::list<int> std_aboba{1, 2, 3};
+  aboba.reverse();
+  std_aboba.reverse();
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_1) {
+  s21::list<int> aboba{1, 2, 3};
+  s21::list<int> keka{4, 5, 6};
+  std::list<int> std_aboba{1, 2, 3};
+  std::list<int> std_keka{4, 5, 6};
+  aboba.splice(aboba.begin(), keka);
+  std_aboba.splice(std_aboba.begin(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_2) {
+  s21::list<int> aboba{1, 2, 3};
+  s21::list<int> keka{4, 5, 6};
+  std::list<int> std_aboba{1, 2, 3};
+  std::list<int> std_keka{4, 5, 6};
+  aboba.splice(aboba.end(), keka);
+  std_aboba.splice(std_aboba.end(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_3) {
+  s21::list<int> aboba{1, 2, 3};
+  s21::list<int> keka{4, 5, 6};
+  std::list<int> std_aboba{1, 2, 3};
+  std::list<int> std_keka{4, 5, 6};
+  aboba.splice(--aboba.end(), keka);
+  std_aboba.splice(--std_aboba.end(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_4) {
+  s21::list<int> aboba{1};
+  s21::list<int> keka{4, 5, 6};
+  std::list<int> std_aboba{1};
+  std::list<int> std_keka{4, 5, 6};
+  aboba.splice(aboba.begin(), keka);
+  std_aboba.splice(std_aboba.begin(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_5) {
+  s21::list<int> aboba{1};
+  s21::list<int> keka{4, 5, 6};
+  std::list<int> std_aboba{1};
+  std::list<int> std_keka{4, 5, 6};
+  aboba.splice(aboba.end(), keka);
+  std_aboba.splice(std_aboba.end(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_6) {
+  s21::list<int> aboba{1};
+  s21::list<int> keka{4, 5, 6};
+  std::list<int> std_aboba{1};
+  std::list<int> std_keka{4, 5, 6};
+  aboba.splice(--aboba.end(), keka);
+  std_aboba.splice(--std_aboba.end(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_7) {
+  s21::list<int> aboba{1, 2, 3};
+  s21::list<int> keka{4};
+  std::list<int> std_aboba{1, 2, 3};
+  std::list<int> std_keka{4};
+  aboba.splice(aboba.begin(), keka);
+  std_aboba.splice(std_aboba.begin(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_8) {
+  s21::list<int> aboba{1, 2, 3};
+  s21::list<int> keka{4};
+  std::list<int> std_aboba{1, 2, 3};
+  std::list<int> std_keka{4};
+  aboba.splice(aboba.end(), keka);
+  std_aboba.splice(std_aboba.end(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_9) {
+  s21::list<int> aboba{1, 2, 3};
+  s21::list<int> keka{4};
+  std::list<int> std_aboba{1, 2, 3};
+  std::list<int> std_keka{4};
+  aboba.splice(--aboba.end(), keka);
+  std_aboba.splice(--std_aboba.end(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_10) {
+  s21::list<int> aboba{1};
+  s21::list<int> keka{4};
+  std::list<int> std_aboba{1};
+  std::list<int> std_keka{4};
+  aboba.splice(aboba.begin(), keka);
+  std_aboba.splice(std_aboba.begin(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_11) {
+  s21::list<int> aboba{1};
+  s21::list<int> keka{4};
+  std::list<int> std_aboba{1};
+  std::list<int> std_keka{4};
+  aboba.splice(aboba.end(), keka);
+  std_aboba.splice(std_aboba.end(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_12) {
+  s21::list<int> aboba{1};
+  s21::list<int> keka{4};
+  std::list<int> std_aboba{1};
+  std::list<int> std_keka{4};
+  aboba.splice(--aboba.end(), keka);
+  std_aboba.splice(--std_aboba.end(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_13) {
+  s21::list<int> aboba;
+  s21::list<int> keka{4};
+  std::list<int> std_aboba;
+  std::list<int> std_keka{4};
+  aboba.splice(aboba.begin(), keka);
+  std_aboba.splice(std_aboba.begin(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_14) {
+  s21::list<int> aboba;
+  s21::list<int> keka{4};
+  std::list<int> std_aboba;
+  std::list<int> std_keka{4};
+  aboba.splice(aboba.end(), keka);
+  std_aboba.splice(std_aboba.end(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_15) {
+  s21::list<int> aboba;
+  s21::list<int> keka{4};
+  std::list<int> std_aboba;
+  std::list<int> std_keka{4};
+  aboba.splice(--aboba.end(), keka);
+  std_aboba.splice(--std_aboba.end(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_16) {
+  s21::list<int> aboba{1};
+  s21::list<int> keka;
+  std::list<int> std_aboba{1};
+  std::list<int> std_keka;
+  aboba.splice(aboba.begin(), keka);
+  std_aboba.splice(std_aboba.begin(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_17) {
+  s21::list<int> aboba{1};
+  s21::list<int> keka;
+  std::list<int> std_aboba{1};
+  std::list<int> std_keka;
+  aboba.splice(aboba.end(), keka);
+  std_aboba.splice(std_aboba.end(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+TEST(List, Splice_18) {
+  s21::list<int> aboba{1};
+  s21::list<int> keka;
+  std::list<int> std_aboba{1};
+  std::list<int> std_keka;
+  aboba.splice(--aboba.end(), keka);
+  std_aboba.splice(--std_aboba.end(), std_keka);
+  auto s21_it = aboba.begin();
+  auto std_it = std_aboba.begin();
+  auto s21_it_end = aboba.end();
+  auto std_it_end = std_aboba.end();
+  ASSERT_EQ(aboba.size(), std_aboba.size());
+  do {
+    ASSERT_EQ(*s21_it, *std_it);
+  } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
 /* TEST(List, Exception_1) { */
 /*   s21::list<int> aboba; */
 /*   EXPECT_THROW(aboba.pop_back(), std::invalid_argument); */
