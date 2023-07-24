@@ -15,7 +15,7 @@ class stack {
   using size_type = std::size_t;
 
   /*** Stack member functions ***/
-  stack(){};
+  stack() = default;
 
   explicit stack(std::initializer_list<value_type> const &items)
       : data_(items){};
@@ -24,7 +24,7 @@ class stack {
 
   stack(stack &&s) noexcept { std::swap(data_, s.data_); };
 
-  ~stack(){} noexcept;
+  ~stack() = default;
 
   stack &operator=(const stack &s) {
     data_ = s.data_;
