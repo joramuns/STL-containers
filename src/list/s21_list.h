@@ -40,9 +40,7 @@ class list {
     for (const auto &item : l) push_back(item);
   };
 
-  list(list &&l) : list() {
-    swap(l);
-  };
+  list(list &&l) : list() { swap(l); };
 
   ~list() {
     clear();
@@ -193,7 +191,11 @@ class list {
       }
     }
   };
-  void sort();
+  void sort() {
+    if (m_size_ > 1) {
+      head_->next_->MergeSort(&(head_->next_), head_);
+    }
+  };
 
  private:
   struct Node {
@@ -202,6 +204,58 @@ class list {
     value_type data_{};
     Node() : next_(this), prev_(this){};
     explicit Node(value_type value) : next_(this), prev_(this), data_(value){};
+
+    void MergeSort(Node **sort_head, Node *tail) {
+      /* Break recursion in case of empty or one element in list */
+      if (*sort_head == tail || (*sort_head)->next_ == tail) {
+        return;
+      }
+      Node *a = nullptr;
+      Node *b = nullptr;
+      /* Split whole list into two halves */
+      SplitList(*sort_head, &a, &b, tail);
+      /* Recursively sort every half */
+      MergeSort(&a, tail);
+      MergeSort(&b, tail);
+
+      /* Merge sorted pieces of list back */
+      *sort_head = MergeBack(a, b, tail);
+    }
+
+    void SplitList(Node *sort_head, Node **a, Node **b, Node *tail) {
+      Node *fast = sort_head->next_;
+      Node *slow = sort_head;
+      while (fast != tail) {
+        fast = fast->next_;
+        if (fast != tail) {
+          fast = fast->next_;
+          slow = slow->next_;
+        }
+      }
+      *a = sort_head;
+      *b = slow->next_;
+      slow->next_ = tail;
+    }
+
+    Node *MergeBack(Node *a, Node *b, Node *tail) {
+      Node *result = nullptr;
+      if (a == tail) {
+        return b;
+      } else if (b == tail) {
+        return a;
+      }
+      if (a->data_ <= b->data_) {
+        result = a;
+        result->next_ = MergeBack(a->next_, b, tail);
+      } else {
+        result = b;
+        result->next_ = MergeBack(a, b->next_, tail);
+      }
+      result->prev_ = tail;
+      result->next_->prev_ = result;
+
+      return result;
+    }
 
     void LinkNodes(Node *pos) {
       prev_ = pos->prev_;
