@@ -41,8 +41,7 @@ class list {
   };
 
   list(list &&l) : list() {
-    std::swap(head_, l.head_);
-    std::swap(m_size_, l.m_size_);
+    swap(l);
   };
 
   ~list() {
@@ -62,8 +61,7 @@ class list {
 
   list &operator=(list &&l) {
     if (this != &l) {
-      std::swap(head_, l.head_);
-      std::swap(m_size_, l.m_size_);
+      swap(l);
     }
 
     return *this;
@@ -128,12 +126,8 @@ class list {
 
   void swap(list &other) noexcept {
     if (this != &other) {
-      Node *temp = head_;
-      head_ = other.head_;
-      other.head_ = temp;
-      size_type temp_size = m_size_;
-      m_size_ = other.m_size_;
-      other.m_size_ = temp_size;
+      std::swap(head_, other.head_);
+      std::swap(m_size_, other.m_size_);
     }
   };
 
@@ -191,11 +185,12 @@ class list {
     while (pos != end_pos) {
       if (*pos == *prev_pos) {
         iterator del_pos = pos;
+        ++pos;
         erase(del_pos);
       } else {
+        ++pos;
         ++prev_pos;
       }
-      ++pos;
     }
   };
   void sort();
