@@ -109,14 +109,13 @@ class list {
     return iterator(temp);
   };
 
-  void erase(iterator pos) {
-    if (pos == end())
-      throw std::invalid_argument(
-          "Container is empty or trying to erase end iterator");
-    Node *temp = pos.GetNode();
-    temp->ExtractNode();
-    --m_size_;
-    delete temp;
+  void erase(iterator pos) noexcept {
+    if (pos != end()) {
+      Node *temp = pos.GetNode();
+      temp->ExtractNode();
+      --m_size_;
+      delete temp;
+    }
   };
 
   void push_back(const_reference value) { insert(end(), value); };
