@@ -24,11 +24,11 @@ class list {
   using size_type = std::size_t;
 
   /*** List functions ***/
-  list() : head_(new Node), m_size_(0){};
+  list() : head_(new Node){};
 
   explicit list(size_type n) : list() {
     while (n--) {
-      push_back(0);
+      push_back({});
     }
   };
 
@@ -54,7 +54,6 @@ class list {
   list &operator=(const list &l) {
     if (this != &l) {
       clear();
-      m_size_ = 0;
       for (const auto &item : l) push_back(item);
     }
 
@@ -89,6 +88,7 @@ class list {
   };
 
   const_iterator end() const noexcept { return const_iterator(head_); };
+
   /*** List capacity ***/
   bool empty() const noexcept { return m_size_ == 0; };
 
@@ -102,9 +102,8 @@ class list {
   };
 
   iterator insert(iterator pos, const_reference value) {
-    Node *temp = new Node;
-    temp->data_ = value;
-    temp->LinkNodes(pos.iter_);
+    Node *temp = new Node(value);
+    temp->LinkNodes(pos.GetNode());
     ++m_size_;
 
     return iterator(temp);
@@ -114,9 +113,8 @@ class list {
     if (pos == end())
       throw std::invalid_argument(
           "Container is empty or trying to erase end iterator");
-    Node *temp = pos.iter_;
-    temp->prev_->next_ = temp->next_;
-    temp->next_->prev_ = temp->prev_;
+    Node *temp = pos.GetNode();
+    temp->ExtractNode();
     --m_size_;
     delete temp;
   };
@@ -129,7 +127,7 @@ class list {
 
   void pop_front() { erase(begin()); };
 
-  void swap(list &other) {
+  void swap(list &other) noexcept {
     if (this != &other) {
       Node *temp = head_;
       head_ = other.head_;
@@ -139,18 +137,36 @@ class list {
       other.m_size_ = temp_size;
     }
   };
-  void merge(list &other);
 
-  /* void splice(const_iterator pos, list &other) { */
-  void splice(const_iterator pos, list &other) {
+  void merge(list &other) noexcept {
     if (this != &other) {
-      iterator non_const_pos{const_cast<Node *>(pos.iter_)};
-      Node *lnode = non_const_pos.iter_->prev_;
-      Node *rnode = other.begin().iter_;
+      iterator this_pos = begin();
+      iterator this_end = end();
+      iterator other_pos = other.begin();
+      iterator other_end = other.end();
+      while (other_pos != other_end) {
+        while (*other_pos >= *this_pos && this_pos != this_end) {
+          ++this_pos;
+        }
+        iterator move_pos = other_pos;
+        ++other_pos;
+        move_pos.GetNode()->ExtractNode();
+        move_pos.GetNode()->LinkNodes(this_pos.GetNode());
+        ++m_size_;
+        --other.m_size_;
+      }
+    }
+  };
+
+  void splice(const_iterator pos, list &other) noexcept {
+    if (this != &other) {
+      iterator non_const_pos{const_cast<Node *>(pos.GetNode())};
+      Node *lnode = non_const_pos.GetNode()->prev_;
+      Node *rnode = other.begin().GetNode();
       lnode->LinkOneSide(rnode);
 
-      lnode = other.end().iter_->prev_;
-      rnode = non_const_pos.iter_;
+      lnode = other.end().GetNode()->prev_;
+      rnode = non_const_pos.GetNode();
       lnode->LinkOneSide(rnode);
 
       m_size_ += other.size();
@@ -168,15 +184,30 @@ class list {
     }
   };
 
-  void unique();
+  void unique() {
+    iterator pos = begin();
+    iterator prev_pos = pos;
+    ++pos;
+    iterator end_pos = end();
+    while (pos != end_pos) {
+      if (*pos == *prev_pos) {
+        iterator del_pos = pos;
+        erase(del_pos);
+      } else {
+        ++prev_pos;
+      }
+      ++pos;
+    }
+  };
   void sort();
 
  private:
   struct Node {
     Node *next_;
     Node *prev_;
-    value_type data_;
-    Node() : next_(this), prev_(this), data_(0){};
+    value_type data_{};
+    Node() : next_(this), prev_(this){};
+    explicit Node(value_type value) : next_(this), prev_(this), data_(value){};
 
     void LinkNodes(Node *pos) {
       prev_ = pos->prev_;
@@ -188,8 +219,14 @@ class list {
     void LinkOneSide(Node *other) {
       next_ = other;
       other->prev_ = this;
-    }
+    };
+
+    void ExtractNode() {
+      prev_->next_ = next_;
+      next_->prev_ = prev_;
+    };
   };
+
   class ListIterator {
    public:
     /* using iterator_category = std::bidirectional_iterator_tag; */
@@ -197,19 +234,8 @@ class list {
     /* using value_type = list::value_type; */
     /* using pointer = value_type *; */
     /* using reference = value_type &; */
-    ListIterator(){};
+    ListIterator() = default;
     explicit ListIterator(Node *list_node) noexcept : iter_(list_node){};
-    ListIterator(const ListIterator &other) noexcept : iter_(other.iter_){};
-    ListIterator(ListIterator &&other) noexcept { *this = std::move(other); };
-    ListIterator &operator=(const ListIterator &other) noexcept {
-      if (*this != other) iter_ = other.iter_;
-      return *this;
-    };
-    ListIterator operator=(ListIterator &&other) noexcept {
-      if (*this != other) *this = std::move(other);
-      return *this;
-    };
-    ~ListIterator() noexcept {};
 
     operator ConstListIterator() const { return ConstListIterator(*this); };
 
@@ -245,8 +271,12 @@ class list {
       return iter_ != other.iter_;
     }
 
-    Node *iter_;
+    Node *GetNode() const noexcept { return iter_; }
+
+   private:
+    Node *iter_ = nullptr;
   };
+
   class ConstListIterator {
    public:
     /* using iterator_category = std::bidirectional_iterator_tag; */
@@ -254,12 +284,11 @@ class list {
     /* using value_type = list::value_type; */
     /* using pointer = value_type *; */
     /* using reference = value_type &; */
-    ConstListIterator() = delete;
+    ConstListIterator() = default;
     explicit ConstListIterator(const Node *list_node) noexcept
         : iter_(list_node){};
     explicit ConstListIterator(const iterator &other) noexcept
-        : iter_(other.iter_){};
-    ~ConstListIterator() noexcept {};
+        : iter_(other.GetNode()){};
 
     value_type operator*() const noexcept { return iter_->data_; }
 
@@ -293,18 +322,21 @@ class list {
       return iter_ != other.iter_;
     }
 
-    const Node *iter_;
+    const Node *GetNode() const noexcept { return iter_; }
+
+   private:
+    const Node *iter_ = nullptr;
   };
 
   void SwapPrevNode(const iterator &pos) {
-    Node *target = pos.iter_;
+    Node *target = pos.GetNode();
     Node *temp = target->prev_;
     target->prev_ = target->next_;
     target->next_ = temp;
   };
 
   Node *head_;
-  size_type m_size_;
+  size_type m_size_ = 0;
 };
 }  // namespace s21
 
