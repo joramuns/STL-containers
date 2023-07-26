@@ -15,7 +15,7 @@ class queue {
   using size_type = std::size_t;
 
   /*** Queue member functions ***/
-  queue(){};
+  queue() = default;
 
   explicit queue(std::initializer_list<value_type> const &items)
       : data_(items){};
@@ -24,7 +24,7 @@ class queue {
 
   queue(queue &&q) noexcept { std::swap(data_, q.data_); };
 
-  ~queue() noexcept;
+  ~queue() = default;
 
   queue &operator=(const queue &q) {
     data_ = q.data_;
