@@ -846,6 +846,40 @@ TEST(List, Sort_11) {
     ASSERT_EQ(*s21_it, *std_it);
   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
 }
+
+TEST(List, Max_Size) {
+  s21::list<int> intlist{};
+  s21::list<char> charlist{};
+  s21::list<size_t> sztlist{};
+  s21::list<float> fltlist{};
+  s21::list<double> dbllist{};
+  s21::list<std::vector<int>> vecintlist{};
+  s21::list<std::vector<char>> veccharlist{};
+  s21::list<std::vector<size_t>> vecsztlist{};
+  s21::list<std::list<int>> listintlist{};
+  s21::list<std::set<int>> setintlist{};
+
+  std::list<int> std_intlist{};
+  std::list<char> std_charlist{};
+  std::list<size_t> std_sztlist{};
+  std::list<float> std_fltlist{};
+  std::list<double> std_dbllist{};
+  std::list<std::vector<int>> std_vecintlist{};
+  std::list<std::vector<char>> std_veccharlist{};
+  std::list<std::vector<size_t>> std_vecsztlist{};
+  std::list<std::list<int>> std_listintlist{};
+  std::list<std::set<int>> std_setintlist{};
+
+  ASSERT_EQ(intlist.max_size(), std_intlist.max_size());
+  ASSERT_EQ(charlist.max_size(), std_charlist.max_size());
+  ASSERT_EQ(sztlist.max_size(), std_sztlist.max_size());
+  ASSERT_EQ(dbllist.max_size(), std_dbllist.max_size());
+  ASSERT_EQ(vecintlist.max_size(), std_vecintlist.max_size());
+  ASSERT_EQ(veccharlist.max_size(), std_veccharlist.max_size());
+  ASSERT_EQ(vecsztlist.max_size(), std_vecsztlist.max_size());
+  ASSERT_EQ(listintlist.max_size(), std_listintlist.max_size());
+  ASSERT_EQ(setintlist.max_size(), std_setintlist.max_size());
+}
 /* TEST(List, Exception_1) { */
 /*   s21::list<int> aboba; */
 /*   EXPECT_THROW(aboba.pop_back(), std::invalid_argument); */
