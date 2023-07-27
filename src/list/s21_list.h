@@ -90,7 +90,9 @@ class list {
 
   size_type size() const noexcept { return m_size_; };
 
-  size_type max_size();
+  size_type max_size() {
+    return std::numeric_limits<size_type>::max() / sizeof(Node) / 2;
+  };
 
   /*** List modifiers ***/
   void clear() {
