@@ -78,31 +78,19 @@ class vector {
 
   const_reference operator[](size_type pos) const { return at(pos); };
 
-  reference front() {
-    if (!sz_) {
-      throw std::out_of_range("\nWrond vector position\n");
-    }
+  reference front() noexcept {
     return arr_[0];
   };
 
-  reference back() {
-    if (!sz_) {
-      throw std::out_of_range("\nWrond vector position\n");
-    }
+  reference back() noexcept {
     return arr_[sz_ - 1];
   };
 
-  const_reference front() const {
-    if (!sz_) {
-      throw std::out_of_range("\nWrond vector position\n");
-    }
+  const_reference front() const noexcept {
     return arr_[0];
   };
 
-  const_reference back() const {
-    if (!sz_) {
-      throw std::out_of_range("\nWrond vector position\n");
-    }
+  const_reference back() const noexcept {
     return arr_[sz_ - 1];
   };
 
@@ -175,14 +163,13 @@ class vector {
     return new_pos;
   };
 
-  void erase(iterator pos) {
-    if (pos >= end() || pos < begin()) {
-      throw std::out_of_range("\nOut of range\n");
+  void erase(iterator pos) noexcept {
+    if (pos >= begin() && pos < end()) {
+      iterator new_pos = pos;
+      ++new_pos;
+      std::copy(new_pos, end(), pos);
+      --sz_;
     }
-    iterator new_pos = pos;
-    ++new_pos;
-    std::copy(new_pos, end(), pos);
-    --sz_;
   };
 
   void push_back(const_reference value) { insert(end(), value); };
@@ -196,7 +183,7 @@ class vector {
   };
 
  private:
-  T *arr_ = nullptr;
+  value_type *arr_ = nullptr;
   size_type sz_ = 0U;
   size_type cpct_ = 0U;
 
