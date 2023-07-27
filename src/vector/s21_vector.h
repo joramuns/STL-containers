@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <initializer_list>
 #include <iostream>
+#include <limits>
 
 namespace s21 {
 template <typename T>
@@ -113,7 +114,9 @@ class vector {
 
   size_type size() const noexcept { return sz_; };
 
-  size_type max_size() const noexcept { return 0; };
+  size_type max_size() const noexcept {
+    return std::numeric_limits<size_type>::max() / sizeof(value_type) / 2;
+  };
 
   void reserve(size_type size) {
     if (size > cpct_) {
