@@ -80,7 +80,7 @@ class map {
 
   size_type size() { return rb_tree_->GetSize(); };
 
-  size_type max_size();
+  size_type max_size() { return rb_tree_->MaxSize(); };
 
   /*** Map modifiers ***/
   void clear() { rb_tree_->ClearTree(); };
