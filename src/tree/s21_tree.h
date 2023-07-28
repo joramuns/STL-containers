@@ -460,6 +460,10 @@ class Tree {
 
   size_type GetSize() const noexcept { return size_; }
 
+  size_type MaxSize() const noexcept {
+    return std::numeric_limits<size_type>::max() / sizeof(TNode) / 2;
+  };
+
   bool Empty() const noexcept { return size_ == 0; }
 
   class TreeIterator {
