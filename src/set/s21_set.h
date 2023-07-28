@@ -84,7 +84,7 @@ class set {
 
   size_type size() const noexcept { return rb_tree_->GetSize(); };
 
-  size_type max_size() const noexcept;
+  size_type max_size() const noexcept { return rb_tree_->MaxSize(); };
 
   /* Set modifiers */
   void clear() { rb_tree_->ClearTree(); };
@@ -101,9 +101,7 @@ class set {
     }
   };
 
-  void merge(set &other) {
-    rb_tree_->Merge(*other.rb_tree_);
-  };
+  void merge(set &other) { rb_tree_->Merge(*other.rb_tree_); };
 
   /* Set lookup */
   iterator find(const key_type &key) noexcept {
