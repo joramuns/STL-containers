@@ -51,11 +51,11 @@ class array {
 
   /*** Array element access ***/
   reference at(size_type pos) {
-    if (pos > N - 1) throw std::invalid_argument("Index is out of range");
+    if (pos > N - 1 || N == 0) throw std::invalid_argument("Index is out of range");
     return data_[pos];
   };
 
-  reference operator[](size_type pos) { return at(pos); };
+  reference operator[](size_type pos) noexcept { return data_[pos]; };
 
   const_reference at(size_type pos) const {
     if (pos > N - 1) throw std::invalid_argument("Index is out of range");
@@ -90,7 +90,7 @@ class array {
 
   size_type size() const noexcept { return end() - begin(); };
 
-  size_type max_size() const noexcept;
+  size_type max_size() const noexcept { return size(); };
 
   /*** Array modifiers ***/
   void swap(array &other) noexcept { std::swap(data_, other.data_); };
@@ -100,7 +100,7 @@ class array {
   };
 
  private:
-  value_type data_[N] = {};
+  value_type data_[N + 1] = {};
 };
 }  // namespace s21
 
