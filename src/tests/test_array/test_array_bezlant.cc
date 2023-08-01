@@ -136,7 +136,7 @@ TEST(Array, test_all) {
     for (auto e : a)
         ASSERT_EQ(e, v);
 
-    ASSERT_ANY_THROW(a[11]);
+    ASSERT_NO_THROW(a[11]);
 
     ASSERT_ANY_THROW(a.at(11));
     ASSERT_EQ(a.front(), a[0]);
