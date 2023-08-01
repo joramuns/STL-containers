@@ -277,6 +277,16 @@ class list {
     };
   };
 
+  /* Bonus part */
+  /* iterator insert_many(const_iterator pos, Args&&... args) { */
+  /* }; */
+
+  /* void insert_many_back(Args&&... args) { */
+  /* }; */
+
+  template <typename... Args>
+  void insert_many_front(Args &&...args){};
+
   class ListIterator {
    public:
     /* using iterator_category = std::bidirectional_iterator_tag; */
@@ -315,11 +325,11 @@ class list {
 
     bool operator==(const iterator &other) const noexcept {
       return iter_ == other.iter_;
-    }
+    };
 
     bool operator!=(const iterator &other) const noexcept {
       return iter_ != other.iter_;
-    }
+    };
 
     Node *GetNode() const noexcept { return iter_; }
 
