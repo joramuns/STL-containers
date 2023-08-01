@@ -32,7 +32,9 @@ class array {
     for (size_type i = 0; i != a_size; ++i) data_[i] = a.data_[i];
   };
 
-  array(array &&a) noexcept { std::swap(data_, a.data_); };
+  array(array &&a) noexcept {
+    for (size_type i = 0; i != a.size(); ++i) data_[i] = a[i];
+  };
 
   ~array() noexcept {};
 
@@ -44,14 +46,15 @@ class array {
   };
 
   array &operator=(array &&a) noexcept {
-    std::swap(data_, a.data_);
+    for (size_type i = 0; i != a.size(); ++i) data_[i] = a[i];
 
     return *this;
   };
 
   /*** Array element access ***/
   reference at(size_type pos) {
-    if (pos > N - 1 || N == 0) throw std::invalid_argument("Index is out of range");
+    if (N == 0 || pos > N - 1)
+      throw std::invalid_argument("Index is out of range");
     return data_[pos];
   };
 
@@ -72,9 +75,9 @@ class array {
 
   reference back() noexcept { return data_[size() - 1]; };
 
-  const_iterator data() const noexcept { return data_; };
+  const_iterator data() const noexcept { return N ? data_ : nullptr; };
 
-  iterator data() noexcept { return data_; };
+  iterator data() noexcept { return N ? data_ : nullptr; };
 
   /*** Array iterators ***/
   iterator begin() noexcept { return data_; };
@@ -100,7 +103,7 @@ class array {
   };
 
  private:
-  value_type data_[N + 1] = {};
+  value_type data_[N ? N : 1] = {};
 };
 }  // namespace s21
 
