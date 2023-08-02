@@ -19,25 +19,36 @@ class multiset {
   /*** Multiset member functions ***/
   multiset() = default;
 
-  explicit multiset(std::initializer_list<value_type> const &items);
+  explicit multiset(std::initializer_list<value_type> const &items) {
+    for (const auto &item : items) {
+      rb_tree_->MultiInsertNode(item);
+    }
+  };
 
-  multiset(const multiset &ms);
+  multiset(const multiset &ms) {};
 
-  multiset(multiset &&ms);
+  multiset(multiset &&ms) {};
 
   ~multiset() { delete rb_tree_; };
 
-  multiset &operator=(const multiset &ms);
+  /* multiset &operator=(const multiset &ms) {}; */
 
-  multiset &operator=(multiset &&ms);
+  /* multiset &operator=(multiset &&ms) {}; */
 
   /*** Multiset iterators ***/
-  iterator begin() const noexcept;
+  iterator begin() const noexcept { return rb_tree_->begin(); };
 
-  iterator end() const noexcept;
+  iterator end() const noexcept { return rb_tree_->end(); };
+
+  /*** Multiset capacity ***/
+  bool empty() const noexcept { return rb_tree_->Empty(); }
+
+  size_type size() const noexcept { return rb_tree_->GetSize(); };
+
+  size_type max_size() const noexcept { return rb_tree_->MaxSize(); }
 
   /*** Multiset modifiers ***/
-  void clear() noexcept;
+  void clear() noexcept { rb_tree_->ClearTree(); };
 
   iterator insert(const value_type &value) {
     return rb_tree_->MultiInsertNode(value);
@@ -54,17 +65,17 @@ class multiset {
   void merge(multiset &other) { rb_tree_->MultiMerge(*other.rb_tree_); };
 
   /*** Multiset lookup ***/
-  size_type count(const key_type &key) const noexcept;
+  size_type count(const key_type &key) const noexcept { return rb_tree_->MultiFindKey(key); };
 
   iterator find(const key_type &key) const noexcept { return rb_tree_->FindKey(key); };
 
   bool contains(const key_type &key) const noexcept { return find(key) != end(); };
 
-  std::pair<iterator, iterator> equal_range(const key_type &key) const noexcept;
+  /* std::pair<iterator, iterator> equal_range(const key_type &key) const noexcept; */
 
-  iterator lower_bound(const key_type &key) const noexcept;
+  iterator lower_bound(const key_type &key) const noexcept { return rb_tree_->LowerBound(key); };
 
-  iterator upper_bound(const key_type &key) const noexcept;
+  iterator upper_bound(const key_type &key) const noexcept { return rb_tree_->UpperBound(key); };
 
  private:
   tree_type *rb_tree_ = new tree_type;
