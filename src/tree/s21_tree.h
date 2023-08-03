@@ -28,17 +28,9 @@ class Tree {
 
   Tree() { tail_->is_fake_ = true; };
 
-  Tree(const Tree &other) : Tree() {
-    if (this != &other) {
-      CopyTree(other);
-    }
-  };
+  Tree(const Tree &other) : Tree() { CopyTree(other); };
 
-  Tree(Tree &&other) {
-    if (this != &other) {
-      SwapTree(other);
-    }
-  };
+  Tree(Tree &&other) { SwapTree(other); };
 
   Tree &operator=(const Tree &other) {
     if (this != &other) {
@@ -244,7 +236,7 @@ class Tree {
   };
 
   /* Counter of elements with given key */
-  size_type MultiFindKey(key_type key) {
+  size_type MultiFindKey(key_type key) const noexcept {
     size_type result = 0;
     TNode *root = FindNode(key, head_);
     while (root != tail_) {
@@ -254,9 +246,9 @@ class Tree {
     return result;
   }
 
-  iterator LowerBound(const key_type &key) {
-    iterator result = begin();
-    iterator end_tree = end();
+  iterator LowerBound(const key_type &key) noexcept {
+    auto result = begin();
+    auto end_tree = end();
 
     while (result != end_tree && result.GetKey() < key) {
       ++result;
@@ -265,9 +257,31 @@ class Tree {
     return result;
   }
 
-  iterator UpperBound(const key_type &key) {
-    iterator result = LowerBound(key);
-    iterator end_tree = end();
+  const_iterator LowerBound(const key_type &key) const noexcept {
+    auto result = begin();
+    auto end_tree = end();
+
+    while (result != end_tree && result.GetKey() < key) {
+      ++result;
+    }
+
+    return result;
+  }
+
+  iterator UpperBound(const key_type &key) noexcept {
+    auto result = LowerBound(key);
+    auto end_tree = end();
+
+    while (result != end_tree && result.GetKey() <= key) {
+      ++result;
+    }
+
+    return result;
+  }
+
+  const_iterator UpperBound(const key_type &key) const noexcept {
+    auto result = LowerBound(key);
+    auto end_tree = end();
 
     while (result != end_tree && result.GetKey() <= key) {
       ++result;
@@ -279,7 +293,7 @@ class Tree {
   /* Universal function for rotating nodes,
    * based on mutual arrangement of upper and
    * lower nodes determines which side rotation should be called */
-  void RotateNodes(TNode *upper_node, TNode *lower_node) {
+  void RotateNodes(TNode *upper_node, TNode *lower_node) noexcept {
     if (lower_node->IsRightSon()) {
       RotateLeft(upper_node, lower_node);
     } else {
@@ -287,14 +301,14 @@ class Tree {
     }
   };
 
-  void RotateLeft(TNode *upper_node, TNode *lower_node) {
+  void RotateLeft(TNode *upper_node, TNode *lower_node) noexcept {
     SwapParents(upper_node, lower_node);
     upper_node->right_ = lower_node->left_;
     if (upper_node->right_) upper_node->right_->parent_ = upper_node;
     lower_node->left_ = upper_node;
   };
 
-  void RotateRight(TNode *upper_node, TNode *lower_node) {
+  void RotateRight(TNode *upper_node, TNode *lower_node) noexcept {
     SwapParents(upper_node, lower_node);
     upper_node->left_ = lower_node->right_;
     if (upper_node->left_) upper_node->left_->parent_ = upper_node;
@@ -302,7 +316,7 @@ class Tree {
   };
 
   /* Common decomposed algorithm for both rotations */
-  void SwapParents(TNode *upper_node, TNode *lower_node) {
+  void SwapParents(TNode *upper_node, TNode *lower_node) noexcept {
     lower_node->parent_ = upper_node->parent_;
     if (upper_node->IsFatherFake()) {
       head_ = lower_node;
@@ -317,7 +331,7 @@ class Tree {
     upper_node->parent_ = lower_node;
   };
 
-  void BalanceTree(TNode *target_node) {
+  void BalanceTree(TNode *target_node) noexcept {
     /* Father and son are red, need to balance */
     while (target_node->IsParentRed()) {
       /* :1:&:4: Uncle is red, no matter whether son is left or right,
@@ -357,13 +371,13 @@ class Tree {
   /* Separate function for deleting node from tree, first find it with the help
    * of ExtractNode function, then delete it. This approach allows merging two
    * containers without invalidating iterators. */
-  void DeleteNode(iterator remove_iter) {
+  void DeleteNode(iterator remove_iter) noexcept {
     TNode *target = ExtractNode(remove_iter);
     if (target) delete target;
     ;
   }
 
-  TNode *ExtractNode(iterator remove_iter) {
+  TNode *ExtractNode(iterator remove_iter) noexcept {
     TNode *remove_node = nullptr;
     size_type children_num = 3;
     if (remove_iter != end()) {
@@ -419,7 +433,7 @@ class Tree {
   };
 
   /* Rebalance tree function after deleting a node */
-  void RebalanceBrother(TNode *brother) { /* :B0.1: Brother is black */
+  void RebalanceBrother(TNode *brother) noexcept { /* :B0.1: Brother is black */
     if (brother->color_ == kBlack) {
       TNode *far_nephew = brother->GetFarNephew();
       TNode *near_nephew = brother->GetNearNephew();
@@ -457,7 +471,7 @@ class Tree {
     }
   };
 
-  void Merge(Tree &other) {
+  void Merge(Tree &other) noexcept {
     iterator iter = other.begin();
     iterator iter_end = other.end();
     iterator this_end = end();
@@ -472,7 +486,7 @@ class Tree {
     }
   };
 
-  void MultiMerge(Tree &other) {
+  void MultiMerge(Tree &other) noexcept {
     iterator iter = other.begin();
     iterator iter_end = other.end();
     while (iter != iter_end) {
@@ -482,7 +496,7 @@ class Tree {
     }
   };
 
-  void DeleteTree(TNode *pivot) {
+  void DeleteTree(TNode *pivot) noexcept {
     if (pivot && size_) {
       DeleteTree(pivot->left_);
       DeleteTree(pivot->right_);
@@ -490,7 +504,7 @@ class Tree {
     }
   };
 
-  void RefreshTail() {
+  void RefreshTail() noexcept {
     if (size_) {
       tail_->left_ = head_->MaxNode();
       tail_->right_ = head_->MinNode();
@@ -591,7 +605,7 @@ class Tree {
 
     const_iterator operator--(int) {
       const_iterator post_decrement = *this;
-      ++(*this);
+      --(*this);
       return post_decrement;
     };
 
@@ -603,7 +617,7 @@ class Tree {
       return iter_ != other.iter_;
     }
 
-    const_value_reference operator*() { return iter_->value_; }
+    const_value_reference operator*() const noexcept { return iter_->value_; }
 
     const_key_reference GetKey() const noexcept { return iter_->key_; }
 
@@ -646,7 +660,7 @@ class Tree {
       return root_node;
     };
 
-    iterator NextNode() {
+    iterator NextNode() noexcept {
       TNode *next_node = this;
       if (next_node->right_) {
         next_node = next_node->right_->MinNode();
