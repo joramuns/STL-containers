@@ -90,12 +90,12 @@ class list {
 
   size_type size() const noexcept { return m_size_; };
 
-  size_type max_size() {
+  size_type max_size() const noexcept {
     return std::numeric_limits<size_type>::max() / sizeof(Node) / 2;
   };
 
   /*** List modifiers ***/
-  void clear() {
+  void clear() noexcept {
     while (m_size_) erase(begin());
   };
 
@@ -169,7 +169,7 @@ class list {
     }
   };
 
-  void reverse() {
+  void reverse() noexcept {
     iterator iter_prev = end();
     for (int i = 0; i <= m_size_; ++i) {
       SwapPrevNode(iter_prev);
@@ -177,7 +177,7 @@ class list {
     }
   };
 
-  void unique() {
+  void unique() noexcept {
     iterator pos = begin();
     iterator prev_pos = pos;
     ++pos;
@@ -193,21 +193,33 @@ class list {
       }
     }
   };
-  void sort() {
+  void sort() noexcept {
     if (m_size_ > 1) {
       head_->next_->MergeSort(&(head_->next_), head_);
     }
   };
+
+  /* Bonus part */
+  /* iterator insert_many(const_iterator pos, Args&&... args) { */
+  /* }; */
+
+  /* void insert_many_back(Args&&... args) { */
+  /* }; */
+
+  template <typename... Args>
+  void insert_many_front(Args &&...args){};
 
  private:
   struct Node {
     Node *next_;
     Node *prev_;
     value_type data_{};
+
     Node() : next_(this), prev_(this){};
+
     explicit Node(value_type value) : next_(this), prev_(this), data_(value){};
 
-    void MergeSort(Node **sort_head, Node *tail) {
+    void MergeSort(Node **sort_head, Node *tail) noexcept {
       /* Break recursion in case of empty or one element in list */
       if (*sort_head == tail || (*sort_head)->next_ == tail) {
         return;
@@ -224,7 +236,7 @@ class list {
       *sort_head = MergeBack(a, b, tail);
     }
 
-    void SplitList(Node *sort_head, Node **a, Node **b, Node *tail) {
+    void SplitList(Node *sort_head, Node **a, Node **b, Node *tail) noexcept {
       Node *fast = sort_head->next_;
       Node *slow = sort_head;
       while (fast != tail) {
@@ -239,7 +251,7 @@ class list {
       slow->next_ = tail;
     }
 
-    Node *MergeBack(Node *a, Node *b, Node *tail) {
+    Node *MergeBack(Node *a, Node *b, Node *tail) noexcept {
       Node *result = nullptr;
       if (a == tail) {
         return b;
@@ -259,33 +271,23 @@ class list {
       return result;
     }
 
-    void LinkNodes(Node *pos) {
+    void LinkNodes(Node *pos) noexcept {
       prev_ = pos->prev_;
       next_ = prev_->next_;
       next_->prev_ = this;
       prev_->next_ = this;
     };
 
-    void LinkOneSide(Node *other) {
+    void LinkOneSide(Node *other) noexcept {
       next_ = other;
       other->prev_ = this;
     };
 
-    void ExtractNode() {
+    void ExtractNode() noexcept {
       prev_->next_ = next_;
       next_->prev_ = prev_;
     };
   };
-
-  /* Bonus part */
-  /* iterator insert_many(const_iterator pos, Args&&... args) { */
-  /* }; */
-
-  /* void insert_many_back(Args&&... args) { */
-  /* }; */
-
-  template <typename... Args>
-  void insert_many_front(Args &&...args){};
 
   class ListIterator {
    public:
