@@ -438,3 +438,101 @@ TEST(MultisetJ, Merge_7) {
 
   ASSERT_EQ(mergoka.empty(), true);
 }
+
+TEST(MultisetJ, EqualRange_1) {
+  std::multiset<int> std_keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+  s21::multiset<int> keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+
+  auto range = keka.equal_range(7);
+  auto std_range = std_keka.equal_range(7);
+  ASSERT_EQ(*range.first, *std_range.first);
+  ASSERT_EQ(*range.second, *std_range.second);
+}
+
+TEST(MultisetJ, EqualRange_2) {
+  std::multiset<int> std_keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+  s21::multiset<int> keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+
+  auto range = keka.equal_range(3);
+  auto std_range = std_keka.equal_range(3);
+  ASSERT_EQ(*range.first, *std_range.first);
+  ASSERT_EQ(*range.second, *std_range.second);
+}
+
+TEST(MultisetJ, EqualRange_3) {
+  std::multiset<int> std_keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+  s21::multiset<int> keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+
+  auto range = keka.equal_range(198);
+  auto std_range = std_keka.equal_range(198);
+  ASSERT_EQ(*range.first, *std_range.first);
+  ASSERT_EQ(*range.second, *std_range.second);
+}
+
+TEST(MultisetJ, EqualRange_4) {
+  std::multiset<int> std_keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+  s21::multiset<int> keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+
+  auto range = keka.equal_range(5);
+  auto std_range = std_keka.equal_range(5);
+  ASSERT_EQ(*range.first, *std_range.first);
+  ASSERT_EQ(*range.second, *std_range.second);
+}
+
+TEST(MultisetJ, EqualRange_5) {
+  std::multiset<int> std_keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+  s21::multiset<int> keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+
+  auto range = keka.equal_range(232);
+  auto std_range = std_keka.equal_range(232);
+  auto ms_end = keka.end();
+  auto std_end = std_keka.end();
+  ASSERT_EQ(*range.first, *std_range.first);
+  ASSERT_EQ(range.second, ms_end);
+  ASSERT_EQ(std_end, std_range.second);
+}
+
+TEST(MultisetJ, EqualRange_6) {
+  std::multiset<int> std_keka{};
+  s21::multiset<int> keka{};
+
+  auto range = keka.equal_range(232);
+  auto std_range = std_keka.equal_range(232);
+  auto ms_end = keka.end();
+  auto std_end = std_keka.end();
+  ASSERT_EQ(range.first, ms_end);
+  ASSERT_EQ(range.second, ms_end);
+  ASSERT_EQ(std_end, std_range.first);
+  ASSERT_EQ(std_end, std_range.second);
+}
+
+TEST(MultisetJ, EqualRange_7) {
+  std::multiset<int> std_keka{3, 3, 3, 3, 3, 3, 3, 3, 3};
+  s21::multiset<int> keka{3, 3, 3, 3, 3, 3, 3, 3, 3};
+
+  auto range = keka.equal_range(3);
+  auto std_range = std_keka.equal_range(3);
+  auto ms_end = keka.end();
+  auto std_end = std_keka.end();
+  auto ms_begin = keka.begin();
+  auto std_begin = std_keka.begin();
+  ASSERT_EQ(*range.first, *std_range.first);
+  ASSERT_EQ(range.first, ms_begin);
+  ASSERT_EQ(std_range.first, std_begin);
+  ASSERT_EQ(range.second, ms_end);
+  ASSERT_EQ(std_end, std_range.second);
+}
+
+TEST(MultisetJ, EqualRange_8) {
+  std::multiset<int> std_keka{3, 3, 3, 3, 3, 3, 3, 3, 3};
+  s21::multiset<int> keka{3, 3, 3, 3, 3, 3, 3, 3, 3};
+
+  auto range = keka.equal_range(198);
+  auto std_range = std_keka.equal_range(198);
+  auto ms_end = keka.end();
+  auto std_end = std_keka.end();
+  ASSERT_EQ(range.first, ms_end);
+  ASSERT_EQ(range.second, ms_end);
+  ASSERT_EQ(std_range.first, std_end);
+  ASSERT_EQ(std_range.second, std_end);
+}
