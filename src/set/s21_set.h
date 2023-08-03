@@ -30,15 +30,9 @@ class set {
     }
   };
 
-  set(const set &s) {
-    if (&rb_tree_ != &s.rb_tree_) {
-      clear();
-      rb_tree_ = tree_type(s.rb_tree_);
-    }
-  };
+  set(const set &s) : rb_tree_(s.rb_tree_){};
 
-  set(set &&s) : rb_tree_(std::move(s.rb_tree_)) {
-  };
+  set(set &&s) : rb_tree_(std::move(s.rb_tree_)){};
 
   ~set() = default;
 
@@ -100,9 +94,7 @@ class set {
   void merge(set &other) { rb_tree_.Merge(other.rb_tree_); };
 
   /* Set lookup */
-  iterator find(const key_type &key) noexcept {
-    return rb_tree_.FindKey(key);
-  };
+  iterator find(const key_type &key) noexcept { return rb_tree_.FindKey(key); };
 
   const_iterator find(const key_type &key) const noexcept {
     return rb_tree_.FindKey(key);
