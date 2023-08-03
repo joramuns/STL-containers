@@ -1,13 +1,13 @@
 #include "../tests.h"
 
-TEST(Map, Constructor_Default) {
+TEST(MapCasimira, Constructor_Default) {
   s21::map<int, std::string> s21_map;
   std::map<int, std::string> std_map;
   EXPECT_EQ(s21_map.size(), std_map.size());
   EXPECT_EQ(s21_map.empty(), std_map.empty());
 }
 
-TEST(Map, Constructor_Initializer_list) {
+TEST(MapCasimira, Constructor_Initializer_list) {
   s21::map<int, std::string> s21_map{
       {1, "aboba"}, {2, "shleppa"}, {3, "amogus"}, {4, "abobus"}};
   std::map<int, std::string> std_map{
@@ -16,7 +16,7 @@ TEST(Map, Constructor_Initializer_list) {
   EXPECT_EQ(s21_map.empty(), std_map.empty());
 }
 
-TEST(Map, Modifier_Insert) {
+TEST(MapCasimira, Modifier_Insert) {
   s21::map<char, int> s21_map_1{{'b', 228}, {'c', 1337}};
   s21::map<char, int> s21_map_2{
       {'b', 228},
@@ -43,7 +43,7 @@ TEST(Map, Modifier_Insert) {
   EXPECT_EQ(s21_map_1.size(), s21_map_2.size());
 }
 
-TEST(Map, Rehash_And_Insert_In_Collision) {
+TEST(MapCasimira, Rehash_And_Insert_In_Collision) {
   s21::map<std::string, int> s21_map;
   s21_map.insert("asd", 0);
   s21_map.insert("asa", 1);
@@ -108,13 +108,13 @@ TEST(Map, Rehash_And_Insert_In_Collision) {
   EXPECT_EQ(s21_map.size(), std_map.size());
 }
 
-TEST(Map, Modifier_Get_Value) {
+TEST(MapCasimira, Modifier_Get_Value) {
   s21::map<std::string, int> m;
   m["123"] = 5;
   EXPECT_EQ(5, m["123"]);
 }
 
-TEST(Map, Modifier_Insert_or_assign) {
+TEST(MapCasimira, Modifier_Insert_or_assign) {
   s21::map<char, int> s21_map_1{{'b', 228}, {'c', 1337}};
   s21::map<char, int> s21_map_2{
       {'b', 228},
@@ -138,7 +138,7 @@ TEST(Map, Modifier_Insert_or_assign) {
   EXPECT_EQ(s21_map_1.size(), s21_map_2.size());
 }
 
-TEST(Map, Modifier_Erase_1) {
+TEST(MapCasimira, Modifier_Erase_1) {
   s21::map<int, std::string> s21_map_1{
       {1, "aboba"}, {2, "shleppa"}, {3, "amogus"}, {4, "abobus"}};
   s21::map<int, std::string> s21_map_2{
@@ -155,7 +155,7 @@ TEST(Map, Modifier_Erase_1) {
   EXPECT_EQ(s21_map_1.size(), s21_map_2.size());
 }
 
-TEST(Map, Modifier_Swap) {
+TEST(MapCasimira, Modifier_Swap) {
   s21::map<int, std::string> s21_map_1{
       {1, "aboba"}, {2, "shleppa"}, {3, "amogus"}, {4, "abobus"}};
   s21::map<int, std::string> s21_map_2{
