@@ -25,20 +25,47 @@ class multiset {
     }
   };
 
-  multiset(const multiset &ms) {};
+  multiset(const multiset &ms) {
+    if (rb_tree_ != ms.rb_tree_) {
+      clear();
+      delete rb_tree_;
+      rb_tree_ = new tree_type(*ms.rb_tree_);
+    }
+  };
 
-  multiset(multiset &&ms) {};
+  multiset(multiset &&ms) {
+    if (rb_tree_ != ms.rb_tree_) {
+      rb_tree_ = std::move(*ms.rb_tree_);
+    }
+  };
 
   ~multiset() { delete rb_tree_; };
 
-  /* multiset &operator=(const multiset &ms) {}; */
+  multiset &operator=(const multiset &ms) {
+    if (this != &ms) {
+      delete rb_tree_;
+      rb_tree_ = new tree_type(*ms.rb_tree_);
+    }
 
-  /* multiset &operator=(multiset &&ms) {}; */
+    return *this;
+  };
+
+  multiset &operator=(multiset &&ms) {
+    if (this != &ms) {
+      *rb_tree_ = std::move(*ms.rb_tree_);
+    }
+
+    return *this;
+  };
 
   /*** Multiset iterators ***/
-  iterator begin() const noexcept { return rb_tree_->begin(); };
+  iterator begin() noexcept { return rb_tree_->begin(); };
 
-  iterator end() const noexcept { return rb_tree_->end(); };
+  iterator end() noexcept { return rb_tree_->end(); };
+
+  const_iterator begin() const noexcept { return rb_tree_->begin(); };
+
+  const_iterator end() const noexcept { return rb_tree_->end(); };
 
   /*** Multiset capacity ***/
   bool empty() const noexcept { return rb_tree_->Empty(); }
@@ -65,17 +92,30 @@ class multiset {
   void merge(multiset &other) { rb_tree_->MultiMerge(*other.rb_tree_); };
 
   /*** Multiset lookup ***/
-  size_type count(const key_type &key) const noexcept { return rb_tree_->MultiFindKey(key); };
+  size_type count(const key_type &key) const noexcept {
+    return rb_tree_->MultiFindKey(key);
+  };
 
-  iterator find(const key_type &key) const noexcept { return rb_tree_->FindKey(key); };
+  iterator find(const key_type &key) const noexcept {
+    return rb_tree_->FindKey(key);
+  };
 
-  bool contains(const key_type &key) const noexcept { return find(key) != end(); };
+  bool contains(const key_type &key) const noexcept {
+    return find(key) != end();
+  };
 
-  /* std::pair<iterator, iterator> equal_range(const key_type &key) const noexcept; */
+  std::pair<iterator, iterator> equal_range(
+      const key_type &key) const noexcept {
+    return std::pair<iterator, iterator>(lower_bound(key), upper_bound(key));
+  };
 
-  iterator lower_bound(const key_type &key) const noexcept { return rb_tree_->LowerBound(key); };
+  iterator lower_bound(const key_type &key) const noexcept {
+    return rb_tree_->LowerBound(key);
+  };
 
-  iterator upper_bound(const key_type &key) const noexcept { return rb_tree_->UpperBound(key); };
+  iterator upper_bound(const key_type &key) const noexcept {
+    return rb_tree_->UpperBound(key);
+  };
 
  private:
   tree_type *rb_tree_ = new tree_type;
