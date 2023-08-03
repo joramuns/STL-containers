@@ -206,7 +206,7 @@ class Tree {
   }
 
   const_iterator FindKey(key_type key) const noexcept {
-    iterator result = FindNode(key);
+    const_iterator result = FindNode(key);
     if (!size_ || result.GetKey() != key) {
       result = end();
     }
