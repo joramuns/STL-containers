@@ -107,6 +107,16 @@ class list {
     return iterator(temp);
   };
 
+  /* Overload for insert_many */
+  iterator insert(const_iterator pos, const_reference value) {
+    Node *cast_node = const_cast<Node *>(pos.GetNode());
+    Node *temp = new Node(value);
+    temp->LinkNodes(cast_node);
+    ++m_size_;
+
+    return iterator(temp);
+  };
+
   void erase(iterator pos) noexcept {
     if (pos != end()) {
       Node *temp = pos.GetNode();
@@ -200,14 +210,23 @@ class list {
   };
 
   /* Bonus part */
-  /* iterator insert_many(const_iterator pos, Args&&... args) { */
-  /* }; */
+  template <typename... Args>
+  iterator insert_many(const_iterator pos, Args&&... args) {
+    iterator result;
+    for (auto &&item : {std::forward<Args>(args)...}) result = insert(pos, item);
 
-  /* void insert_many_back(Args&&... args) { */
-  /* }; */
+    return result;
+  };
 
   template <typename... Args>
-  void insert_many_front(Args &&...args){};
+  void insert_many_back(Args&&... args) {
+    insert_many(end(), args...);
+  };
+
+  template <typename... Args>
+  void insert_many_front(Args &&...args) {
+    insert_many(begin(), args...);
+  };
 
  private:
   struct Node {
