@@ -31,20 +31,16 @@ class set {
   };
 
   set(const set &s) {
-    if (rb_tree_ != s.rb_tree_) {
+    if (&rb_tree_ != &s.rb_tree_) {
       clear();
-      delete rb_tree_;
-      rb_tree_ = new tree_type(*s.rb_tree_);
+      rb_tree_ = tree_type(s.rb_tree_);
     }
   };
 
-  set(set &&s) {
-    if (rb_tree_ != s.rb_tree_) {
-      std::swap(rb_tree_, s.rb_tree_);
-    }
+  set(set &&s) : rb_tree_(std::move(s.rb_tree_)) {
   };
 
-  ~set() { delete rb_tree_; };
+  ~set() = default;
 
   set &operator=(std::initializer_list<value_type> const &items) {
     clear();
@@ -57,59 +53,59 @@ class set {
 
   set &operator=(const set &s) {
     if (this != &s) {
-      delete rb_tree_;
-      rb_tree_ = new tree_type(*s.rb_tree_);
+      rb_tree_ = tree_type(s.rb_tree_);
     }
+
     return *this;
   };
 
   set &operator=(set &&s) {
     if (this != &s) {
-      *rb_tree_ = std::move(*s.rb_tree_);
+      rb_tree_ = std::move(s.rb_tree_);
     }
     return *this;
   };
 
   /* Set iterators */
-  iterator begin() noexcept { return rb_tree_->begin(); };
+  iterator begin() noexcept { return rb_tree_.begin(); };
 
-  iterator end() noexcept { return rb_tree_->end(); };
+  iterator end() noexcept { return rb_tree_.end(); };
 
-  const_iterator begin() const noexcept { return rb_tree_->begin(); };
+  const_iterator begin() const noexcept { return rb_tree_.begin(); };
 
-  const_iterator end() const noexcept { return rb_tree_->end(); };
+  const_iterator end() const noexcept { return rb_tree_.end(); };
 
   /* Set capacity */
-  bool empty() const noexcept { return rb_tree_->Empty(); };
+  bool empty() const noexcept { return rb_tree_.Empty(); };
 
-  size_type size() const noexcept { return rb_tree_->GetSize(); };
+  size_type size() const noexcept { return rb_tree_.GetSize(); };
 
-  size_type max_size() const noexcept { return rb_tree_->MaxSize(); };
+  size_type max_size() const noexcept { return rb_tree_.MaxSize(); };
 
   /* Set modifiers */
-  void clear() { rb_tree_->ClearTree(); };
+  void clear() { rb_tree_.ClearTree(); };
 
   std::pair<iterator, bool> insert(const value_type &value) {
-    return rb_tree_->InsertNode(value);
+    return rb_tree_.InsertNode(value);
   };
 
-  void erase(iterator pos) { rb_tree_->DeleteNode(pos); };
+  void erase(iterator pos) { rb_tree_.DeleteNode(pos); };
 
   void swap(set &other) {
-    if (rb_tree_ != other.rb_tree_) {
+    if (&rb_tree_ != &other.rb_tree_) {
       std::swap(rb_tree_, other.rb_tree_);
     }
   };
 
-  void merge(set &other) { rb_tree_->Merge(*other.rb_tree_); };
+  void merge(set &other) { rb_tree_.Merge(other.rb_tree_); };
 
   /* Set lookup */
   iterator find(const key_type &key) noexcept {
-    return rb_tree_->FindKey(key);
+    return rb_tree_.FindKey(key);
   };
 
   const_iterator find(const key_type &key) const noexcept {
-    return rb_tree_->FindKey(key);
+    return rb_tree_.FindKey(key);
   };
 
   bool contains(const key_type &key) const noexcept {
@@ -117,7 +113,7 @@ class set {
   };
 
  private:
-  tree_type *rb_tree_ = new tree_type;
+  tree_type rb_tree_;
 };
 }  // namespace s21
 
