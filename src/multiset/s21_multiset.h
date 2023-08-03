@@ -21,30 +21,19 @@ class multiset {
 
   explicit multiset(std::initializer_list<value_type> const &items) {
     for (const auto &item : items) {
-      rb_tree_->MultiInsertNode(item);
+      rb_tree_.MultiInsertNode(item);
     }
   };
 
-  multiset(const multiset &ms) {
-    if (rb_tree_ != ms.rb_tree_) {
-      clear();
-      delete rb_tree_;
-      rb_tree_ = new tree_type(*ms.rb_tree_);
-    }
-  };
+  multiset(const multiset &ms) : rb_tree_(ms.rb_tree_){};
 
-  multiset(multiset &&ms) {
-    if (rb_tree_ != ms.rb_tree_) {
-      rb_tree_ = std::move(*ms.rb_tree_);
-    }
-  };
+  multiset(multiset &&ms) : rb_tree_(std::move(ms.rb_tree_)){};
 
-  ~multiset() { delete rb_tree_; };
+  ~multiset() = default;
 
   multiset &operator=(const multiset &ms) {
     if (this != &ms) {
-      delete rb_tree_;
-      rb_tree_ = new tree_type(*ms.rb_tree_);
+      rb_tree_ = tree_type(ms.rb_tree_);
     }
 
     return *this;
@@ -52,73 +41,87 @@ class multiset {
 
   multiset &operator=(multiset &&ms) {
     if (this != &ms) {
-      *rb_tree_ = std::move(*ms.rb_tree_);
+      rb_tree_ = std::move(ms.rb_tree_);
     }
 
     return *this;
   };
 
   /*** Multiset iterators ***/
-  iterator begin() noexcept { return rb_tree_->begin(); };
+  iterator begin() noexcept { return rb_tree_.begin(); };
 
-  iterator end() noexcept { return rb_tree_->end(); };
+  iterator end() noexcept { return rb_tree_.end(); };
 
-  const_iterator begin() const noexcept { return rb_tree_->begin(); };
+  const_iterator begin() const noexcept { return rb_tree_.begin(); };
 
-  const_iterator end() const noexcept { return rb_tree_->end(); };
+  const_iterator end() const noexcept { return rb_tree_.end(); };
 
   /*** Multiset capacity ***/
-  bool empty() const noexcept { return rb_tree_->Empty(); }
+  bool empty() const noexcept { return rb_tree_.Empty(); }
 
-  size_type size() const noexcept { return rb_tree_->GetSize(); };
+  size_type size() const noexcept { return rb_tree_.GetSize(); };
 
-  size_type max_size() const noexcept { return rb_tree_->MaxSize(); }
+  size_type max_size() const noexcept { return rb_tree_.MaxSize(); }
 
   /*** Multiset modifiers ***/
-  void clear() noexcept { rb_tree_->ClearTree(); };
+  void clear() noexcept { rb_tree_.ClearTree(); };
 
   iterator insert(const value_type &value) {
-    return rb_tree_->MultiInsertNode(value);
+    return rb_tree_.MultiInsertNode(value);
   };
 
-  void erase(iterator pos) { rb_tree_->DeleteNode(pos); };
+  void erase(iterator pos) { rb_tree_.DeleteNode(pos); };
 
   void swap(multiset &other) {
-    if (rb_tree_ != other.rb_tree_) {
+    if (&rb_tree_ != &other.rb_tree_) {
       std::swap(rb_tree_, other.rb_tree_);
     }
   };
 
-  void merge(multiset &other) { rb_tree_->MultiMerge(*other.rb_tree_); };
+  void merge(multiset &other) { rb_tree_.MultiMerge(other.rb_tree_); };
 
   /*** Multiset lookup ***/
   size_type count(const key_type &key) const noexcept {
-    return rb_tree_->MultiFindKey(key);
+    return rb_tree_.MultiFindKey(key);
   };
 
-  iterator find(const key_type &key) const noexcept {
-    return rb_tree_->FindKey(key);
+  iterator find(const key_type &key) noexcept { return rb_tree_.FindKey(key); };
+
+  const_iterator find(const key_type &key) const noexcept {
+    return rb_tree_.FindKey(key);
   };
 
   bool contains(const key_type &key) const noexcept {
     return find(key) != end();
   };
 
-  std::pair<iterator, iterator> equal_range(
+  std::pair<iterator, iterator> equal_range(const key_type &key) noexcept {
+    return std::pair<iterator, iterator>(lower_bound(key), upper_bound(key));
+  };
+
+  std::pair<const_iterator, const_iterator> equal_range(
       const key_type &key) const noexcept {
     return std::pair<iterator, iterator>(lower_bound(key), upper_bound(key));
   };
 
-  iterator lower_bound(const key_type &key) const noexcept {
-    return rb_tree_->LowerBound(key);
+  iterator lower_bound(const key_type &key) noexcept {
+    return rb_tree_.LowerBound(key);
   };
 
-  iterator upper_bound(const key_type &key) const noexcept {
-    return rb_tree_->UpperBound(key);
+  iterator upper_bound(const key_type &key) noexcept {
+    return rb_tree_.UpperBound(key);
+  };
+
+  const_iterator lower_bound(const key_type &key) const noexcept {
+    return rb_tree_.LowerBound(key);
+  };
+
+  const_iterator upper_bound(const key_type &key) const noexcept {
+    return rb_tree_.UpperBound(key);
   };
 
  private:
-  tree_type *rb_tree_ = new tree_type;
+  tree_type rb_tree_;
 };
 }  // namespace s21
 
