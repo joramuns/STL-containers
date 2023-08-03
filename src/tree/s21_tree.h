@@ -105,8 +105,10 @@ class Tree {
   const_iterator end() const noexcept { return const_iterator(tail_); }
 
   /* Overload for multiset, inserts multi node with key and value = key */
-  std::pair<iterator, bool> MultiInsertNode(key_type key) {
-    return (std::pair<iterator, bool>)MultiInsertNode(key, key);
+  iterator MultiInsertNode(key_type key) {
+    std::pair<iterator, bool> result =
+        (std::pair<iterator, bool>)MultiInsertNode(key, key);
+    return result.first;
   };
 
   /* Overload for set, inserts unique node with key and value = key */
@@ -117,6 +119,10 @@ class Tree {
   /* Inserts multi node */
   std::pair<TNode *, bool> MultiInsertNode(key_type key, value_type value) {
     TNode *insert_node = new TNode(key, value);
+    return MultiInsertNode(insert_node);
+  }
+
+  std::pair<TNode *, bool> MultiInsertNode(TNode *insert_node) {
     std::pair<TNode *, bool> result = InsertNode(insert_node);
     while (result.second == false) {
       if (result.first->right_) {
@@ -200,7 +206,7 @@ class Tree {
   }
 
   const_iterator FindKey(key_type key) const noexcept {
-    iterator result = FindNode(key);
+    const_iterator result = FindNode(key);
     if (!size_ || result.GetKey() != key) {
       result = end();
     }
@@ -236,6 +242,39 @@ class Tree {
 
     return parent;
   };
+
+  /* Counter of elements with given key */
+  size_type MultiFindKey(key_type key) {
+    size_type result = 0;
+    TNode *root = FindNode(key, head_);
+    while (root != tail_) {
+      ++result;
+      root = FindNode(key, root);
+    }
+    return result;
+  }
+
+  iterator LowerBound(const key_type &key) {
+    iterator result = begin();
+    iterator end_tree = end();
+
+    while (result != end_tree && result.GetKey() < key) {
+      ++result;
+    }
+
+    return result;
+  }
+
+  iterator UpperBound(const key_type &key) {
+    iterator result = LowerBound(key);
+    iterator end_tree = end();
+
+    while (result != end_tree && result.GetKey() <= key) {
+      ++result;
+    }
+
+    return result;
+  }
 
   /* Universal function for rotating nodes,
    * based on mutual arrangement of upper and
@@ -430,6 +469,16 @@ class Tree {
       } else {
         ++iter;
       }
+    }
+  };
+
+  void MultiMerge(Tree &other) {
+    iterator iter = other.begin();
+    iterator iter_end = other.end();
+    while (iter != iter_end) {
+      iterator temp = iter;
+      ++iter;
+      MultiInsertNode(other.ExtractNode(temp));
     }
   };
 
