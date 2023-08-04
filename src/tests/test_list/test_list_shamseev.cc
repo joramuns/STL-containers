@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "../tests.h"
 
 TEST(s21_list_constructor, default_constructor) {
   s21::list<int> s21list;

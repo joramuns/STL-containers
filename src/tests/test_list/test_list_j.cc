@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "../tests.h"
 
 TEST(List, Filling_int_1) {
   s21::list<int> aboba;
