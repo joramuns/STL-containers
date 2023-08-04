@@ -211,15 +211,16 @@ class list {
 
   /* Bonus part */
   template <typename... Args>
-  iterator insert_many(const_iterator pos, Args&&... args) {
+  iterator insert_many(const_iterator pos, Args &&...args) {
     iterator result;
-    for (auto &&item : {std::forward<Args>(args)...}) result = insert(pos, item);
+    for (auto &&item : {std::forward<Args>(args)...})
+      result = insert(pos, item);
 
     return result;
   };
 
   template <typename... Args>
-  void insert_many_back(Args&&... args) {
+  void insert_many_back(Args &&...args) {
     insert_many(end(), args...);
   };
 
@@ -240,19 +241,18 @@ class list {
 
     void MergeSort(Node **sort_head, Node *tail) noexcept {
       /* Break recursion in case of empty or one element in list */
-      if (*sort_head == tail || (*sort_head)->next_ == tail) {
-        return;
-      }
-      Node *a = nullptr;
-      Node *b = nullptr;
-      /* Split whole list into two halves */
-      SplitList(*sort_head, &a, &b, tail);
-      /* Recursively sort every half */
-      MergeSort(&a, tail);
-      MergeSort(&b, tail);
+      if (*sort_head != tail && (*sort_head)->next_ != tail) {
+        Node *a = nullptr;
+        Node *b = nullptr;
+        /* Split whole list into two halves */
+        SplitList(*sort_head, &a, &b, tail);
+        /* Recursively sort every half */
+        MergeSort(&a, tail);
+        MergeSort(&b, tail);
 
-      /* Merge sorted pieces of list back */
-      *sort_head = MergeBack(a, b, tail);
+        /* Merge sorted pieces of list back */
+        *sort_head = MergeBack(a, b, tail);
+      }
     }
 
     void SplitList(Node *sort_head, Node **a, Node **b, Node *tail) noexcept {
