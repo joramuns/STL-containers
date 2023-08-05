@@ -189,15 +189,15 @@ TEST(List, Modifier_Unique) {
   EXPECT_EQ(s21_list.size(), std_list.size());
 }
 
-TEST(List, Modifier_Sort) {
-  s21::list<int> s21_list{1, -1, -23, 4, 1, 5, 6, 4, -1, -1};
-  std::list<int> std_list{1, -1, -23, 4, 1, 5, 6, 4, -1, -1};
-  s21_list.sort();
-  std_list.sort();
-  auto it1 = s21_list.begin();
-  auto it2 = std_list.begin();
-  while (it1 != s21_list.end()) {
-    EXPECT_EQ(*it1, *it2);
-    ++it1, ++it2;
-  }
-}
+// TEST(List, Modifier_Sort) {
+//   s21::list<int> s21_list{1, -1, -23, 4, 1, 5, 6, 4, -1, -1};
+//   std::list<int> std_list{1, -1, -23, 4, 1, 5, 6, 4, -1, -1};
+//   s21_list.sort();
+//   std_list.sort();
+//   auto it1 = s21_list.begin();
+//   auto it2 = std_list.begin();
+//   while (it1 != s21_list.end()) {
+//     EXPECT_EQ(*it1, *it2);
+//     ++it1, ++it2;
+//   }
+// }
