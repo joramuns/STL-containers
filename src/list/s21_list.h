@@ -66,21 +66,21 @@ class list {
   };
 
   /*** List element access ***/
-  const_reference front() const noexcept { return head_->next->data; };
+  const_reference front() const noexcept { return head_->next_->data_; };
 
-  const_reference back() const noexcept { return head_->prev->data; };
+  const_reference back() const noexcept { return head_->prev_->data_; };
 
-  reference front() noexcept { return head_->next->data; }
+  reference front() noexcept { return head_->next_->data_; }
 
-  reference back() noexcept { return head_->prev->data; }
+  reference back() noexcept { return head_->prev_->data_; }
 
   /*** List iterators ***/
-  iterator begin() noexcept { return iterator(head_->next); };
+  iterator begin() noexcept { return iterator(head_->next_); };
 
   iterator end() noexcept { return iterator(head_); };
 
   const_iterator begin() const noexcept {
-    return const_iterator(head_->next);
+    return const_iterator(head_->next_);
   };
 
   const_iterator end() const noexcept { return const_iterator(head_); };
@@ -164,48 +164,48 @@ class list {
   void splice(const_iterator pos, list &other) noexcept {
     if (this != &other) {
       iterator non_const_pos{const_cast<Node *>(pos.GetNode())};
-      Node *lnode = non_const_pos.GetNode()->prev;
+      Node *lnode = non_const_pos.GetNode()->prev_;
       Node *rnode = other.begin().GetNode();
       lnode->LinkOneSide(rnode);
 
-      lnode = other.end().GetNode()->prev;
+      lnode = other.end().GetNode()->prev_;
       rnode = non_const_pos.GetNode();
       lnode->LinkOneSide(rnode);
 
       m_size_ += other.size();
-      other.head_->next = other.head_;
-      other.head_->prev = other.head_;
+      other.head_->next_ = other.head_;
+      other.head_->prev_ = other.head_;
       other.m_size_ = 0;
     }
   };
 
   void reverse() noexcept {
-    iterator iter_prev = end();
+    iterator iter_prev_ = end();
     for (int i = 0; i <= m_size_; ++i) {
-      SwapPrevNode(iter_prev);
-      ++iter_prev;
+      Swapprev_Node(iter_prev_);
+      ++iter_prev_;
     }
   };
 
   void unique() noexcept {
     iterator pos = begin();
-    iterator prevpos = pos;
+    iterator prev_pos = pos;
     ++pos;
     iterator end_pos = end();
     while (pos != end_pos) {
-      if (*pos == *prevpos) {
+      if (*pos == *prev_pos) {
         iterator del_pos = pos;
         ++pos;
         erase(del_pos);
       } else {
         ++pos;
-        ++prevpos;
+        ++prev_pos;
       }
     }
   };
   void sort() noexcept {
     if (m_size_ > 1) {
-      head_->next->MergeSort(&(head_->next), head_);
+      head_->next_->MergeSort(&(head_->next_), head_);
     }
   };
 
@@ -230,18 +230,55 @@ class list {
   };
 
  private:
-  struct Node {
-    Node *next;
-    Node *prev;
-    value_type data{};
+  class Node {
+    private:
+      Node *next_;
+      Node *prev_;
+      value_type data_{};
+    
+    void Swap(const Node &other) {
+      if (this != other) {
+        std::swap(next_, other.next_);
+        std::swap(prev_, other.prev_);
+        std::swap(data_, other.data_);
+      }
+    };
+    public:
 
-    Node() : next(this), prev(this){};
+    Node() : next_(this), prev_(this){};
+    ~Node() = default;
 
-    explicit Node(value_type value) : next(this), prev(this), data(value){};
+    explicit Node(value_type value) : next_(this), prev_(this), data_(value){};
+
+    Node(const Node &other) : next_(other.next_), prev_(other.next_), data_(other.data_){};
+
+    Node& opertator=(const Node& other) {
+      Node copy{other};
+      Swap(copy);
+      return *this;
+    }
+
+    Node(Node &&other) noexcept : next_(other.next_), prev_(other.prev_), data_(other.data_) {
+      other.next_ = nullptr;
+      other.prev_ = nullptr;
+      other.data_ = {};
+    }
+
+    Node& opertator=(const Node&& other) {
+      Node moved{std::move(other)};
+      Swap(moved);
+      return *this;
+    }
+
+    Node *GetNext() noexcept { return next_;};
+
+    Node *GetPrev() noexcept { return prev_;};
+
+    Node *GetData() noexcept { return data_;};
 
     void MergeSort(Node **sort_head, Node *tail) noexcept {
       /* Break recursion in case of empty or one element in list */
-      if (*sort_head != tail && (*sort_head)->next != tail) {
+      if (*sort_head != tail && (*sort_head)->next_ != tail) {
         Node *a = nullptr;
         Node *b = nullptr;
         /* Split whole list into two halves */
@@ -253,22 +290,22 @@ class list {
         /* Merge sorted pieces of list back */
         *sort_head = MergeBack(a, b, tail);
       }
-    }
+    };
 
     void SplitList(Node *sort_head, Node **a, Node **b, Node *tail) noexcept {
-      Node *fast = sort_head->next;
+      Node *fast = sort_head->next_;
       Node *slow = sort_head;
       while (fast != tail) {
-        fast = fast->next;
+        fast = fast->next_;
         if (fast != tail) {
-          fast = fast->next;
-          slow = slow->next;
+          fast = fast->next_;
+          slow = slow->next_;
         }
       }
       *a = sort_head;
-      *b = slow->next;
-      slow->next = tail;
-    }
+      *b = slow->next_;
+      slow->next_ = tail;
+    };
 
     Node *MergeBack(Node *a, Node *b, Node *tail) noexcept {
       Node *result = nullptr;
@@ -277,35 +314,36 @@ class list {
       } else if (b == tail) {
         return a;
       }
-      if (a->data <= b->data) {
+      if (a->data_ <= b->data_) {
         result = a;
-        result->next = MergeBack(a->next, b, tail);
+        result->next_ = MergeBack(a->next_, b, tail);
       } else {
         result = b;
-        result->next = MergeBack(a, b->next, tail);
+        result->next_ = MergeBack(a, b->next_, tail);
       }
-      result->prev = tail;
-      result->next->prev = result;
+      result->prev_ = tail;
+      result->next_->prev_ = result;
 
       return result;
-    }
+    };
 
     void LinkNodes(Node *pos) noexcept {
-      prev = pos->prev;
-      next = prev->next;
-      next->prev = this;
-      prev->next = this;
+      prev_ = pos->prev_;
+      next_ = prev_->next_;
+      next_->prev_ = this;
+      prev_->next_ = this;
     };
 
     void LinkOneSide(Node *other) noexcept {
-      next = other;
-      other->prev = this;
+      next_ = other;
+      other->prev_ = this;
     };
 
     void ExtractNode() noexcept {
-      prev->next = next;
-      next->prev = prev;
+      prev_->next_ = next_;
+      next_->prev_ = prev_;
     };
+    
   };
 
   class ListIterator {
@@ -320,10 +358,10 @@ class list {
 
     operator ConstListIterator() const { return ConstListIterator(*this); };
 
-    reference operator*() noexcept { return iter_->data; }
+    reference operator*() noexcept { return iter_->GetData(); }
 
     iterator &operator++() noexcept {
-      iter_ = iter_->next;
+      iter_ = iter_->GetNext();
       return *this;
     };
 
@@ -334,7 +372,7 @@ class list {
     };
 
     iterator &operator--() noexcept {
-      iter_ = iter_->prev;
+      iter_ = iter_->prev_;
       return *this;
     };
 
@@ -371,10 +409,10 @@ class list {
     explicit ConstListIterator(const iterator &other) noexcept
         : iter_(other.GetNode()){};
 
-    value_type operator*() const noexcept { return iter_->data; }
+    value_type operator*() const noexcept { return iter_->data_; }
 
     const_iterator &operator++() noexcept {
-      iter_ = iter_->next;
+      iter_ = iter_->next_;
       return *this;
     };
 
@@ -385,7 +423,7 @@ class list {
     };
 
     const_iterator &operator--() noexcept {
-      iter_ = iter_->prev;
+      iter_ = iter_->prev_;
       return *this;
     };
 
@@ -409,11 +447,11 @@ class list {
     const Node *iter_ = nullptr;
   };
 
-  void SwapPrevNode(const iterator &pos) {
+  void Swapprev_Node(const iterator &pos) {
     Node *target = pos.GetNode();
-    Node *temp = target->prev;
-    target->prev = target->next;
-    target->next = temp;
+    Node *temp = target->prev_;
+    target->prev_ = target->next_;
+    target->next_ = temp;
   };
 
   Node *head_;
