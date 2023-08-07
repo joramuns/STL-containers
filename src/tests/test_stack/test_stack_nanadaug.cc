@@ -82,7 +82,7 @@ TYPED_TEST(StackPopTest, empty) {
   using Stack = typename TestFixture::Stack;
 
   Stack a{};
-  EXPECT_ANY_THROW(a.pop());
+  EXPECT_NO_THROW(a.pop());
 }
 
 TYPED_TEST(StackPopTest, one_item) {
