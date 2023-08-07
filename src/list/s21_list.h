@@ -202,11 +202,17 @@ class list {
   /* Bonus part */
   template <typename... Args>
   iterator insert_many(const_iterator pos, Args &&...args) {
-    iterator result = iterator(pos);
-    for (auto &&item : {std::forward<Args>(args)...}) result = insert(result, item);
-    result = std::accumulate(std::begin(args...), std::end(args...), 0);
+    iterator non_const_it = iterator(pos);
+    Node *pos_node = non_const_it.GetNode();
+    Node *insert_node;
 
-    return result;
+    for (auto item : {std::forward<Args>(args)...}) {
+      insert_node = new Node(std::move(item));
+      insert_node->LinkNodes(pos_node);
+      ++m_size_;
+    }
+
+    return iterator(insert_node);
   };
 
   template <typename... Args>
