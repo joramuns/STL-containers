@@ -407,7 +407,7 @@ class list {
 
     operator ListIterator() const { return ListIterator(*this); };
 
-    value_type operator*() const noexcept { return iter_->data_; }
+    const_reference operator*() const noexcept { return iter_->data_; }
 
     const_iterator &operator++() noexcept {
       iter_ = iter_->next_;
