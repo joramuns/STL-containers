@@ -51,15 +51,19 @@ class list {
   };
 
   list &operator=(const list &l) {
-    list copy{l};
-    swap(copy);
+    if (this != &l) {
+      list copy{l};
+      swap(copy);
+    }
 
     return *this;
   };
 
   list &operator=(list &&l) {
-    list moved{std::move(l)};
-    swap(moved);
+    if (this != &l) {
+      list moved{std::move(l)};
+      swap(moved);
+    }
 
     return *this;
   };
@@ -124,10 +128,8 @@ class list {
   void pop_front() { erase(begin()); };
 
   void swap(list &other) noexcept {
-    if (this != &other) {
-      std::swap(head_, other.head_);
-      std::swap(m_size_, other.m_size_);
-    }
+    std::swap(head_, other.head_);
+    std::swap(m_size_, other.m_size_);
   };
 
   void merge(list &other) noexcept {
@@ -241,8 +243,10 @@ class list {
         : next_(other.next_), prev_(other.next_), data_(other.data_){};
 
     Node &operator=(const Node &other) {
-      Node copy{other};
-      Swap(copy);
+      if (this != other) {
+        Node copy{other};
+        Swap(copy);
+      }
       return *this;
     };
 
@@ -252,8 +256,10 @@ class list {
           data_(std::move(other.data_)){};
 
     Node &operator=(Node &&other) {
-      Node moved{std::move(other)};
-      Swap(moved);
+      if (this != other) {
+        Node moved{std::move(other)};
+        Swap(moved);
+      }
       return *this;
     };
 
@@ -330,11 +336,9 @@ class list {
 
    private:
     void Swap(const Node &other) noexcept {
-      if (this != other) {
-        std::swap(next_, other.next_);
-        std::swap(prev_, other.prev_);
-        std::swap(data_, other.data_);
-      }
+      std::swap(next_, other.next_);
+      std::swap(prev_, other.prev_);
+      std::swap(data_, other.data_);
     };
   };
 
