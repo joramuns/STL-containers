@@ -1006,39 +1006,39 @@ struct ListSortTest : public testing::Test {
 using ListSortTypes = ::testing::Types<char, int, long double>;
 TYPED_TEST_SUITE(ListSortTest, ListSortTypes);
 
-// TYPED_TEST(ListSortTest, empty) {
-//   using List = typename TestFixture::List;
-//   List a{};
+ TYPED_TEST(ListSortTest, empty) {
+   using List = typename TestFixture::List;
+   List a{};
 
-//   a.sort();
-//   EXPECT_EQ(a.size(), 0);
-// }
+   a.sort();
+   EXPECT_EQ(a.size(), 0);
+ }
 
-// TYPED_TEST(ListSortTest, size_1) {
-//   using List = typename TestFixture::List;
-//   TypeParam value_1(1);
+ TYPED_TEST(ListSortTest, size_1) {
+   using List = typename TestFixture::List;
+   TypeParam value_1(1);
 
-//   List a({value_1});
-//   a.sort();
+   List a({value_1});
+   a.sort();
 
-//   EXPECT_DOUBLE_EQ(*(a.begin()), value_1);
-//   EXPECT_EQ(a.size(), 1);
-// }
+   EXPECT_DOUBLE_EQ(*(a.begin()), value_1);
+   EXPECT_EQ(a.size(), 1);
+ }
 
-// TYPED_TEST(ListSortTest, size_2) {
-//   using List = typename TestFixture::List;
-//   TypeParam value_1(1);
-//   TypeParam value_2(2);
+ TYPED_TEST(ListSortTest, size_2) {
+   using List = typename TestFixture::List;
+   TypeParam value_1(1);
+   TypeParam value_2(2);
 
-//   List a({value_2, value_1});
-//   a.sort();
+   List a({value_2, value_1});
+   a.sort();
 
-//   auto it = a.begin();
-//   EXPECT_DOUBLE_EQ(*it, value_1);
-//   ++it;
-//   EXPECT_DOUBLE_EQ(*it, value_2);
-//   EXPECT_EQ(a.size(), 2);
-// }
+   auto it = a.begin();
+   EXPECT_DOUBLE_EQ(*it, value_1);
+   ++it;
+   EXPECT_DOUBLE_EQ(*it, value_2);
+   EXPECT_EQ(a.size(), 2);
+ }
 
 /* TYPED_TEST(ListSortTest, size_10) { */
 /*   using List = typename TestFixture::List; */
