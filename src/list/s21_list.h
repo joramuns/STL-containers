@@ -291,11 +291,10 @@ class list {
     Node *MergeBack(Node *a, Node *b, Node *tail) noexcept {
       Node *result = nullptr;
       if (a == tail) {
-        return b;
+        result = b;
       } else if (b == tail) {
-        return a;
-      }
-      if (a->data_ <= b->data_) {
+        result = a;
+      } else if (a->data_ <= b->data_) {
         result = a;
         result->next_ = MergeBack(a->next_, b, tail);
       } else {
@@ -330,7 +329,7 @@ class list {
     value_type data_{};
 
    private:
-    void Swap(const Node &other) {
+    void Swap(const Node &other) noexcept {
       if (this != other) {
         std::swap(next_, other.next_);
         std::swap(prev_, other.prev_);
