@@ -17,7 +17,7 @@ class array {
   using size_type = std::size_t;
 
   /*** Array member functions ***/
-  array() noexcept {};
+  array() = default;
 
   explicit array(std::initializer_list<value_type> const &items) {
     if (items.size() != N)
@@ -27,26 +27,26 @@ class array {
     for (const auto &item : items) data_[counter++] = item;
   };
 
-  array(const array &a) {
-    size_type a_size = a.size();
-    for (size_type i = 0; i != a_size; ++i) data_[i] = a.data_[i];
-  };
+  array(const array &a) noexcept { std::copy(a.begin(), a.end(), begin()); };
 
-  array(array &&a) noexcept {
-    for (size_type i = 0; i != a.size(); ++i) data_[i] = a[i];
-  };
+  array(array &&a) : array(a){};
 
-  ~array() noexcept {};
+  ~array() = default;
 
   array &operator=(const array &a) {
-    size_type a_size = a.size();
-    for (size_type i = 0; i != a_size; ++i) data_[i] = a.data_[i];
+    if (this != &a) {
+      array copy{a};
+      swap(copy);
+    }
 
     return *this;
   };
 
   array &operator=(array &&a) noexcept {
-    for (size_type i = 0; i != a.size(); ++i) data_[i] = a[i];
+    if (this != &a) {
+      array moved{std::move(a)};
+      swap(moved);
+    }
 
     return *this;
   };
