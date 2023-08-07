@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "../tests.h"
 
 template <typename T>
 struct ListBackTest : public testing::Test {
@@ -995,5 +995,101 @@ TYPED_TEST(ListUniqueTest, many_item_7) {
   int i = 0;
   for (auto iter = a.begin(); iter != a.end(); ++iter, ++i) {
     EXPECT_DOUBLE_EQ(b[i], *iter);
+  }
+}
+
+template <typename T>
+struct ListSortTest : public testing::Test {
+  using List = s21::list<T>;
+};
+
+using ListSortTypes = ::testing::Types<char, int, long double>;
+TYPED_TEST_SUITE(ListSortTest, ListSortTypes);
+
+ TYPED_TEST(ListSortTest, empty) {
+   using List = typename TestFixture::List;
+   List a{};
+
+   a.sort();
+   EXPECT_EQ(a.size(), 0);
+ }
+
+ TYPED_TEST(ListSortTest, size_1) {
+   using List = typename TestFixture::List;
+   TypeParam value_1(1);
+
+   List a({value_1});
+   a.sort();
+
+   EXPECT_DOUBLE_EQ(*(a.begin()), value_1);
+   EXPECT_EQ(a.size(), 1);
+ }
+
+ TYPED_TEST(ListSortTest, size_2) {
+   using List = typename TestFixture::List;
+   TypeParam value_1(1);
+   TypeParam value_2(2);
+
+   List a({value_2, value_1});
+   a.sort();
+
+   auto it = a.begin();
+   EXPECT_DOUBLE_EQ(*it, value_1);
+   ++it;
+   EXPECT_DOUBLE_EQ(*it, value_2);
+   EXPECT_EQ(a.size(), 2);
+ }
+
+TYPED_TEST(ListSortTest, size_10) {
+  using List = typename TestFixture::List;
+
+  List a{};
+  for (size_t i = 0U; i < 10U; ++i) {
+    if (i % 2U == 0U) {
+      if (i % 3U == 0U) {
+        a.insert_many_front(TypeParam(i));
+      } else {
+        a.insert_many_back(TypeParam(i));
+      }
+    } else {
+      if (i % 3U == 0U) {
+        a.insert_many_back(TypeParam(i));
+      } else {
+        a.insert_many_front(TypeParam(i));
+      }
+    }
+  }
+  a.sort();
+
+  size_t i = 0U;
+  for (auto it = a.begin(); it != a.end(); ++it) {
+    EXPECT_DOUBLE_EQ(*it, TypeParam(i++));
+  }
+}
+
+TYPED_TEST(ListSortTest, size_100) {
+  using List = typename TestFixture::List;
+
+  List a{};
+  for (size_t i = 0U; i < 100U; ++i) {
+    if (i % 2U == 0U) {
+      if (i % 3U == 0U) {
+        a.insert_many_front(TypeParam(i));
+      } else {
+        a.insert_many_back(TypeParam(i));
+      }
+    } else {
+      if (i % 3U == 0U) {
+        a.insert_many_back(TypeParam(i));
+      } else {
+        a.insert_many_front(TypeParam(i));
+      }
+    }
+  }
+  a.sort();
+
+  size_t i = 0U;
+  for (auto it = a.begin(); it != a.end(); ++it) {
+    EXPECT_DOUBLE_EQ(*it, TypeParam(i++));
   }
 }
