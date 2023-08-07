@@ -121,11 +121,11 @@ class list {
 
   void push_back(const_reference value) { insert(end(), value); };
 
-  void pop_back() { erase(--end()); };
+  void pop_back() noexcept { erase(--end()); };
 
   void push_front(const_reference value) { insert(begin(), value); };
 
-  void pop_front() { erase(begin()); };
+  void pop_front() noexcept { erase(begin()); };
 
   void swap(list &other) noexcept {
     std::swap(head_, other.head_);
