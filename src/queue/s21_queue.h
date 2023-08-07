@@ -22,18 +22,24 @@ class queue {
 
   queue(const queue &q) : data_(q.data_){};
 
-  queue(queue &&q) noexcept { std::swap(data_, q.data_); };
+  queue(queue &&q) : data_(std::move(q.data_)){};
 
   ~queue() = default;
 
   queue &operator=(const queue &q) {
-    data_ = q.data_;
+    if (this != &q) {
+      queue copy{q};
+      swap(copy);
+    }
 
     return *this;
   };
 
   queue &operator=(queue &&q) noexcept {
-    std::swap(data_, q.data_);
+    if (this != &q) {
+      queue moved{std::move(q)};
+      swap(moved);
+    }
 
     return *this;
   };
@@ -55,7 +61,7 @@ class queue {
   /*** Queue modifiers ***/
   void push(const_reference value) { data_.push_back(value); };
 
-  void pop() { data_.pop_front(); };
+  void pop() noexcept { data_.pop_front(); };
 
   void swap(queue &other) noexcept { std::swap(data_, other.data_); };
 
