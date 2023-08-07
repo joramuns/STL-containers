@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iterator>
 #include <limits>
+#include <numeric>
 
 namespace s21 {
 template <typename T>
@@ -50,30 +51,27 @@ class list {
   };
 
   list &operator=(const list &l) {
-    if (this != &l) {
-      clear();
-      for (const auto &item : l) push_back(item);
-    }
+    list copy{l};
+    swap(copy);
 
     return *this;
   };
 
   list &operator=(list &&l) {
-    if (this != &l) {
-      swap(l);
-    }
+    list moved{std::move(l)};
+    swap(moved);
 
     return *this;
   };
 
   /*** List element access ***/
-  const_reference front() const noexcept { return head_->next_->data_; };
+  const_reference front() const noexcept { return *begin(); };
 
-  const_reference back() const noexcept { return head_->prev_->data_; };
+  const_reference back() const noexcept { return *std::prev(end()); };
 
-  reference front() noexcept { return head_->next_->data_; }
+  reference front() noexcept { return *begin(); }
 
-  reference back() noexcept { return head_->prev_->data_; }
+  reference back() noexcept { return *std::prev(end()); }
 
   /*** List iterators ***/
   iterator begin() noexcept { return iterator(head_->next_); };
@@ -103,16 +101,6 @@ class list {
   iterator insert(iterator pos, const_reference value) {
     Node *temp = new Node(value);
     temp->LinkNodes(pos.GetNode());
-    ++m_size_;
-
-    return iterator(temp);
-  };
-
-  /* Overload for insert_many */
-  iterator insert(const_iterator pos, const_reference value) {
-    Node *cast_node = const_cast<Node *>(pos.GetNode());
-    Node *temp = new Node(value);
-    temp->LinkNodes(cast_node);
     ++m_size_;
 
     return iterator(temp);
@@ -214,9 +202,9 @@ class list {
   /* Bonus part */
   template <typename... Args>
   iterator insert_many(const_iterator pos, Args &&...args) {
-    iterator result;
-    for (auto &&item : {std::forward<Args>(args)...})
-      result = insert(pos, item);
+    iterator result = iterator(pos);
+    for (auto &&item : {std::forward<Args>(args)...}) result = insert(result, item);
+    result = std::accumulate(std::begin(args...), std::end(args...), 0);
 
     return result;
   };
@@ -235,9 +223,13 @@ class list {
   class Node {
    public:
     Node() : next_(this), prev_(this){};
+
     ~Node() = default;
 
-    explicit Node(value_type value) : next_(this), prev_(this), data_(value){};
+    explicit Node(const_reference value)
+        : next_(this), prev_(this), data_(value){};
+
+    explicit Node(reference value) : next_(this), prev_(this), data_(value){};
 
     Node(const Node &other)
         : next_(other.next_), prev_(other.next_), data_(other.data_){};
@@ -249,11 +241,9 @@ class list {
     };
 
     Node(Node &&other) noexcept
-        : next_(other.next_), prev_(other.prev_), data_(other.data_) {
-      other.next_ = nullptr;
-      other.prev_ = nullptr;
-      other.data_ = {};
-    };
+        : next_(std::move(other.next_)),
+          prev_(std::move(other.prev_)),
+          data_(std::move(other.data_)){};
 
     Node &operator=(Node &&other) {
       Node moved{std::move(other)};
@@ -345,13 +335,16 @@ class list {
 
   class ListIterator {
    public:
-    /* using iterator_category = std::bidirectional_iterator_tag; */
-    /* using difference_type = std::ptrdiff_t; */
-    /* using value_type = list::value_type; */
-    /* using pointer = value_type *; */
-    /* using reference = value_type &; */
+    using iterator_category = std::bidirectional_iterator_tag;
+    using difference_type = std::ptrdiff_t;
+    using value_type = list::value_type;
+    using pointer = value_type *;
+    using reference = value_type &;
     ListIterator() = default;
     explicit ListIterator(Node *list_node) noexcept : iter_(list_node){};
+
+    explicit ListIterator(const_iterator iter) noexcept
+        : iter_(const_cast<Node *>(iter.GetNode())){};
 
     operator ConstListIterator() const { return ConstListIterator(*this); };
 
@@ -395,16 +388,18 @@ class list {
 
   class ConstListIterator {
    public:
-    /* using iterator_category = std::bidirectional_iterator_tag; */
-    /* using difference_type = std::ptrdiff_t; */
-    /* using value_type = list::value_type; */
-    /* using pointer = value_type *; */
-    /* using reference = value_type &; */
+    using iterator_category = std::bidirectional_iterator_tag;
+    using difference_type = std::ptrdiff_t;
+    using value_type = list::value_type;
+    using pointer = value_type *;
+    using reference = value_type &;
     ConstListIterator() = default;
     explicit ConstListIterator(const Node *list_node) noexcept
         : iter_(list_node){};
     explicit ConstListIterator(const iterator &other) noexcept
         : iter_(other.GetNode()){};
+
+    operator ListIterator() const { return ListIterator(*this); };
 
     value_type operator*() const noexcept { return iter_->data_; }
 
