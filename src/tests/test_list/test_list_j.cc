@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "../tests.h"
 
 TEST(List, Filling_int_1) {
   s21::list<int> aboba;
@@ -680,6 +680,205 @@ TEST(List, Splice_18) {
   do {
     ASSERT_EQ(*s21_it, *std_it);
   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+}
+
+ TEST(List, Sort_1) {
+   std::list<int> std_keka{3, 2, 1};
+   s21::list<int> keka{3, 2, 1};
+   std_keka.sort();
+   keka.sort();
+   auto s21_it = keka.begin();
+   auto std_it = std_keka.begin();
+   auto s21_it_end = keka.end();
+   auto std_it_end = std_keka.end();
+   ASSERT_EQ(keka.size(), std_keka.size());
+   do {
+     ASSERT_EQ(*s21_it, *std_it);
+   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+ }
+
+ TEST(List, Sort_2) {
+   std::list<int> std_keka{1, 2, 3};
+   s21::list<int> keka{1, 2, 3};
+   std_keka.sort();
+   keka.sort();
+   auto s21_it = keka.begin();
+   auto std_it = std_keka.begin();
+   auto s21_it_end = keka.end();
+   auto std_it_end = std_keka.end();
+   ASSERT_EQ(keka.size(), std_keka.size());
+   do {
+     ASSERT_EQ(*s21_it, *std_it);
+   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+ }
+
+ TEST(List, Sort_3) {
+   std::list<int> std_keka{3, 1, 2};
+   s21::list<int> keka{3, 1, 2};
+   std_keka.sort();
+   keka.sort();
+   auto s21_it = keka.begin();
+   auto std_it = std_keka.begin();
+   auto s21_it_end = keka.end();
+   auto std_it_end = std_keka.end();
+   ASSERT_EQ(keka.size(), std_keka.size());
+   do {
+     ASSERT_EQ(*s21_it, *std_it);
+   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+ }
+
+ TEST(List, Sort_4) {
+   std::list<int> std_keka{3, 3, 1};
+   s21::list<int> keka{3, 3, 1};
+   std_keka.sort();
+   keka.sort();
+   auto s21_it = keka.begin();
+   auto std_it = std_keka.begin();
+   auto s21_it_end = keka.end();
+   auto std_it_end = std_keka.end();
+   ASSERT_EQ(keka.size(), std_keka.size());
+   do {
+     ASSERT_EQ(*s21_it, *std_it);
+   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+ }
+
+ TEST(List, Sort_5) {
+   std::list<int> std_keka{3, 2};
+   s21::list<int> keka{3, 2};
+   std_keka.sort();
+   keka.sort();
+   auto s21_it = keka.begin();
+   auto std_it = std_keka.begin();
+   auto s21_it_end = keka.end();
+   auto std_it_end = std_keka.end();
+   ASSERT_EQ(keka.size(), std_keka.size());
+   do {
+     ASSERT_EQ(*s21_it, *std_it);
+   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+ }
+
+ TEST(List, Sort_6) {
+   std::list<int> std_keka{2, 3};
+   s21::list<int> keka{2, 3};
+   std_keka.sort();
+   keka.sort();
+   auto s21_it = keka.begin();
+   auto std_it = std_keka.begin();
+   auto s21_it_end = keka.end();
+   auto std_it_end = std_keka.end();
+   ASSERT_EQ(keka.size(), std_keka.size());
+   do {
+     ASSERT_EQ(*s21_it, *std_it);
+   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+ }
+
+ TEST(List, Sort_7) {
+   std::list<int> std_keka{1, 4, 3, 2};
+   s21::list<int> keka{1, 4, 3, 2};
+   std_keka.sort();
+   keka.sort();
+   auto s21_it = keka.begin();
+   auto std_it = std_keka.begin();
+   auto s21_it_end = keka.end();
+   auto std_it_end = std_keka.end();
+   ASSERT_EQ(keka.size(), std_keka.size());
+   do {
+     ASSERT_EQ(*s21_it, *std_it);
+   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+ }
+
+ TEST(List, Sort_8) {
+   std::list<int> std_keka{1, 3, 4, 2};
+   s21::list<int> keka{1, 3, 4, 2};
+   std_keka.sort();
+   keka.sort();
+   auto s21_it = keka.begin();
+   auto std_it = std_keka.begin();
+   auto s21_it_end = keka.end();
+   auto std_it_end = std_keka.end();
+   ASSERT_EQ(keka.size(), std_keka.size());
+   do {
+     ASSERT_EQ(*s21_it, *std_it);
+   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+ }
+
+ TEST(List, Sort_9) {
+   std::list<int> std_keka{4, 3, 1, 2};
+   s21::list<int> keka{4, 3, 1, 2};
+   std_keka.sort();
+   keka.sort();
+   auto s21_it = keka.begin();
+   auto std_it = std_keka.begin();
+   auto s21_it_end = keka.end();
+   auto std_it_end = std_keka.end();
+   ASSERT_EQ(keka.size(), std_keka.size());
+   do {
+     ASSERT_EQ(*s21_it, *std_it);
+   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+ }
+
+ TEST(List, Sort_10) {
+   std::list<int> std_keka{4};
+   s21::list<int> keka{4};
+   std_keka.sort();
+   keka.sort();
+   auto s21_it = keka.begin();
+   auto std_it = std_keka.begin();
+   auto s21_it_end = keka.end();
+   auto std_it_end = std_keka.end();
+   ASSERT_EQ(keka.size(), std_keka.size());
+   do {
+     ASSERT_EQ(*s21_it, *std_it);
+   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+ }
+
+ TEST(List, Sort_11) {
+   std::list<int> std_keka{};
+   s21::list<int> keka{};
+   std_keka.sort();
+   keka.sort();
+   auto s21_it = keka.begin();
+   auto std_it = std_keka.begin();
+   auto s21_it_end = keka.end();
+   auto std_it_end = std_keka.end();
+   ASSERT_EQ(keka.size(), std_keka.size());
+   do {
+     ASSERT_EQ(*s21_it, *std_it);
+   } while (++s21_it != s21_it_end && ++std_it != std_it_end);
+ }
+
+TEST(List, Max_Size) {
+  s21::list<int> intlist{};
+  s21::list<char> charlist{};
+  s21::list<size_t> sztlist{};
+  s21::list<float> fltlist{};
+  s21::list<double> dbllist{};
+  s21::list<std::vector<int>> vecintlist{};
+  s21::list<std::vector<char>> veccharlist{};
+  s21::list<std::vector<size_t>> vecsztlist{};
+  s21::list<std::list<int>> listintlist{};
+  s21::list<std::set<int>> setintlist{};
+
+  std::list<int> std_intlist{};
+  std::list<char> std_charlist{};
+  std::list<size_t> std_sztlist{};
+  std::list<float> std_fltlist{};
+  std::list<double> std_dbllist{};
+  std::list<std::vector<int>> std_vecintlist{};
+  std::list<std::vector<char>> std_veccharlist{};
+  std::list<std::vector<size_t>> std_vecsztlist{};
+  std::list<std::list<int>> std_listintlist{};
+  std::list<std::set<int>> std_setintlist{};
+
+  ASSERT_EQ(intlist.max_size(), std_intlist.max_size());
+  ASSERT_EQ(charlist.max_size(), std_charlist.max_size());
+  ASSERT_EQ(sztlist.max_size(), std_sztlist.max_size());
+  ASSERT_EQ(dbllist.max_size(), std_dbllist.max_size());
+  ASSERT_EQ(vecintlist.max_size(), std_vecintlist.max_size());
+  ASSERT_EQ(veccharlist.max_size(), std_veccharlist.max_size());
+  ASSERT_EQ(vecsztlist.max_size(), std_vecsztlist.max_size());
+  ASSERT_EQ(listintlist.max_size(), std_listintlist.max_size());
+  ASSERT_EQ(setintlist.max_size(), std_setintlist.max_size());
 }
 /* TEST(List, Exception_1) { */
 /*   s21::list<int> aboba; */
