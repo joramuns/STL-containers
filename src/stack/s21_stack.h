@@ -22,18 +22,24 @@ class stack {
 
   stack(const stack &s) : data_(s.data_){};
 
-  stack(stack &&s) noexcept { std::swap(data_, s.data_); };
+  stack(stack &&s) : data_(std::move(s.data_)){};
 
   ~stack() = default;
 
   stack &operator=(const stack &s) {
-    data_ = s.data_;
+    if (this != &s) {
+      stack copy{s};
+      swap(copy);
+    }
 
     return *this;
   };
 
   stack &operator=(stack &&s) noexcept {
-    std::swap(data_, s.data_);
+    if (this != &s) {
+      stack moved{std::move(s)};
+      swap(moved);
+    }
 
     return *this;
   };
@@ -51,7 +57,7 @@ class stack {
   /*** Stack modifiers ***/
   void push(const_reference value) { data_.push_back(value); };
 
-  void pop() { data_.pop_back(); };
+  void pop() noexcept { data_.pop_back(); };
 
   void swap(stack &other) noexcept { std::swap(data_, other.data_); };
 
