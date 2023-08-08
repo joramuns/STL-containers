@@ -47,6 +47,7 @@ class set {
 
   set &operator=(const set &s) {
     if (this != &s) {
+      clear();
       rb_tree_ = tree_type(s.rb_tree_);
     }
 
@@ -55,6 +56,7 @@ class set {
 
   set &operator=(set &&s) {
     if (this != &s) {
+      clear();
       rb_tree_ = std::move(s.rb_tree_);
     }
     return *this;
