@@ -14,7 +14,6 @@ class list {
   /*** Forward declaration of nested classes ***/
   class ListIterator;
   class ConstListIterator;
-  class Node;
 
  public:
   /*** List member types ***/
@@ -245,7 +244,7 @@ class list {
     Node &operator=(const Node &other) {
       if (this != other) {
         Node copy{other};
-        Swap(copy);
+        swap(copy);
       }
       return *this;
     };
@@ -258,7 +257,7 @@ class list {
     Node &operator=(Node &&other) {
       if (this != other) {
         Node moved{std::move(other)};
-        Swap(moved);
+        swap(moved);
       }
       return *this;
     };
@@ -335,7 +334,7 @@ class list {
     value_type data_{};
 
    private:
-    void Swap(const Node &other) noexcept {
+    void swap(const Node &other) noexcept {
       std::swap(next_, other.next_);
       std::swap(prev_, other.prev_);
       std::swap(data_, other.data_);
@@ -349,7 +348,9 @@ class list {
     using value_type = list::value_type;
     using pointer = value_type *;
     using reference = value_type &;
+
     ListIterator() = default;
+
     explicit ListIterator(Node *list_node) noexcept : iter_(list_node){};
 
     explicit ListIterator(const_iterator iter) noexcept
@@ -402,9 +403,12 @@ class list {
     using value_type = list::value_type;
     using pointer = value_type *;
     using reference = value_type &;
+
     ConstListIterator() = default;
+
     explicit ConstListIterator(const Node *list_node) noexcept
         : iter_(list_node){};
+
     explicit ConstListIterator(const iterator &other) noexcept
         : iter_(other.GetNode()){};
 
