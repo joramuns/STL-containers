@@ -1,12 +1,8 @@
 #ifndef CPP2_S21_CONTAINERS_0_LIST_S21_LIST_H_
 #define CPP2_S21_CONTAINERS_0_LIST_S21_LIST_H_
 
-#include <exception>
 #include <initializer_list>
 #include <iostream>
-#include <iterator>
-#include <limits>
-#include <numeric>
 
 namespace s21 {
 template <typename T>

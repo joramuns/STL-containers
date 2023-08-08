@@ -1,8 +1,6 @@
 #ifndef CPP2_S21_CONTAINERS_0_QUEUE_S21_QUEUE_H_
 #define CPP2_S21_CONTAINERS_0_QUEUE_S21_QUEUE_H_
 
-#include <initializer_list>
-
 #include "../list/s21_list.h"
 
 namespace s21 {

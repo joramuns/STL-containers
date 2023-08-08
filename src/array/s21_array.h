@@ -1,7 +1,6 @@
 #ifndef CPP2_S21_CONTAINERS_0_ARRAY_S21_ARRAY_H_
 #define CPP2_S21_CONTAINERS_0_ARRAY_S21_ARRAY_H_
 
-#include <algorithm>
 #include <initializer_list>
 #include <iostream>
 
@@ -70,7 +69,9 @@ class array {
     return data_[pos];
   };
 
-  const_reference operator[](size_type pos) const noexcept { return data_[pos]; };
+  const_reference operator[](size_type pos) const noexcept {
+    return data_[pos];
+  };
 
   const_reference front() const noexcept { return data_[0]; };
 

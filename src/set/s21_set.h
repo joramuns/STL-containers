@@ -1,9 +1,6 @@
 #ifndef CPP2_S21_CONTAINERS_0_SET_S21_SET_H_
 #define CPP2_S21_CONTAINERS_0_SET_S21_SET_H_
 
-#include <algorithm>
-#include <initializer_list>
-
 #include "../tree/s21_tree.h"
 
 namespace s21 {

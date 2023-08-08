@@ -1,10 +1,7 @@
 #ifndef CPP2_S21_CONTAINERS_0_TREE_S21_TREE_H_
 #define CPP2_S21_CONTAINERS_0_TREE_S21_TREE_H_
 
-#include <algorithm>
 #include <initializer_list>
-
-// temp
 #include <iostream>
 
 namespace s21 {
