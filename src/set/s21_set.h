@@ -79,21 +79,21 @@ class set {
   size_type max_size() const noexcept { return rb_tree_.MaxSize(); };
 
   /* Set modifiers */
-  void clear() { rb_tree_.ClearTree(); };
+  void clear() noexcept { rb_tree_.ClearTree(); };
 
   std::pair<iterator, bool> insert(const value_type &value) {
     return rb_tree_.InsertNode(value);
   };
 
-  void erase(iterator pos) { rb_tree_.DeleteNode(pos); };
+  void erase(iterator pos) noexcept { rb_tree_.DeleteNode(pos); };
 
-  void swap(set &other) {
+  void swap(set &other) noexcept {
     if (&rb_tree_ != &other.rb_tree_) {
       std::swap(rb_tree_, other.rb_tree_);
     }
   };
 
-  void merge(set &other) { rb_tree_.Merge(other.rb_tree_); };
+  void merge(set &other) noexcept { rb_tree_.Merge(other.rb_tree_); };
 
   /* Set lookup */
   iterator find(const key_type &key) noexcept { return rb_tree_.FindKey(key); };
