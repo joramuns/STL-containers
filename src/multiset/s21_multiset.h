@@ -33,6 +33,7 @@ class multiset {
 
   multiset &operator=(const multiset &ms) {
     if (this != &ms) {
+      clear();
       rb_tree_ = tree_type(ms.rb_tree_);
     }
 
@@ -41,6 +42,7 @@ class multiset {
 
   multiset &operator=(multiset &&ms) {
     if (this != &ms) {
+      clear();
       rb_tree_ = std::move(ms.rb_tree_);
     }
 
@@ -70,7 +72,7 @@ class multiset {
     return rb_tree_.MultiInsertNode(value);
   };
 
-  void erase(iterator pos) { rb_tree_.DeleteNode(pos); };
+  void erase(iterator pos) noexcept { rb_tree_.DeleteNode(pos); };
 
   void swap(multiset &other) {
     if (&rb_tree_ != &other.rb_tree_) {
@@ -78,7 +80,7 @@ class multiset {
     }
   };
 
-  void merge(multiset &other) { rb_tree_.MultiMerge(other.rb_tree_); };
+  void merge(multiset &other) noexcept { rb_tree_.MultiMerge(other.rb_tree_); };
 
   /*** Multiset lookup ***/
   size_type count(const key_type &key) const noexcept {
