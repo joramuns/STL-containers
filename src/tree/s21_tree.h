@@ -10,8 +10,8 @@
 namespace s21 {
 template <typename T, typename N>
 class Tree {
- protected:
-  struct TNode;
+ private:
+  class TNode;
 
  public:
   class TreeIterator;
@@ -531,9 +531,40 @@ class Tree {
 
   class TreeIterator {
    public:
+    using iterator_category = std::bidirectional_iterator_tag;
+    using difference_type = std::ptrdiff_t;
+    using value_type = Tree::value_type;
+    using pointer = value_type *;
+    using reference = value_type &;
+
     TreeIterator() = default;
 
     explicit TreeIterator(TNode *node) : iter_(node){};
+
+    TreeIterator(const TreeIterator &other) : iter_(other.GetNode()){};
+
+    TreeIterator(TreeIterator &&other) : iter_(std::move(other.GetNode())){};
+
+    TreeIterator &operator=(const TreeIterator &other) {
+      if (this != &other) {
+        TreeIterator copy{other};
+        swap(copy);
+      }
+
+      return *this;
+    };
+
+    TreeIterator &operator=(TreeIterator &&other) {
+      if (this != &other) {
+        TreeIterator moved{std::move(other)};
+        swap(moved);
+      }
+
+      return *this;
+    };
+
+    explicit TreeIterator(const ConstTreeIterator &other) noexcept
+        : iter_(other.GetNode()){};
 
     operator ConstTreeIterator() const { return ConstTreeIterator(*this); };
 
@@ -573,17 +604,51 @@ class Tree {
     const_key_reference GetKey() const noexcept { return iter_->key_; }
 
    private:
+    void swap(iterator other) { std::swap(iter_, other.iter_); }
+
     TNode *iter_ = nullptr;
   };
 
   class ConstTreeIterator {
    public:
+    using iterator_category = std::bidirectional_iterator_tag;
+    using difference_type = std::ptrdiff_t;
+    using value_type = Tree::value_type;
+    using pointer = value_type *;
+    using reference = value_type &;
+
     ConstTreeIterator() = default;
 
     explicit ConstTreeIterator(const TNode *node) noexcept : iter_(node){};
 
-    explicit ConstTreeIterator(const iterator &other) noexcept
+    ConstTreeIterator(const ConstTreeIterator &other)
         : iter_(other.GetNode()){};
+
+    ConstTreeIterator(ConstTreeIterator &&other)
+        : iter_(std::move(other.GetNode())){};
+
+    ConstTreeIterator &operator=(const ConstTreeIterator &other) {
+      if (this != &other) {
+        ConstTreeIterator copy{other};
+        swap(copy);
+      }
+
+      return *this;
+    };
+
+    ConstTreeIterator &operator=(ConstTreeIterator &&other) {
+      if (this != &other) {
+        ConstTreeIterator moved{std::move(other)};
+        swap(moved);
+      }
+
+      return *this;
+    };
+
+    explicit ConstTreeIterator(const TreeIterator &other) noexcept
+        : iter_(other.GetNode()){};
+
+    operator TreeIterator() const { return TreeIterator(*this); };
 
     const TNode *GetNode() const noexcept { return iter_; }
 
@@ -622,13 +687,16 @@ class Tree {
     const_key_reference GetKey() const noexcept { return iter_->key_; }
 
    private:
+    void swap(const_iterator other) { std::swap(iter_, other.iter_); }
+
     const TNode *iter_ = nullptr;
   };
 
- protected:
+ private:
   enum TColor { kBlack, kRed };
 
-  struct TNode {
+  class TNode {
+   public:
     TNode *parent_ = nullptr;
     TNode *left_ = nullptr;
     TNode *right_ = nullptr;
@@ -640,7 +708,27 @@ class Tree {
     TNode(const_key_reference key, const_value_reference value)
         : key_(key), value_(value){};
 
-    TNode(const TNode &other) : key_(other.key_), value_(other.value_){};
+    TNode(const TNode &other) = default;
+
+    TNode(TNode &&other) = default;
+
+    TNode &operator=(const TNode &other) {
+      if (this != &other) {
+        TNode copy{other};
+        swap(copy);
+      }
+
+      return *this;
+    };
+
+    TNode &operator=(TNode &&other) {
+      if (this != &other) {
+        TNode moved{std::move(other)};
+        swap(moved);
+      }
+
+      return *this;
+    };
 
     TNode *MinNode() noexcept {
       TNode *root_node = this;
@@ -679,7 +767,7 @@ class Tree {
 
     const_iterator NextNode() const {
       return const_iterator(const_cast<TNode *>(this)->NextNode());
-    }
+    };
 
     iterator PrevNode() {
       TNode *prev_node = this;
@@ -700,7 +788,7 @@ class Tree {
 
     const_iterator PrevNode() const {
       return const_iterator(const_cast<TNode *>(this)->PrevNode());
-    }
+    };
 
     void SwapNode(TNode *other) {
       std::swap(color_, other->color_);
@@ -729,7 +817,7 @@ class Tree {
       if (other->left_) {
         other->left_->parent_ = other;
       }
-    }
+    };
 
     bool IsFatherFake() { return this->parent_->is_fake_; }
 
@@ -809,6 +897,16 @@ class Tree {
       } else if (parent_) {
         parent_->left_ = nullptr;
       }
+    };
+
+    void swap(TNode other) {
+      std::swap(parent_);
+      std::swap(left_, other.left_);
+      std::swap(right_, other.right_);
+      std::swap(key_, other.key_);
+      std::swap(value_, other.value_);
+      std::swap(color_, other.color_);
+      std::swap(is_fake_, other.is_fake_);
     };
   };
 
