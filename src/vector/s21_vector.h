@@ -21,16 +21,18 @@ class vector {
 
   vector() = default;
 
-  explicit vector(size_type n) : sz_(n), cpct_(n) { InitVector(); };
+  explicit vector(size_type n) : arr_(new value_type[n]), sz_(n), cpct_(n){};
 
   explicit vector(std::initializer_list<value_type> const &items)
       : vector(items.size()) {
     std::copy(items.begin(), items.end(), arr_);
   };
 
-  vector(const vector &v) : sz_(v.sz_), cpct_(v.cpct_) {
-    InitVector();
-    CopyArr(v);
+  vector(const vector &v)
+      : arr_(new value_type[v.sz_]), sz_(v.sz_), cpct_(v.cpct_) {
+    for (size_type i = 0; i < v.sz_; ++i) {
+      arr_[i] = v.arr_[i];
+    }
   };
 
   vector(vector &&v) noexcept {
@@ -39,7 +41,14 @@ class vector {
     }
   };
 
-  ~vector() { DestroyArr(); };
+  ~vector() {
+    if (cpct_) {
+      delete[] arr_;
+      arr_ = nullptr;
+      cpct_ = 0U;
+      sz_ = 0U;
+    }
+  };
 
   vector &operator=(const vector &v) noexcept {
     if (this != &v) {
@@ -74,23 +83,17 @@ class vector {
 
   reference operator[](size_type pos) noexcept { return arr_[pos]; };
 
-  const_reference operator[](size_type pos) const noexcept { return arr_[pos]; };
-
-  reference front() noexcept {
-    return arr_[0];
+  const_reference operator[](size_type pos) const noexcept {
+    return arr_[pos];
   };
 
-  reference back() noexcept {
-    return arr_[sz_ - 1];
-  };
+  reference front() noexcept { return arr_[0]; };
 
-  const_reference front() const noexcept {
-    return arr_[0];
-  };
+  reference back() noexcept { return arr_[sz_ - 1]; };
 
-  const_reference back() const noexcept {
-    return arr_[sz_ - 1];
-  };
+  const_reference front() const noexcept { return arr_[0]; };
+
+  const_reference back() const noexcept { return arr_[sz_ - 1]; };
 
   iterator data() noexcept { return arr_; };
 
@@ -186,27 +189,6 @@ class vector {
   value_type *arr_ = nullptr;
   size_type sz_ = 0U;
   size_type cpct_ = 0U;
-
-  void InitVector() {
-    if (cpct_) {
-      arr_ = new value_type[cpct_]();
-    }
-  };
-
-  void CopyArr(const vector &other) noexcept {
-    for (size_type i = 0; i < other.sz_; ++i) {
-      arr_[i] = other.arr_[i];
-    }
-  };
-
-  void DestroyArr() noexcept {
-    if (cpct_) {
-      delete[] arr_;
-      arr_ = nullptr;
-      cpct_ = 0U;
-      sz_ = 0U;
-    }
-  };
 };
 }  // namespace s21
 
