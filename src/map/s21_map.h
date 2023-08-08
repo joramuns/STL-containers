@@ -49,12 +49,12 @@ class map {
   };
 
   /*** Map element access ***/
-  mapped_type &at(const Key &key) {
+  mapped_type &at(const Key &key) noexcept {
     iterator iter = rb_tree_.FindKey(key);
     return *iter;
   };
 
-  mapped_type &operator[](const Key &key) { return at(key); };
+  mapped_type &operator[](const Key &key) noexcept { return at(key); };
 
   /*** Map iterators ***/
   iterator begin() noexcept { return rb_tree_.begin(); };
@@ -66,14 +66,14 @@ class map {
   const_iterator end() const noexcept { return rb_tree_.end(); };
 
   /*** Map capacity ***/
-  bool empty() { return rb_tree_.Empty(); };
+  bool empty() const noexcept { return rb_tree_.Empty(); };
 
-  size_type size() { return rb_tree_.GetSize(); };
+  size_type size() const noexcept { return rb_tree_.GetSize(); };
 
-  size_type max_size() { return rb_tree_.MaxSize(); };
+  size_type max_size() const noexcept { return rb_tree_.MaxSize(); };
 
   /*** Map modifiers ***/
-  void clear() { rb_tree_.ClearTree(); };
+  void clear() noexcept { rb_tree_.ClearTree(); };
 
   std::pair<iterator, bool> insert(const value_type &value) {
     return rb_tree_.InsertNode(value);
@@ -95,7 +95,7 @@ class map {
     return insert_attempt;
   };
 
-  void erase(iterator pos) { rb_tree_.DeleteNode(pos); };
+  void erase(iterator pos) noexcept { rb_tree_.DeleteNode(pos); };
 
   void swap(map &other) {
     if (&rb_tree_ != &other.rb_tree_) {
@@ -103,14 +103,16 @@ class map {
     }
   };
 
-  void merge(map &other) {
+  void merge(map &other) noexcept {
     if (this != &other) {
       rb_tree_.Merge(other.rb_tree_);
     }
   };
 
   /*** Map lookup ***/
-  bool contains(const key_type &key) { return rb_tree_.FindKey(key) != end(); };
+  bool contains(const key_type &key) const noexcept {
+    return rb_tree_.FindKey(key) != end();
+  };
 
  private:
   tree_type rb_tree_;
