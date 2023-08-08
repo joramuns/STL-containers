@@ -10,8 +10,10 @@
 namespace s21 {
 template <typename T, typename N>
 class Tree {
- public:
+ private:
   class TNode;
+
+ public:
   class TreeIterator;
   class ConstTreeIterator;
   using key_type = T;
@@ -685,13 +687,16 @@ class Tree {
     const_key_reference GetKey() const noexcept { return iter_->key_; }
 
    private:
+    void swap(const_iterator other) { std::swap(iter_, other.iter_); }
+
     const TNode *iter_ = nullptr;
   };
 
- protected:
+ private:
   enum TColor { kBlack, kRed };
 
   class TNode {
+   public:
     TNode *parent_ = nullptr;
     TNode *left_ = nullptr;
     TNode *right_ = nullptr;
