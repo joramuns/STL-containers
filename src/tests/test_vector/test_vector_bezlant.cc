@@ -515,9 +515,10 @@ TEST(vector, test_all) {
 
     /* ASSERT_EQ(vs21.max_size(), vsstd.max_size()); */
 
-    ASSERT_ANY_THROW(vs21[10]);
-    ASSERT_ANY_THROW(vs21[-1]);
+    ASSERT_NO_THROW(vs21[10]);
+    ASSERT_NO_THROW(vs21[-1]);
     ASSERT_ANY_THROW(vs21.at(-1));
+    ASSERT_ANY_THROW(vs21.at(10));
 }
 
 TEST(vector, test_all_const) {
@@ -544,9 +545,10 @@ TEST(vector, test_all_const) {
     ASSERT_EQ(std::string{"hello"}, vs21.front());
     ASSERT_EQ(std::string{"?"}, vs21.back());
 
-    ASSERT_ANY_THROW(vs21[10]);
-    ASSERT_ANY_THROW(vs21[-1]);
+    ASSERT_NO_THROW(vs21[10]);
+    ASSERT_NO_THROW(vs21[-1]);
     ASSERT_ANY_THROW(vs21.at(-1));
+    ASSERT_ANY_THROW(vs21.at(10));
 }
 
 TEST(vector, vzero) {
