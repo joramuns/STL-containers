@@ -9,8 +9,6 @@
 namespace s21 {
 template <typename T>
 class set {
-  /*** Forward declaration of nested classes ***/
-
  public:
   using key_type = T;
   using value_type = T;
