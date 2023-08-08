@@ -56,6 +56,15 @@ class map {
 
   mapped_type &operator[](const Key &key) noexcept { return at(key); };
 
+  const mapped_type &at(const Key &key) const noexcept {
+    const_iterator iter = rb_tree_.FindKey(key);
+    return *iter;
+  };
+
+  const mapped_type &operator[](const Key &key) const noexcept {
+    return at(key);
+  };
+
   /*** Map iterators ***/
   iterator begin() noexcept { return rb_tree_.begin(); };
 
@@ -97,7 +106,7 @@ class map {
 
   void erase(iterator pos) noexcept { rb_tree_.DeleteNode(pos); };
 
-  void swap(map &other) {
+  void swap(map &other) noexcept {
     if (&rb_tree_ != &other.rb_tree_) {
       std::swap(rb_tree_, other.rb_tree_);
     }
