@@ -19,7 +19,7 @@ class vector {
 
   vector() = default;
 
-  explicit vector(size_type n) : arr_(new value_type[n]), sz_(n), cpct_(n){};
+  explicit vector(size_type n) : arr_(new value_type[n]()), sz_(n), cpct_(n){};
 
   explicit vector(std::initializer_list<value_type> const &items)
       : vector(items.size()) {
