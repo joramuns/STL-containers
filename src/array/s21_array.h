@@ -27,9 +27,14 @@ class array {
     for (const auto &item : items) data_[counter++] = item;
   };
 
-  array(const array &a) noexcept { std::copy(a.begin(), a.end(), begin()); };
+  /* There is no need in copy and move constructors as the container has a stack
+   * allocated variable, which can be handled by defaulted constructors.
+   * array(const array &a) noexcept { std::copy(a.begin(), a.end(), begin()); };
+   *  array(array &&a) : data_(std::move(a.data_)) {}; */
 
-  array(array &&a) : array(a){};
+  array(const array &a) = default;
+
+  array(array &&a) = default;
 
   ~array() = default;
 
@@ -65,7 +70,7 @@ class array {
     return data_[pos];
   };
 
-  const_reference operator[](size_type pos) const { return at(pos); };
+  const_reference operator[](size_type pos) const noexcept { return data_[pos]; };
 
   const_reference front() const noexcept { return data_[0]; };
 
