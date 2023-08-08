@@ -43,19 +43,16 @@ class vector {
 
   vector &operator=(const vector &v) noexcept {
     if (this != &v) {
-      DestroyArr();
-      sz_ = v.sz_;
-      cpct_ = v.cpct_;
-      InitVector();
-      CopyArr(v);
+      vector copy(v);
+      swap(copy);
     }
     return *this;
   };
 
   vector &operator=(vector &&v) noexcept {
     if (this != &v) {
-      DestroyArr();
-      swap(v);
+      vector moved(std::move(v));
+      swap(moved);
     }
     return *this;
   };
@@ -75,9 +72,9 @@ class vector {
     return arr_[pos];
   };
 
-  reference operator[](size_type pos) { return at(pos); };
+  reference operator[](size_type pos) noexcept { return arr_[pos]; };
 
-  const_reference operator[](size_type pos) const { return at(pos); };
+  const_reference operator[](size_type pos) const noexcept { return arr_[pos]; };
 
   reference front() noexcept {
     return arr_[0];
