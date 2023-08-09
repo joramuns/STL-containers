@@ -122,6 +122,14 @@ class multiset {
     return rb_tree_.UpperBound(key);
   };
 
+  /* Bonus part */
+  template <typename... Args>
+  vector<std::pair<iterator, bool>> insert_many(Args &&...args) {
+    auto result = rb_tree_.MultiInsertMany(args...);
+
+    return result;
+  };
+
  private:
   tree_type rb_tree_;
 };
