@@ -40,7 +40,7 @@ class vector {
   };
 
   ~vector() {
-    if (cpct_) {
+    if (arr_) {
       delete[] arr_;
       arr_ = nullptr;
       cpct_ = 0U;
