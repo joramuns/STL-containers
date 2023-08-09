@@ -4,6 +4,8 @@
 #include <initializer_list>
 #include <iostream>
 
+#include "../vector/s21_vector.h"
+
 namespace s21 {
 template <typename T, typename N>
 class Tree {
