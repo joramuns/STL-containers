@@ -175,7 +175,7 @@ class vector {
 
   void push_back(const_reference value) { insert(end(), value); };
 
-  void pop_back() { erase(std::prev(end())); };
+  void pop_back() noexcept { erase(std::prev(end())); };
 
   void swap(vector &other) noexcept {
     std::swap(sz_, other.sz_);
