@@ -183,6 +183,23 @@ class vector {
     std::swap(arr_, other.arr_);
   };
 
+  /* Bonus part */
+  template <typename... Args>
+  iterator insert_many(const_iterator pos, Args &&...args) {
+    iterator non_const_it = iterator(pos);
+    for (auto item : {std::forward<Args>(args)...}) {
+      non_const_it = insert(non_const_it, value_type{});
+      *non_const_it = std::move(item);
+      ++non_const_it;
+    }
+    return non_const_it;
+  }
+
+  template <typename... Args>
+  void insert_many_back(Args &&...args) {
+    insert_many(end(), args...);
+  }
+
  private:
   value_type *arr_ = nullptr;
   size_type sz_ = 0U;
