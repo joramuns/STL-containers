@@ -187,9 +187,9 @@ class vector {
   template <typename... Args>
   iterator insert_many(const_iterator pos, Args &&...args) {
     iterator non_const_it = iterator(pos);
-    for (auto item : {std::forward<Args>(args)...}) {
+    for (auto &&item : {std::forward<Args>(args)...}) {
       non_const_it = insert(non_const_it, value_type{});
-      *non_const_it = std::move(item);
+      *non_const_it = item;
       ++non_const_it;
     }
     return non_const_it;
