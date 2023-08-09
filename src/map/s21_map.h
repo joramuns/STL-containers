@@ -88,6 +88,11 @@ class map {
     return rb_tree_.InsertNode(value);
   };
 
+  /* Bonus overload for std::forward */
+  std::pair<iterator, bool> insert(value_type &&value) {
+    return rb_tree_.InsertNode(value);
+  };
+
   std::pair<iterator, bool> insert(const key_type &key,
                                    const mapped_type &obj) {
     return rb_tree_.InsertNode((value_type{key, obj}));
@@ -121,6 +126,14 @@ class map {
   /*** Map lookup ***/
   bool contains(const key_type &key) const noexcept {
     return rb_tree_.FindKey(key) != end();
+  };
+
+  /* Bonus part */
+  template <typename... Args>
+  vector<std::pair<iterator, bool>> insert_many(Args &&...args) {
+    auto result = rb_tree_.InsertMany(args...);
+
+    return result;
   };
 
  private:
