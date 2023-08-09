@@ -16,11 +16,11 @@ class queue {
   queue() = default;
 
   explicit queue(std::initializer_list<value_type> const &items)
-      : data_(items){};
+      : data_{items} {};
 
-  queue(const queue &q) : data_(q.data_){};
+  queue(const queue &q) : data_{q.data_} {};
 
-  queue(queue &&q) : data_(std::move(q.data_)){};
+  queue(queue &&q) : data_{std::move(q.data_)} {};
 
   ~queue() = default;
 
@@ -66,7 +66,7 @@ class queue {
   /* Bonus part */
   template <typename... Args>
   void insert_many_back(Args &&...args) {
-    data_.insert_many_back(args...);
+    data_.insert_many_back(std::forward<Args>(args)...);
   }
 
  private:
