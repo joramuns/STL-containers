@@ -192,6 +192,39 @@ class Tree {
     return result;
   };
 
+  /* Bonus part */
+  template <typename... Args>
+  vector<std::pair<iterator, bool>> InsertMany(Args &&...args) {
+    vector<std::pair<iterator, bool>> result{};
+
+    for (auto &&item : {std::forward<Args>(args)...}) {
+      TNode *emplace_node = new TNode(item);
+      auto it_pair = (std::pair<iterator, bool>)InsertNode(emplace_node);
+      if (!it_pair.second) {
+        delete emplace_node;
+      }
+      result.push_back(it_pair);
+    }
+
+    return result;
+  }
+
+  template <typename... Args>
+  vector<std::pair<iterator, bool>> MultiInsertMany(Args &&...args) {
+    vector<std::pair<iterator, bool>> result{};
+
+    for (auto &&item : {std::forward<Args>(args)...}) {
+      TNode *emplace_node = new TNode(item);
+      auto it_pair = (std::pair<iterator, bool>)MultiInsertNode(emplace_node);
+      if (!it_pair.second) {
+        delete emplace_node;
+      }
+      result.push_back(it_pair);
+    }
+
+    return result;
+  }
+
   iterator FindKey(key_type key) noexcept {
     iterator result = FindNode(key);
     if (!size_ || result.GetKey() != key) {
@@ -711,6 +744,10 @@ class Tree {
 
     TNode(const_key_reference key, const_value_reference value)
         : key_(key), value_(value){};
+
+    explicit TNode(const_key_reference key) : key_(key), value_(key){};
+
+    explicit TNode(key_type &&key) : key_(key), value_(key){};
 
     TNode(const TNode &other) = default;
 
