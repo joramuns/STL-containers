@@ -101,6 +101,14 @@ class set {
     return find(key) != end();
   };
 
+  /* Bonus part */
+  template <typename... Args>
+  vector<std::pair<iterator, bool>> insert_many(Args &&...args) {
+    auto result = rb_tree_.InsertMany(args...);
+
+    return result;
+  };
+
  private:
   tree_type rb_tree_;
 };
