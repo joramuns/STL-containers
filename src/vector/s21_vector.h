@@ -197,7 +197,7 @@ class vector {
 
   template <typename... Args>
   void insert_many_back(Args &&...args) {
-    insert_many(end(), args...);
+    insert_many(end(), std::forward<Args>(args)...);
   }
 
  private:
