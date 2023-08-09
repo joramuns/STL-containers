@@ -204,7 +204,7 @@ class list {
     Node *insert_node;
 
     for (auto &&item : {std::forward<Args>(args)...}) {
-      insert_node = new Node(std::move(item));
+      insert_node = new Node(item);
       insert_node->LinkNodes(pos_node);
       ++m_size_;
     }
@@ -233,6 +233,8 @@ class list {
         : next_(this), prev_(this), data_(value){};
 
     explicit Node(reference value) : next_(this), prev_(this), data_(value){};
+
+    explicit Node(value_type &&value) : next_(this), prev_(this), data_(value){};
 
     Node(const Node &other)
         : next_(other.next_), prev_(other.next_), data_(other.data_){};
