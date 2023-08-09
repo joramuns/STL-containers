@@ -116,7 +116,7 @@ class list {
 
   void push_back(const_reference value) { insert(end(), value); };
 
-  void pop_back() noexcept { erase(--end()); };
+  void pop_back() noexcept { erase(std::prev(end())); };
 
   void push_front(const_reference value) { insert(begin(), value); };
 
