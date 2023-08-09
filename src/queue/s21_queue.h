@@ -63,6 +63,12 @@ class queue {
 
   void swap(queue &other) noexcept { std::swap(data_, other.data_); };
 
+  /* Bonus part */
+  template <typename... Args>
+  void insert_many_back(Args &&...args) {
+    data_.insert_many_back(args...);
+  }
+
  private:
   Container data_;
 };
