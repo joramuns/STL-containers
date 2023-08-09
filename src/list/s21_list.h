@@ -203,7 +203,7 @@ class list {
     Node *pos_node = non_const_it.GetNode();
     Node *insert_node;
 
-    for (auto item : {std::forward<Args>(args)...}) {
+    for (auto &&item : {std::forward<Args>(args)...}) {
       insert_node = new Node(std::move(item));
       insert_node->LinkNodes(pos_node);
       ++m_size_;
