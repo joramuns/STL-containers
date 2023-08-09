@@ -16,11 +16,11 @@ class stack {
   stack() = default;
 
   explicit stack(std::initializer_list<value_type> const &items)
-      : data_(items){};
+      : data_{items} {};
 
-  stack(const stack &s) : data_(s.data_){};
+  stack(const stack &s) : data_{s.data_} {};
 
-  stack(stack &&s) : data_(std::move(s.data_)){};
+  stack(stack &&s) : data_{std::move(s.data_)} {};
 
   ~stack() = default;
 
@@ -58,6 +58,12 @@ class stack {
   void pop() noexcept { data_.pop_back(); };
 
   void swap(stack &other) noexcept { std::swap(data_, other.data_); };
+
+  /* Bonus part */
+  template <typename... Args>
+  void insert_many_front(Args &&...args) {
+    data_.insert_many_back(std::forward<Args>(args)...);
+  };
 
  private:
   Container data_;
