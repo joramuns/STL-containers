@@ -290,23 +290,6 @@ class Tree {
     return parent;
   };
 
-  /* Counter of elements with given key */
-  size_type MultiFindKey(key_type key) const noexcept {
-    size_type result = 0;
-    TNode *root = FindNode(key, head_);
-    if (root->key_ == key) {
-      ++result;
-    }
-    /* while (root != tail_) { */
-    /*   if (root->key_ == key) ++result; */
-    /*   iterator root_iter = (iterator)root; */
-    /*   ++root_iter; */
-    /*   root = root_iter.GetNode(); */
-    /*   if (root != tail_) root = FindNode(key, root); */
-    /* } */
-    return result;
-  }
-
   iterator LowerBound(const key_type &key) noexcept {
     auto result = begin();
     auto end_tree = end();

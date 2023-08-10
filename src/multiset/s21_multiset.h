@@ -84,7 +84,13 @@ class multiset {
 
   /*** Multiset lookup ***/
   size_type count(const key_type &key) const noexcept {
-    return rb_tree_.MultiFindKey(key);
+    auto pair_iter = equal_range(key);
+    size_type result = 0;
+    while (pair_iter.first++ != pair_iter.second) {
+      ++result;
+    }
+
+    return result;
   };
 
   iterator find(const key_type &key) noexcept { return rb_tree_.FindKey(key); };
@@ -103,7 +109,8 @@ class multiset {
 
   std::pair<const_iterator, const_iterator> equal_range(
       const key_type &key) const noexcept {
-    return std::pair<iterator, iterator>(lower_bound(key), upper_bound(key));
+    return std::pair<const_iterator, const_iterator>(lower_bound(key),
+                                                     upper_bound(key));
   };
 
   iterator lower_bound(const key_type &key) noexcept {
