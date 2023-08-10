@@ -243,4 +243,141 @@ TYPED_TEST(StackInsManyTest, EmptyStack) {
 TEST(InsManyTree, Map_0) {
   s21::map<int, int> test{std::make_pair(1, 2), std::make_pair(2, 4), std::make_pair(99, 0)};
   auto result = test.insert_many(std::make_pair(4, 3), std::make_pair(101, 21));
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, true);
+  }
+  EXPECT_EQ(test.size(), 5);
+}
+
+TEST(InsManyTree, Map_1) {
+  s21::map<int, int> test{};
+  auto result = test.insert_many(std::make_pair(4, 3), std::make_pair(101, 21));
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, true);
+  }
+  EXPECT_EQ(test.size(), 2);
+}
+
+TEST(InsManyTree, Map_2) {
+  s21::map<int, int> test{std::make_pair(4, 3), std::make_pair(101, 9)};
+  auto result = test.insert_many(std::make_pair(4, 3), std::make_pair(101, 21));
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, false);
+  }
+  EXPECT_EQ(test.size(), 2);
+  EXPECT_EQ(*result[1].first, 9);
+}
+
+TEST(InsManyTree, Map_3) {
+  s21::map<int, int> test{};
+  auto result = test.insert_many(std::make_pair(4, 3), std::make_pair(101, 21));
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, true);
+  }
+  EXPECT_EQ(test.size(), 2);
+  EXPECT_EQ(*result[1].first, 21);
+  EXPECT_EQ(test[101], 21);
+  EXPECT_EQ(test[4], 3);
+}
+
+TEST(InsManyTree, Map_4) {
+  s21::map<int, int> test{std::make_pair(4, 3)};
+  auto result = test.insert_many(std::make_pair(4, 9));
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, false);
+  }
+  EXPECT_EQ(test.size(), 1);
+  EXPECT_EQ(*result[0].first, 3);
+  EXPECT_EQ(test[4], 3);
+}
+
+TEST(InsManyTree, Set_0) {
+  s21::set<int> test{1, 2, 99};
+  auto result = test.insert_many(3, 7);
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, true);
+  }
+  EXPECT_EQ(test.size(), 5);
+}
+
+TEST(InsManyTree, Set_1) {
+  s21::set<int> test{};
+  auto result = test.insert_many(4, 101);
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, true);
+  }
+  EXPECT_EQ(test.size(), 2);
+}
+
+TEST(InsManyTree, Set_2) {
+  s21::set<int> test{4, 101};
+  auto result = test.insert_many(4, 101);
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, false);
+  }
+  EXPECT_EQ(test.size(), 2);
+  EXPECT_EQ(*result[1].first, 101);
+}
+
+TEST(InsManyTree, Set_3) {
+  s21::set<int> test{4, 101};
+  auto result = test.insert_many(8, 4, 101);
+  EXPECT_EQ(result[0].second, true);
+  EXPECT_EQ(result[1].second, false);
+  EXPECT_EQ(result[2].second, false);
+  EXPECT_EQ(test.size(), 3);
+  EXPECT_EQ(*result[1].first, 4);
+}
+
+TEST(InsManyTree, MultiSet_0) {
+  s21::multiset<int> test{1, 2, 99};
+  auto result = test.insert_many(3, 7);
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, true);
+  }
+  EXPECT_EQ(test.size(), 5);
+}
+
+TEST(InsManyTree, MultiSet_1) {
+  s21::multiset<int> test{};
+  auto result = test.insert_many(4, 101);
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, true);
+  }
+  EXPECT_EQ(test.size(), 2);
+}
+
+TEST(InsManyTree, MultiSet_2) {
+  s21::multiset<int> test{4, 101};
+  auto result = test.insert_many(4, 101);
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, true);
+  }
+  EXPECT_EQ(test.size(), 4);
+  EXPECT_EQ(*result[1].first, 101);
+}
+
+TEST(InsManyTree, MultiSet_3) {
+  s21::multiset<int> test{4, 101};
+  auto result = test.insert_many(8, 4, 101);
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, true);
+  }
+  EXPECT_EQ(test.size(), 5);
+  EXPECT_EQ(*result[1].first, 4);
+  EXPECT_EQ(test.count(4), 2);
+}
+
+TEST(InsManyTree, MultiSet_4) {
+  s21::multiset<int> test{4, 101};
+  auto result = test.insert_many(101, 4, 8, 101, 101, 8, 101, 8, 4, 101);
+  for (const auto& item : result) {
+    EXPECT_EQ(item.second, true);
+  }
+  EXPECT_EQ(test.size(), 12);
+  EXPECT_EQ(*result[1].first, 4);
+  EXPECT_EQ(test.count(4), 3);
+  EXPECT_EQ(test.count(8), 3);
+  EXPECT_EQ(test.count(101), 6);
+  EXPECT_EQ(test.count(111), 0);
 }
