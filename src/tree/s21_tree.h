@@ -1,8 +1,10 @@
 #ifndef CPP2_S21_CONTAINERS_0_TREE_S21_TREE_H_
 #define CPP2_S21_CONTAINERS_0_TREE_S21_TREE_H_
 
+#include <algorithm>
 #include <initializer_list>
 #include <iostream>
+#include <limits>
 
 #include "../vector/s21_vector.h"
 
@@ -292,10 +294,16 @@ class Tree {
   size_type MultiFindKey(key_type key) const noexcept {
     size_type result = 0;
     TNode *root = FindNode(key, head_);
-    while (root != tail_) {
+    if (root->key_ == key) {
       ++result;
-      root = FindNode(key, root);
     }
+    /* while (root != tail_) { */
+    /*   if (root->key_ == key) ++result; */
+    /*   iterator root_iter = (iterator)root; */
+    /*   ++root_iter; */
+    /*   root = root_iter.GetNode(); */
+    /*   if (root != tail_) root = FindNode(key, root); */
+    /* } */
     return result;
   }
 
