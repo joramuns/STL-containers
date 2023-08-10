@@ -1,12 +1,15 @@
 CC=g++ -Wall -Werror -Wextra -std=c++17
-TARGET=test
+TARGET=test.out
 SRCDIR=tests
 OBJDIR=bin
 SOURCES=$(shell find $(SRCDIR) -type f -name '*.cc')
 OBJECTS = $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$($(notdir SOURCES):.cc=.o))
 LIB=-lgtest -pthread
 
-all: $(TARGET)
+all: test
+
+test: $(TARGET)
+	./$(TARGET) --gtest_brief=1
 
 $(TARGET): $(OBJECTS)
 	$(CC) -o $@ $(OBJDIR)/*.o $(OBJDIR)/*/*.o $(LIB)
