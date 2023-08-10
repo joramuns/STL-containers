@@ -27,7 +27,7 @@ $(TARGET): $(OBJECTS)
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.cc | $(OBJDIR)
 	@mkdir -p $(@D)
-	$(CC) -o $@ -c $(CFLAGS) $< $(LIB)
+	$(CC) -o $@ -c $< $(LIB)
 
 $(OBJDIR):
 	mkdir -p $@
