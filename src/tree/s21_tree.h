@@ -198,6 +198,22 @@ class Tree {
     vector<std::pair<iterator, bool>> result{};
 
     for (auto &&item : {std::forward<Args>(args)...}) {
+      TNode *emplace_node = new TNode(item.first, item.second);
+      auto it_pair = (std::pair<iterator, bool>)InsertNode(emplace_node);
+      if (!it_pair.second) {
+        delete emplace_node;
+      }
+      result.push_back(it_pair);
+    }
+
+    return result;
+  }
+
+  template <typename... Args>
+  vector<std::pair<iterator, bool>> InsertManySet(Args &&...args) {
+    vector<std::pair<iterator, bool>> result{};
+
+    for (auto &&item : {std::forward<Args>(args)...}) {
       TNode *emplace_node = new TNode(item);
       auto it_pair = (std::pair<iterator, bool>)InsertNode(emplace_node);
       if (!it_pair.second) {
@@ -744,6 +760,8 @@ class Tree {
 
     TNode(const_key_reference key, const_value_reference value)
         : key_(key), value_(value){};
+
+    TNode(key_type &&key, value_type &&value) : key_(key), value_(value){};
 
     explicit TNode(const_key_reference key) : key_(key), value_(key){};
 
