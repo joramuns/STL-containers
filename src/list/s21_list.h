@@ -234,7 +234,8 @@ class list {
 
     explicit Node(reference value) : next_(this), prev_(this), data_(value){};
 
-    explicit Node(value_type &&value) : next_(this), prev_(this), data_(value){};
+    explicit Node(value_type &&value)
+        : next_(this), prev_(this), data_(value){};
 
     Node(const Node &other)
         : next_(other.next_), prev_(other.next_), data_(other.data_){};
