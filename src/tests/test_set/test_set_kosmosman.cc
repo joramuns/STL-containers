@@ -91,11 +91,11 @@ TEST(SetKosmosman, SizeTest) {
   EXPECT_TRUE(tmp.set_double.size() == tmp.set_double_orig.size());
 }
 
-/* TEST(SetKosmosman, MaxSizeTest) { */
-/*   SetTest tmp; */
-/*   EXPECT_TRUE(tmp.set_int.max_size() == tmp.set_int_orig.max_size()); */
-/*   EXPECT_TRUE(tmp.empty_set.max_size() == tmp.empty_set_orig.max_size()); */
-/* } */
+TEST(SetKosmosman, MaxSizeTest) {
+  SetTest tmp;
+  EXPECT_TRUE(tmp.set_int.max_size() == tmp.set_int_orig.max_size());
+  EXPECT_TRUE(tmp.empty_set.max_size() == tmp.empty_set_orig.max_size());
+}
 
 TEST(SetKosmosman, ClearTest) {
   SetTest tmp;

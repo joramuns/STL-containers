@@ -1,6 +1,5 @@
 #include "../tests.h"
 
-namespace {
 TEST(Stack, Constructor_Default) {
   s21::stack<int> s21_stack;
   std::stack<int> std_stack;
@@ -98,5 +97,3 @@ TEST(Stack, Modifier_Swap) {
     s21_stack_1.pop(), s21_stack_4.pop();
   }
 }
-
-}  // namespace

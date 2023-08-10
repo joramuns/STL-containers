@@ -76,13 +76,13 @@ TEST(s21_queue, test5) {
   ASSERT_EQ(4, to_swap1.back());
 }
 
-/* TEST(s21_queue, emplace_back) { */
-/*   s21::queue<int> my_queue{6, 7, 9}; */
-/*   s21::queue<int> res_queue{6, 7, 9, 1, 2, 8}; */
-/*   my_queue.emplace_back(1, 2, 8); */
-/*   for (size_t i = 0; i <= res_queue.size(); i++) { */
-/*     ASSERT_EQ(my_queue.back(), res_queue.back()); */
-/*     my_queue.pop(); */
-/*     res_queue.pop(); */
-/*   } */
-/* } */
+TEST(s21_queue, emplace_back) {
+  s21::queue<int> my_queue{6, 7, 9};
+  s21::queue<int> res_queue{6, 7, 9, 1, 2, 8};
+  my_queue.insert_many_back(1, 2, 8);
+  for (size_t i = 0; i <= res_queue.size(); i++) {
+    ASSERT_EQ(my_queue.back(), res_queue.back());
+    my_queue.pop();
+    res_queue.pop();
+  }
+}

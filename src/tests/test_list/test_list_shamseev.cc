@@ -251,28 +251,28 @@ TEST(s21_list_function, swap) {
   }
 }
 
- TEST(s21_list_function, merge) {
-   s21::list<int> s21list{77, 55, 0, 87, 1111};
-   s21::list<int> s21list2{5, 3};
-   std::list<int> stdlist{77, 55, 0, 87, 1111};
-   std::list<int> stdlist2{5, 3};
-   stdlist.sort();
-   s21list.sort();
-   s21list.merge(s21list2);
-   stdlist.merge(stdlist2);
-   s21::list<int>::iterator s21it = s21list.begin();
-   std::list<int>::iterator stdit = stdlist.begin();
-   ASSERT_EQ(s21list.size(), stdlist.size());
-   ASSERT_EQ(s21list2.size(), stdlist2.size());
-   auto s21_end = s21list.end();
-   auto std_end = stdlist.end();
-   while (s21it != s21_end && stdit != std_end) {
-     ASSERT_EQ(*s21it, *stdit);
-     ++s21it;
-     ++stdit;
-   }
-   ASSERT_EQ(s21list2.empty(), stdlist2.empty());
- }
+TEST(s21_list_function, merge) {
+  s21::list<int> s21list{77, 55, 0, 87, 1111};
+  s21::list<int> s21list2{5, 3};
+  std::list<int> stdlist{77, 55, 0, 87, 1111};
+  std::list<int> stdlist2{5, 3};
+  stdlist.sort();
+  s21list.sort();
+  s21list.merge(s21list2);
+  stdlist.merge(stdlist2);
+  s21::list<int>::iterator s21it = s21list.begin();
+  std::list<int>::iterator stdit = stdlist.begin();
+  ASSERT_EQ(s21list.size(), stdlist.size());
+  ASSERT_EQ(s21list2.size(), stdlist2.size());
+  auto s21_end = s21list.end();
+  auto std_end = stdlist.end();
+  while (s21it != s21_end && stdit != std_end) {
+    ASSERT_EQ(*s21it, *stdit);
+    ++s21it;
+    ++stdit;
+  }
+  ASSERT_EQ(s21list2.empty(), stdlist2.empty());
+}
 
 TEST(s21_list_function, splice) {
   s21::list<int> s21list{77, 55, 0, 87, 1111};
@@ -329,24 +329,24 @@ TEST(s21_list_function, unique) {
   }
 }
 
- TEST(s21_list_sort, sort) {
-   s21::list<double> s21lone{7.19};
-   s21lone.sort();
-   s21::list<int> s21list{77, 55, 0, 87, 1111};
-   std::list<int> stdlist{77, 55, 0, 87, 1111};
-   s21list.sort();
-   stdlist.sort();
-   s21::list<int>::iterator s21it = s21list.begin();
-   std::list<int>::iterator stdit = stdlist.begin();
-   ASSERT_EQ(s21list.size(), stdlist.size());
-   auto s21_end = s21list.end();
-   auto std_end = stdlist.end();
-   while (s21it != s21_end && stdit != std_end) {
-     ASSERT_EQ(*s21it, *stdit);
-     ++s21it;
-     ++stdit;
-   }
- }
+TEST(s21_list_sort, sort) {
+  s21::list<double> s21lone{7.19};
+  s21lone.sort();
+  s21::list<int> s21list{77, 55, 0, 87, 1111};
+  std::list<int> stdlist{77, 55, 0, 87, 1111};
+  s21list.sort();
+  stdlist.sort();
+  s21::list<int>::iterator s21it = s21list.begin();
+  std::list<int>::iterator stdit = stdlist.begin();
+  ASSERT_EQ(s21list.size(), stdlist.size());
+  auto s21_end = s21list.end();
+  auto std_end = stdlist.end();
+  while (s21it != s21_end && stdit != std_end) {
+    ASSERT_EQ(*s21it, *stdit);
+    ++s21it;
+    ++stdit;
+  }
+}
 
 TEST(s21_list_iterator, iterator) {
   s21::list<int> s21list{77, 55, 0, 87, 1111};
@@ -356,50 +356,45 @@ TEST(s21_list_iterator, iterator) {
   ASSERT_FALSE(begin != begin1);
 }
 
-/* TEST(s21_bonus, emplace) { */
-/*   s21::list<int> s21list{6, 7, 9}; */
-/*   s21::list<int> s21res_list{6, 7, 1, 2, 8, 9}; */
-/*   s21::list<int>::iterator s21it = s21list.begin(); */
-/*   ++s21it; */
-/*   ++s21it; */
-/*   s21list.emplace(s21it, 1, 2, 8); */
-/*   s21::list<int>::iterator it_i = s21list.begin(); */
-/*   s21::list<int>::iterator it_j = s21res_list.begin(); */
-/*   for (size_t i = 0; i <= s21list.size(); i++) { */
-/*     ASSERT_EQ(*it_i, *it_j); */
-/*     ++it_i; */
-/*     ++it_j; */
-/*   } */
-/* } */
+TEST(s21_bonus, emplace) {
+  s21::list<int> s21list{6, 7, 9};
+  s21::list<int> s21res_list{6, 7, 1, 2, 8, 9};
+  s21::list<int>::iterator s21it = s21list.begin();
+  ++s21it;
+  ++s21it;
+  s21list.insert_many(s21it, 1, 2, 8);
+  s21::list<int>::iterator it_i = s21list.begin();
+  s21::list<int>::iterator it_j = s21res_list.begin();
+  for (size_t i = 0; i <= s21list.size(); i++) {
+    ASSERT_EQ(*it_i, *it_j);
+    ++it_i;
+    ++it_j;
+  }
+}
 
-/* TEST(s21_bonus, emplace_front) { */
-/*   s21::list<int> s21list{6, 7, 9}; */
-/*   s21::list<int> s21res_list{1, 2, 8, 6, 7, 9}; */
-/*   s21list.emplace_front(1, 2, 8); */
-/*   s21::list<int>::iterator it_i = s21list.begin(); */
-/*   s21::list<int>::iterator it_j = s21res_list.begin(); */
-/*   for (size_t i = 0; i <= s21list.size(); i++) { */
-/*     ASSERT_EQ(*it_i, *it_j); */
-/*     ++it_i; */
-/*     ++it_j; */
-/*   } */
-/* } */
+TEST(s21_bonus, emplace_front) {
+  s21::list<int> s21list{6, 7, 9};
+  s21::list<int> s21res_list{1, 2, 8, 6, 7, 9};
+  s21list.insert_many_front(1, 2, 8);
+  s21::list<int>::iterator it_i = s21list.begin();
+  s21::list<int>::iterator it_j = s21res_list.begin();
+  for (size_t i = 0; i <= s21list.size(); i++) {
+    ASSERT_EQ(*it_i, *it_j);
+    ++it_i;
+    ++it_j;
+  }
+}
 
-/* TEST(s21_bonus, emplace_back) { */
-/*   s21::list<int> s21list{6, 7, 9}; */
-/*   s21::list<int> s21res_list{6, 7, 9, 1, 2, 8}; */
-/*   s21list.emplace_back(1, 2, 8); */
-/*   s21::list<int>::iterator it_i = s21list.begin(); */
-/*   s21::list<int>::iterator it_j = s21res_list.begin(); */
-/*   for (size_t i = 0; i <= s21list.size(); i++) { */
-/*     ASSERT_EQ(*it_i, *it_j); */
-/*     ++it_i; */
-/*     ++it_j; */
-/*   } */
-/* } */
+TEST(s21_bonus, emplace_back) {
+  s21::list<int> s21list{6, 7, 9};
+  s21::list<int> s21res_list{6, 7, 9, 1, 2, 8};
+  s21list.insert_many_back(1, 2, 8);
+  s21::list<int>::iterator it_i = s21list.begin();
+  s21::list<int>::iterator it_j = s21res_list.begin();
+  for (size_t i = 0; i <= s21list.size(); i++) {
+    ASSERT_EQ(*it_i, *it_j);
+    ++it_i;
+    ++it_j;
+  }
+}
 
-/* TEST(s21_bonus, throw_iterator) { */
-/*   s21::list<int> s21list{}; */
-/*   s21::list<int>::iterator it = s21list.begin(); */
-/*   EXPECT_ANY_THROW(s21list.erase(it)); */
-/* } */

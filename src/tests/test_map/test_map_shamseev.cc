@@ -192,18 +192,18 @@ TEST(s21_map, erase3) {
   test_eq(a, std_a);
 }
 
-/* TEST(s21_map, emplace_bonus_test) { */
-/*   map<double, int> a{{2.34534534, 1}}; */
-/*   a.emplace(std::pair{2.34, 3}, std::pair{1.43, 4}, std::pair{1.0, 6}, */
-/*             std::pair{14.54, 21}, std::pair{75.34, 5}); */
-/*   std::map<double, int> std_a{{2.34534534, 1}}; */
-/*   std_a.emplace(std::pair{2.34, 3}); */
-/*   std_a.emplace(std::pair{1.43, 4}); */
-/*   std_a.emplace(std::pair{1.0, 6}); */
-/*   std_a.emplace(std::pair{14.54, 21}); */
-/*   std_a.emplace(std::pair{75.34, 5}); */
-/*   test_eq(a, std_a); */
-/* } */
+TEST(s21_map, emplace_bonus_test) {
+  map<double, int> a{{2.34534534, 1}};
+  a.insert_many(std::make_pair(2.34, 3), std::make_pair(1.43, 4), std::make_pair(1.0, 6),
+            std::make_pair(14.54, 21), std::make_pair(75.34, 5));
+  std::map<double, int> std_a{{2.34534534, 1}};
+  std_a.emplace(std::pair{2.34, 3});
+  std_a.emplace(std::pair{1.43, 4});
+  std_a.emplace(std::pair{1.0, 6});
+  std_a.emplace(std::pair{14.54, 21});
+  std_a.emplace(std::pair{75.34, 5});
+  test_eq(a, std_a);
+}
 
 TEST(s21_map, merge) {
   map<int, int> a{{3, 7}, {8, 3}, {1, 9}, {4, 9}, {5, 9}};

@@ -440,8 +440,10 @@ TEST(MultisetJ, Merge_7) {
 }
 
 TEST(MultisetJ, EqualRange_1) {
-  std::multiset<int> std_keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
-  s21::multiset<int> keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+  std::multiset<int> std_keka{3, 4,   5,   5,   7,   7,   7,   7,
+                              9, 198, 200, 200, 200, 200, 200, 232};
+  s21::multiset<int> keka{3, 4,   5,   5,   7,   7,   7,   7,
+                          9, 198, 200, 200, 200, 200, 200, 232};
 
   auto range = keka.equal_range(7);
   auto std_range = std_keka.equal_range(7);
@@ -450,8 +452,10 @@ TEST(MultisetJ, EqualRange_1) {
 }
 
 TEST(MultisetJ, EqualRange_2) {
-  std::multiset<int> std_keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
-  s21::multiset<int> keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+  std::multiset<int> std_keka{3, 4,   5,   5,   7,   7,   7,   7,
+                              9, 198, 200, 200, 200, 200, 200, 232};
+  s21::multiset<int> keka{3, 4,   5,   5,   7,   7,   7,   7,
+                          9, 198, 200, 200, 200, 200, 200, 232};
 
   auto range = keka.equal_range(3);
   auto std_range = std_keka.equal_range(3);
@@ -460,8 +464,10 @@ TEST(MultisetJ, EqualRange_2) {
 }
 
 TEST(MultisetJ, EqualRange_3) {
-  std::multiset<int> std_keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
-  s21::multiset<int> keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+  std::multiset<int> std_keka{3, 4,   5,   5,   7,   7,   7,   7,
+                              9, 198, 200, 200, 200, 200, 200, 232};
+  s21::multiset<int> keka{3, 4,   5,   5,   7,   7,   7,   7,
+                          9, 198, 200, 200, 200, 200, 200, 232};
 
   auto range = keka.equal_range(198);
   auto std_range = std_keka.equal_range(198);
@@ -470,8 +476,10 @@ TEST(MultisetJ, EqualRange_3) {
 }
 
 TEST(MultisetJ, EqualRange_4) {
-  std::multiset<int> std_keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
-  s21::multiset<int> keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+  std::multiset<int> std_keka{3, 4,   5,   5,   7,   7,   7,   7,
+                              9, 198, 200, 200, 200, 200, 200, 232};
+  s21::multiset<int> keka{3, 4,   5,   5,   7,   7,   7,   7,
+                          9, 198, 200, 200, 200, 200, 200, 232};
 
   auto range = keka.equal_range(5);
   auto std_range = std_keka.equal_range(5);
@@ -480,8 +488,10 @@ TEST(MultisetJ, EqualRange_4) {
 }
 
 TEST(MultisetJ, EqualRange_5) {
-  std::multiset<int> std_keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
-  s21::multiset<int> keka{3, 4, 5, 5, 7, 7, 7, 7, 9, 198, 200, 200, 200, 200, 200, 232};
+  std::multiset<int> std_keka{3, 4,   5,   5,   7,   7,   7,   7,
+                              9, 198, 200, 200, 200, 200, 200, 232};
+  s21::multiset<int> keka{3, 4,   5,   5,   7,   7,   7,   7,
+                          9, 198, 200, 200, 200, 200, 200, 232};
 
   auto range = keka.equal_range(232);
   auto std_range = std_keka.equal_range(232);

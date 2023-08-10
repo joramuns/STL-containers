@@ -568,19 +568,19 @@ TEST(SetNanadaug, Merge4) {
   }
 }
 
-/* TEST(SetNanadaug, setEmplace) { */
-/*   std::initializer_list<int> items{1, 2, 3}; */
-/*   std::initializer_list<int> items2{2, 3, 543}; */
-/*   s21::set<int> my_set(items); */
-/*   std::set<int> std_set(items); */
-/*   std::set<int> std_set2(items2); */
-/*   std_set.merge(std_set2); */
-/*   my_set.emplace(2, 3, 543); */
-/*   auto my_iter = my_set.begin(); */
-/*   auto std_iter = std_set.begin(); */
-/*   while (std_iter != std_set.end()) { */
-/*     ASSERT_TRUE(*my_iter == *std_iter); */
-/*     ++my_iter; */
-/*     ++std_iter; */
-/*   } */
-/* } */
+TEST(SetNanadaug, setEmplace) {
+  std::initializer_list<int> items{1, 2, 3};
+  std::initializer_list<int> items2{2, 3, 543};
+  s21::set<int> my_set(items);
+  std::set<int> std_set(items);
+  std::set<int> std_set2(items2);
+  std_set.merge(std_set2);
+  my_set.insert_many(2, 3, 543);
+  auto my_iter = my_set.begin();
+  auto std_iter = std_set.begin();
+  while (std_iter != std_set.end()) {
+    ASSERT_TRUE(*my_iter == *std_iter);
+    ++my_iter;
+    ++std_iter;
+  }
+}

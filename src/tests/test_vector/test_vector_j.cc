@@ -23,7 +23,7 @@ TEST(Vector, MaxSize) {
   std::vector<std::vector<std::vector<int>>> std_vecvecintvec{};
   std::vector<std::list<int>> std_veclistvec{};
   std::vector<std::set<int>> std_vecsetvec{};
-  
+
   ASSERT_EQ(intvec.max_size(), std_intvec.max_size());
   ASSERT_EQ(charvec.max_size(), std_charvec.max_size());
   ASSERT_EQ(sztvec.max_size(), std_sztvec.max_size());

@@ -271,7 +271,6 @@ TYPED_TEST(StackTopTest, size_1) {
   EXPECT_DOUBLE_EQ(a.top(), value);
 }
 
-
 TYPED_TEST(StackTopTest, size_3) {
   using Stack = typename TestFixture::Stack;
   using StdStack = typename TestFixture::StdStack;

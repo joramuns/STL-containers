@@ -126,11 +126,11 @@ TEST(s21_vector, create_2) {
   ASSERT_EQ(test_vector.empty(), 0);
 }
 
-/* TEST(s21_vector, max_size_test) { */
-/*   s21::vector<char> myvector; */
-/*   std::vector<char> test_vector; */
-/*   ASSERT_EQ(myvector.max_size(), test_vector.max_size()); */
-/* } */
+TEST(s21_vector, max_size_test) {
+  s21::vector<char> myvector;
+  std::vector<char> test_vector;
+  ASSERT_EQ(myvector.max_size(), test_vector.max_size());
+}
 
 TEST(s21_vector, reserve_test) {
   s21::vector<char> myvector;
@@ -143,8 +143,6 @@ TEST(s21_vector, reserve_test) {
 TEST(s21_vector, shrink_to_fit_test) {
   s21::vector<int> myvector{1, 2, 3, 4, 5, 6, 7, 8};
   std::vector<int> test_vector{1, 2, 3, 4, 5, 6, 7, 8};
-
-
 
   myvector.push_back(2);
   test_vector.push_back(2);
@@ -196,7 +194,7 @@ TEST(s21_vector, data_test_1) {
   ++p;
   *p = 20;
   s21::vector<int> myvector(5);
- auto it = myvector.data();
+  auto it = myvector.data();
   *it = 10;
   ++it;
   *it = 20;
@@ -210,26 +208,26 @@ TEST(s21_vector, front_back_test_1) {
   ASSERT_EQ(myvector.back(), test_vector.back());
 }
 
-/* TEST(vector_modifiers, bounus_emplace_iterator_Test1) { */
-/*   s21::vector<int> myvector; */
-/*   auto itC = (myvector.cbegin()); */
-/*   auto it = myvector.emplace(itC, 9,8,7,6,5); */
-/*   std::vector<int> result{9, 8, 7, 6, 5}; */
-/*   test_eq<int>(myvector, result); */
-/* } */
+TEST(vector_modifiers, bounus_emplace_iterator_Test1) {
+  s21::vector<int> myvector;
+  auto itC = (myvector.end());
+  myvector.insert_many(itC, 9,8,7,6,5);
+  std::vector<int> result{9, 8, 7, 6, 5};
+  test_eq<int>(myvector, result);
+}
 
-/* TEST(vector_modifiers, bounus_emplace_back_Test1) { */
-/*   s21::vector<int> myvector; */
-/*   myvector.emplace_back(1, 2, 3); */
-/*   ASSERT_EQ(myvector.size(), 3); */
-/*   ASSERT_EQ(myvector.front(), 1); */
-/*   ASSERT_EQ(myvector.back(), 3); */
-/* } */
+TEST(vector_modifiers, bounus_emplace_back_Test1) {
+  s21::vector<int> myvector;
+  myvector.insert_many_back(1, 2, 3);
+  ASSERT_EQ(myvector.size(), 3);
+  ASSERT_EQ(myvector.front(), 1);
+  ASSERT_EQ(myvector.back(), 3);
+}
 
-/* TEST(vector_modifiers, bounus_emplace_back_Test2) { */
-/*   s21::vector<int> myvector{9, 8, 7}; */
-/*   myvector.emplace_back(1, 2, 3); */
-/*   ASSERT_EQ(myvector.size(), 6); */
-/*   ASSERT_EQ(myvector.front(), 9); */
-/*   ASSERT_EQ(myvector.back(), 3); */
-/* } */
+TEST(vector_modifiers, bounus_emplace_back_Test2) {
+  s21::vector<int> myvector{9, 8, 7};
+  myvector.insert_many_back(1, 2, 3);
+  ASSERT_EQ(myvector.size(), 6);
+  ASSERT_EQ(myvector.front(), 9);
+  ASSERT_EQ(myvector.back(), 3);
+}

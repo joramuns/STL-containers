@@ -8,14 +8,14 @@ TEST(SetFredacha, Constructor_Default) {
 }
 
 TEST(SetFredacha, Constructor_Initializer_list) {
-  s21::set<int> s21_set  {1, 2, 3, 4};
-  std::set<int> std_set  {1, 2, 3, 4};
+  s21::set<int> s21_set{1, 2, 3, 4};
+  std::set<int> std_set{1, 2, 3, 4};
   EXPECT_EQ(s21_set.size(), std_set.size());
   EXPECT_EQ(s21_set.empty(), std_set.empty());
 }
 
 TEST(SetFredacha, Constructor_Copy) {
-  s21::set<char> s21_set_1  {'a', 'b', 'c', 'd', 'a', 'b', 'f'};
+  s21::set<char> s21_set_1{'a', 'b', 'c', 'd', 'a', 'b', 'f'};
   std::set<char> std_set_1 = {'a', 'b', 'c', 'd', 'a', 'b', 'f'};
   s21::set<char> s21_set_2 = s21_set_1;
   std::set<char> std_set_2 = std_set_1;
@@ -31,7 +31,7 @@ TEST(SetFredacha, Constructor_Copy) {
 }
 
 TEST(SetFredacha, Constructor_Move) {
-  s21::set<char> s21_set_1  {'a', 'b', 'c', 'd'};
+  s21::set<char> s21_set_1{'a', 'b', 'c', 'd'};
   std::set<char> std_set_1 = {'a', 'b', 'c', 'd'};
   s21::set<char> s21_set_2 = std::move(s21_set_1);
   std::set<char> std_set_2 = std::move(std_set_1);
@@ -48,8 +48,8 @@ TEST(SetFredacha, Constructor_Move) {
 }
 
 TEST(SetFredacha, Modifier_Insert_1) {
-  s21::set<char> s21_set_1  {'a', 'c', 'd'};
-  s21::set<char> s21_set_2  {'a', 'c', 'd', 'b'};
+  s21::set<char> s21_set_1{'a', 'c', 'd'};
+  s21::set<char> s21_set_2{'a', 'c', 'd', 'b'};
 
   auto it = s21_set_1.begin();
   ++it;
@@ -87,8 +87,8 @@ TEST(SetFredacha, Modifier_Insert_3) {
 }
 
 TEST(SetFredacha, Modifier_Erase) {
-  s21::set<char> s21_set_1  {'a', 'c', 'd'};
-  s21::set<char> s21_set_2  {'a', 'b', 'c', 'd'};
+  s21::set<char> s21_set_1{'a', 'c', 'd'};
+  s21::set<char> s21_set_2{'a', 'b', 'c', 'd'};
 
   auto it = s21_set_2.begin();
   ++it;
@@ -103,10 +103,10 @@ TEST(SetFredacha, Modifier_Erase) {
 }
 
 TEST(SetFredacha, Modifier_Swap) {
-  s21::set<char> s21_set_1  {'a', 'b', 'o', 'b', 'a'};
-  s21::set<char> s21_set_2  {'s', 'h', 'l', 'e', 'p', 'p', 'a'};
-  s21::set<char> s21_set_3  {'a', 'b', 'o', 'b', 'a'};
-  s21::set<char> s21_set_4  {'s', 'h', 'l', 'e', 'p', 'p', 'a'};
+  s21::set<char> s21_set_1{'a', 'b', 'o', 'b', 'a'};
+  s21::set<char> s21_set_2{'s', 'h', 'l', 'e', 'p', 'p', 'a'};
+  s21::set<char> s21_set_3{'a', 'b', 'o', 'b', 'a'};
+  s21::set<char> s21_set_4{'s', 'h', 'l', 'e', 'p', 'p', 'a'};
   s21_set_1.swap(s21_set_2);
   auto it1 = s21_set_1.begin();
   auto it2 = s21_set_2.begin();
@@ -125,9 +125,9 @@ TEST(SetFredacha, Modifier_Swap) {
 }
 
 TEST(SetFredacha, Modifier_Merge) {
-  s21::set<int> s21_set_1  {1, 2, 3};
-  s21::set<int> s21_set_2  {3, 4, 5, 6};
-  s21::set<int> s21_set_3  {1, 2, 3, 4, 5, 6};
+  s21::set<int> s21_set_1{1, 2, 3};
+  s21::set<int> s21_set_2{3, 4, 5, 6};
+  s21::set<int> s21_set_3{1, 2, 3, 4, 5, 6};
   s21_set_1.merge(s21_set_2);
   auto it1 = s21_set_1.begin();
   auto it3 = s21_set_3.begin();

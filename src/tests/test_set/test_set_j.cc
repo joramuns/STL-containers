@@ -11,6 +11,7 @@ TEST(Set, MaxSize) {
     int key_;
     int value_;
   };
-  size_t struct_size_max_size = std::numeric_limits<size_t>::max() / sizeof(keka) / 2;
+  size_t struct_size_max_size =
+      std::numeric_limits<size_t>::max() / sizeof(keka) / 2;
   ASSERT_EQ(struct_size_max_size, aboba.max_size());
 }

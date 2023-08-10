@@ -175,7 +175,6 @@ TEST(ArzzezzanStackTest, Pop_1) {
   s21_stack.pop();
   std_stack.pop();
   EXPECT_EQ(s21_stack.size(), std_stack.size());
-  /* EXPECT_EQ(s21_stack.top(), std_stack.top()); */
 }
 
 TEST(ArzzezzanStackTest, Pop_2) {

@@ -70,15 +70,14 @@ TEST(s21_stack, test5) {
   ASSERT_EQ(4, to_swap1.top());
 }
 
-/*TEST(s21_stack, emplace_front) {
+TEST(s21_stack, emplace_front) {
   s21::stack<int> my_stack{6, 7, 9};
   s21::stack<int> res_stack{6, 7, 9, 1, 2, 8};
-  my_stack.emplace_front(1, 2, 8);
+  my_stack.insert_many_front(1, 2, 8);
   size_t stack_size = res_stack.size();
   for (size_t i = 0; i < stack_size; i++) {
     ASSERT_EQ(my_stack.top(), res_stack.top());
-    // std::cout << my_stack.top() << "   !!!!!!" << std::endl;
     my_stack.pop();
     res_stack.pop();
   }
-}*/
+}

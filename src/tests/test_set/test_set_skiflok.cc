@@ -1,7 +1,7 @@
 #include "../tests.h"
 
 class S21Set_test : public ::testing::Test {
-protected:
+ protected:
   void SetUp() override {}
   s21::set<int> set_empty;
   s21::set<int> set{1, 0, 4, 7, -5};
@@ -101,9 +101,9 @@ TEST_F(S21Set_test, size) {
   EXPECT_EQ(set.size(), std_set.size());
 }
 
-/* TEST_F(S21Set_test, max_size) { */
-/*   EXPECT_EQ(set.max_size(), std_set_test.max_size()); */
-/* } */
+TEST_F(S21Set_test, max_size) {
+  EXPECT_EQ(set.max_size(), std_set_test.max_size());
+}
 
 TEST_F(S21Set_test, clear) {
   EXPECT_EQ(set.size(), std_set.size());
@@ -178,22 +178,22 @@ TEST_F(S21Set_test, erase) {
   }
 }
 
-/* TEST_F(S21Set_test, emplace) { */
-/*   auto pr2 = set_empty.emplace(10); */
-/*   auto std_pr2 = std_set_empty.emplace(10); */
-/*   auto pr3 = set_s.emplace("a"); */
-/*   auto std_pr3 = std_set_s.emplace("a"); */
+TEST_F(S21Set_test, emplace) {
+  auto pr2 = set_empty.insert_many(10);
+  auto std_pr2 = std_set_empty.emplace(10);
+  auto pr3 = set_s.insert_many("a");
+  auto std_pr3 = std_set_s.emplace("a");
 
-/*   EXPECT_EQ((*pr2[0].first).first, (*std_pr2.first)); */
-/*   EXPECT_EQ(pr2[0].second, std_pr2.second); */
+  EXPECT_EQ(*pr2[0].first, *std_pr2.first);
+  EXPECT_EQ(pr2[0].second, std_pr2.second);
 
-/*   EXPECT_EQ((*pr3[0].first).first, (*std_pr3.first)); */
-/*   EXPECT_EQ(pr3[0].second, std_pr3.second); */
+  EXPECT_EQ(*pr3[0].first, *std_pr3.first);
+  EXPECT_EQ(pr3[0].second, std_pr3.second);
 
-/*   auto pr4 = set_s.emplace("a"); */
-/*   auto std_pr4 = std_set_s.emplace("a"); */
-/*   EXPECT_EQ(pr4[0].second, std_pr4.second); */
-/* } */
+  auto pr4 = set_s.insert_many("a");
+  auto std_pr4 = std_set_s.emplace("a");
+  EXPECT_EQ(pr4[0].second, std_pr4.second);
+}
 
 TEST_F(S21Set_test, merge) {
   s21::set<std::string> ma_{"apple", "x", "banana"};
@@ -218,7 +218,7 @@ TEST_F(S21Set_test, merge) {
 }
 
 TEST_F(S21Set_test, contains) {
-  s21::set<char> example  {'a', 'b'};
+  s21::set<char> example{'a', 'b'};
   EXPECT_TRUE(example.contains('a'));
   EXPECT_FALSE(example.contains('t'));
 }
