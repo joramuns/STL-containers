@@ -8,10 +8,13 @@ SOURCES=$(shell find $(SRCDIR) -type f -name '*.cc')
 OBJECTS = $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$($(notdir SOURCES):.cc=.o))
 LIB=-lgtest -pthread
 
+VGFLAGS=--trace-children=yes --track-fds=all  --leak-check=full --show-leak-kinds=all --track-origins=yes
+
 all: test
 
 test: $(TARGET)
-	./$(TARGET) --gtest_brief=1
+	@echo "Running executable:"
+	@./$(TARGET) --gtest_brief=1
 
 asan:CC+=$(ASAN)
 asan: clean test clean
@@ -23,14 +26,19 @@ gcov_report: clean test
 	open ./report/index.html
 
 $(TARGET): $(OBJECTS)
-	$(CC) -o $@ $(OBJDIR)/*.o $(OBJDIR)/*/*.o $(LIB)
+	@echo "Linking object files..."
+	@$(CC) -o $@ $(OBJDIR)/*.o $(OBJDIR)/*/*.o $(LIB)
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.cc | $(OBJDIR)
+	@echo "Compiling source files..."
 	@mkdir -p $(@D)
-	$(CC) -o $@ -c $< $(LIB)
+	@$(CC) -o $@ -c $< $(LIB)
 
 $(OBJDIR):
-	mkdir -p $@
+	@mkdir -p $@
+
+vg: $(TARGET)
+	valgrind $(VGFLAGS) ./$<
 
 clean:
 	@rm -rf $(TARGET) $(OBJDIR)
