@@ -104,7 +104,7 @@ class set {
   /* Bonus part */
   template <typename... Args>
   vector<std::pair<iterator, bool>> insert_many(Args &&...args) {
-    auto result = rb_tree_.InsertMany(args...);
+    auto result = rb_tree_.InsertManySet(args...);
 
     return result;
   };
