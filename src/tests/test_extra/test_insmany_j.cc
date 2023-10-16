@@ -329,6 +329,11 @@ TEST(InsManyTree, Set_3) {
   EXPECT_EQ(*result[1].first, 4);
 }
 
+TEST(InsManyTree, Set_4) {
+  s21::set<int> test{4, 101};
+  auto result = test.insert_many(4);
+}
+
 TEST(InsManyTree, MultiSet_0) {
   s21::multiset<int> test{1, 2, 99};
   auto result = test.insert_many(3, 7);
@@ -380,4 +385,9 @@ TEST(InsManyTree, MultiSet_4) {
   EXPECT_EQ(test.count(8), 3);
   EXPECT_EQ(test.count(101), 6);
   EXPECT_EQ(test.count(111), 0);
+}
+
+TEST(InsManyTree, Set_5) {
+  s21::set<int> test{4, 101};
+  auto result = test.insert_many(1);
 }
